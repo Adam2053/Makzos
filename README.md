@@ -3,42 +3,54 @@
 Next.js 16 (App Router, TypeScript, CSS Modules) with GSAP for motion. No UI framework.
 
 ```bash
-npm run dev      # http://localhost:3000
+npm run dev            # http://localhost:3000
 npm run build
-npm run prep:images   # regenerate /public/brand from ../images
+npm run prep:images    # regenerate /public/brand from ../images
 ```
 
-## Design rule
+## Three designs, three branches
 
-The packs already state the brand's idea: a desaturated world with exactly one
-thing in colour. The page obeys the same rule. Everything — chrome, type,
-photography, even the packs — is greyscale, and colour exists only where the
-active flavour is. `--flavour` is registered with `@property` so the accent
-animates when you change flavour instead of snapping.
+| branch | direction |
+| --- | --- |
+| `main` | Cinematic and greyscale. The page obeys the packaging's rule — a desaturated world with colour only where the active flavour is. |
+| `too-yum-style` | Loud, warm and product-first, in the register of an Indian snack aisle. Die-cut stickers, stamped poster type. |
+| `modern-fumky` | This one. The page read as a campaign: soft capsules floating on a deep berry ground. |
 
-- **Display** Archivo, weight 900 on the width axis, italic for flavour names —
-  the wordmark's own heavy slanted grotesque.
-- **Body** Instrument Sans. **Data** DM Mono.
-- Structure encodes provenance, not sequence: flavours are labelled by where
-  the seasoning came from. The only numbered list on the page is the roasting
-  process, because that genuinely is a sequence — and the point is that it
-  stops at two.
+## This branch — modern funky
+
+Built from a Klaviyo email-campaign reference. Email design solves the same
+problem this brand has — sell to someone scrolling fast — and it solves it with
+shapes rather than grids. So the page is a stack of capsules floating on a deep
+berry ground taken from the Sweet Thai Chilli bag, instead of the usual
+full-bleed sections. Nothing on the page has a straight outer edge.
+
+- **The signature is the stat bubble.** Four white roundels orbit the bag with
+  dotted leaders running back to it. They're positioned as percentages of a
+  square stage so the SVG's `0 0 100 100` viewBox maps 1:1 and the leaders stay
+  attached at every width.
+- **Shapes carry the structure.** The Why block is cut with an elliptical arc
+  (`border-radius: 50% 50% … / 12% 12% …`); the product cards repeat that arc
+  under their flavour colour; testimonials are offset pills alternating left and
+  right, so the section reads as a conversation rather than a grid.
+- **The Compare capsule takes the flavour's colour**, so the whole block
+  repaints as you move along the tabs.
+- **Type** Fredoka for display — rounded and warm without tipping into childish
+  — with Manrope for body.
+- The voucher chip and its **Use discount** button come from the campaign format
+  directly. It's the one place a homepage genuinely benefits from looking like
+  an email.
 
 ## Motion
 
-GSAP drives everything that moves: the hero's load timeline, the flavour
-crossfade, the marquee, and the scroll reveals (ScrollTrigger). The hero pack
-carries a slow `sine.inOut` yoyo — 10px and one degree — so it reads as
-suspended rather than animated.
+GSAP drives the hero timeline — bag first, then the leaders, then the bubbles
+popping in on `back.out` — plus the Compare crossfade and the scroll reveals via
+ScrollTrigger. The bag breathes on a slow `sine.inOut` yoyo; the bubbles hold
+their orbit rather than drifting, so the numbers stay readable.
 
 Every tween sits inside `gsap.matchMedia()`. Under `prefers-reduced-motion:
-reduce` the float never starts and elements are simply `set` to their final
-state. The hidden start state for reveals lives in CSS behind `html[data-js]`,
-so with JavaScript off nothing is ever hidden.
-
-The hero holds one height across all four flavours: flavour names run to one or
-two lines, so the deck reserves the taller case once and pins the buttons to its
-floor — the slack collects below the copy instead of opening a hole.
+reduce` nothing moves and elements are simply `set` to their final state. The
+hidden start state for reveals lives in CSS behind `html[data-js]`, so with
+JavaScript off nothing is ever hidden.
 
 ## Assets
 
@@ -49,12 +61,19 @@ plain neutral test leaks into the bag. The script builds a silhouette from the
 strongly-coloured pixels, fills each column between its topmost and bottommost
 hit, and uses that envelope as a barrier the background fill can't cross.
 
-## Content gaps
+The puff in `public/brand/puff.png` is the bitten seed cropped out of the
+wordmark, reused as the icon on every promise card.
 
-- **Curry Leaves has no scene photograph.** The other three flavours use one as
-  the hero backdrop; Curry Leaves falls back to a flavour-washed grain field.
-  It reads as deliberate, but a shot would complete the set.
-- **Prices are placeholders** (₹60 a bag, ₹220 a box) — swap in real ones.
+## Placeholders to replace before this ships
+
+- **Ratings, review counts and the reviewer quotes are invented**, as is the
+  "959 reviews" figure. Wire these to real data.
+- **Prices** (₹60 a bag, ₹75 MRP, ₹220 a box) and the `MAKZO15` discount code
+  are placeholders.
+- **Ingredient lists, allergen statements and roast times in Compare are
+  written to be plausible, not sourced.** Allergen copy is a legal claim —
+  replace it with the real declarations.
 - **Nutrition** shows the pack's gram values only. The `%` reference intakes
   printed on the bag don't add up (15 g fat marked 2%), so they're left off
   rather than republished.
+- Stockists are text chips; no logos were supplied and none were fabricated.

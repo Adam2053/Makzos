@@ -1,0 +1,121 @@
+.section {
+  padding-bottom: clamp(1rem, 2vw, 2rem);
+}
+
+.capsule {
+  background: var(--berry-soft);
+  color: var(--cream);
+  padding: clamp(1.75rem, 4vw, 3.5rem);
+}
+
+.head {
+  text-align: center;
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.kicker {
+  color: color-mix(in srgb, var(--cream) 62%, transparent);
+}
+
+.title {
+  font-size: clamp(1.9rem, 4.2vw, 3rem);
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+.list {
+  display: grid;
+  gap: clamp(0.75rem, 1.5vw, 1.1rem);
+  margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+
+.row {
+  display: flex;
+}
+
+.pill {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.85rem, 1.6vw, 1.25rem);
+  width: min(100%, 46rem);
+  border-radius: 999px 999px 999px 999px;
+  padding: clamp(1rem, 1.8vw, 1.4rem) clamp(1.25rem, 2.4vw, 2rem);
+}
+
+.pill[data-side="left"] {
+  background: var(--cream);
+  color: var(--ink);
+  margin-right: auto;
+  border-bottom-left-radius: var(--r-card);
+}
+
+.pill[data-side="right"] {
+  background: var(--ink);
+  color: var(--cream);
+  margin-left: auto;
+  flex-direction: row-reverse;
+  text-align: right;
+  border-bottom-right-radius: var(--r-card);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--coral);
+  color: var(--paper);
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.content {
+  min-width: 0;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.pill[data-side="right"] .top {
+  justify-content: flex-end;
+}
+
+.name {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.quote {
+  margin: 0.35rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.city {
+  display: block;
+  margin-top: 0.4rem;
+  opacity: 0.6;
+  font-size: 0.5625rem;
+}
+
+@media (max-width: 620px) {
+  .pill,
+  .pill[data-side="right"] {
+    flex-direction: row;
+    text-align: left;
+    border-radius: var(--r-card);
+    width: 100%;
+  }
+  .pill[data-side="right"] .top {
+    justify-content: flex-start;
+  }
+}

@@ -1,367 +1,186 @@
 .hero {
-  position: relative;
-  isolation: isolate;
-  min-height: calc(100svh - var(--nav-h));
+  padding-bottom: clamp(1rem, 2vw, 2rem);
+}
+
+.capsule {
   display: grid;
-  grid-template-rows: 1fr auto;
-  overflow: hidden;
-  transition:
-    --flavour 0.7s var(--ease),
-    --deep 0.7s var(--ease);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  background: var(--cream);
+  padding: clamp(1.75rem, 4vw, 3.75rem);
 }
 
-/* ---------- backdrop ---------- */
+/* ---------- copy ---------- */
 
-.stage {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-}
-
-.plate,
-.plateBlank {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transform: scale(1.06);
-}
-
-.plate img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 62% 42%;
-}
-
-.plateBlank {
-  background:
-    radial-gradient(120% 90% at 70% 20%, color-mix(in srgb, var(--deep) 88%, transparent), transparent 70%),
-    var(--ink);
-}
-
-.plate[data-on],
-.plateBlank[data-on] {
-  opacity: 1;
-  transform: none;
-}
-
-.scrim {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(100deg, var(--ink) 26%, color-mix(in srgb, var(--ink) 84%, transparent) 50%, color-mix(in srgb, var(--ink) 34%, transparent) 84%),
-    linear-gradient(to top, var(--ink) 4%, transparent 46%),
-    linear-gradient(color-mix(in srgb, var(--ink) 30%, transparent), color-mix(in srgb, var(--ink) 30%, transparent));
-}
-
-.glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    58% 46% at 78% 30%,
-    color-mix(in srgb, var(--flavour) 16%, transparent),
-    transparent 68%
-  );
-  mix-blend-mode: screen;
-  transition: background 0.7s var(--ease);
-}
-
-/* ---------- content ---------- */
-
-.body {
-  width: var(--shell);
-  margin-inline: auto;
-  align-self: center;
-  padding-block: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 3vw, 2.5rem);
-  /* Type and pack get their own columns, so the pack can never crop a word. */
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(200px, 25vw, 350px);
-  grid-template-areas:
-    "eyebrow pack"
-    "headline pack"
-    "deck pack";
-  column-gap: clamp(1.5rem, 4vw, 3.5rem);
-  align-content: center;
-}
-
-.eyebrow {
-  grid-area: eyebrow;
-  color: var(--ash);
-  margin-bottom: clamp(1.25rem, 3vw, 2rem);
-}
-
-.dot {
-  color: color-mix(in srgb, var(--bone) 26%, transparent);
-  padding-inline: 0.35em;
+.chip {
+  display: inline-block;
+  background: color-mix(in srgb, var(--coral) 12%, transparent);
+  color: var(--coral);
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
 }
 
 .headline {
-  grid-area: headline;
-  font-size: clamp(2.25rem, 6.8vw, 6.4rem);
+  font-size: clamp(2.5rem, 5.4vw, 4.25rem);
+  font-weight: 700;
+  margin-top: clamp(0.9rem, 2vw, 1.35rem);
 }
 
-/* The ampersand is set in the display italic so the line reads as one
-   spoken phrase rather than three stacked words. */
-.amp {
-  font-style: italic;
-  font-stretch: 100%;
-  color: var(--ash);
-  padding-inline: 0.16em 0.1em;
+.hot {
+  color: var(--coral);
 }
 
-.deck {
-  --name-size: clamp(1.75rem, 4.4vw, 3.4rem);
-  grid-area: deck;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  max-width: 34rem;
-  min-height: calc(var(--name-size) * 1.68 + 12rem);
-  margin-top: clamp(1.75rem, 3.5vw, 3rem);
+.sub {
+  margin-top: clamp(0.85rem, 1.8vw, 1.25rem);
+  max-width: 38ch;
 }
 
-.origin {
-  color: var(--ash);
-}
-
-.flavourName {
-  font-size: var(--name-size);
-  color: var(--flavour);
-  margin-top: 0.35rem;
-}
-
-.line {
-  color: var(--chalk);
-  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.1875rem);
-  margin-top: 0.75rem;
-  max-width: 30ch;
-  min-height: 3.2em; /* two lines; slack sits above the buttons, not under the name */
-}
-
-.actions {
+/* The discount pair is lifted straight from the campaign format: a dashed
+   voucher chip beside the button that redeems it. */
+.offer {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: auto;
-  padding-top: clamp(1.5rem, 3vw, 2.25rem);
-}
-
-.buy {
-  background: var(--flavour);
-  color: var(--ink);
-  padding: 0.95rem 1.5rem;
-  border-radius: 999px;
-  font-weight: 500;
-  transition:
-    background 0.7s var(--ease),
-    transform 0.25s var(--ease);
-}
-
-.buy:hover {
-  transform: translateY(-2px);
-}
-
-.ghost {
-  display: inline-flex;
   align-items: center;
-  padding: 0.95rem 1.5rem;
-  border: 1px solid var(--line);
+  gap: 0.75rem;
+  margin-top: clamp(1.35rem, 3vw, 2rem);
+}
+
+.code {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  border: 2px dashed color-mix(in srgb, var(--ink) 30%, transparent);
   border-radius: 999px;
-  color: var(--bone);
-  transition:
-    border-color 0.25s var(--ease),
-    background 0.25s var(--ease);
+  padding: 0.6rem 1.4rem;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
+  font-size: 1.0625rem;
+  letter-spacing: 0.08em;
 }
 
-.ghost:hover {
-  border-color: color-mix(in srgb, var(--bone) 40%, transparent);
-  background: color-mix(in srgb, var(--bone) 6%, transparent);
+.codeLabel {
+  color: var(--ink-soft);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
 }
 
-/* ---------- floating pack ---------- */
+.cta {
+  background: var(--coral);
+  color: var(--paper);
+  box-shadow: 0 10px 22px -8px color-mix(in srgb, var(--coral) 80%, transparent);
+}
 
-.packWrap {
-  grid-area: pack;
-  align-self: center;
+.cta:hover {
+  box-shadow: 0 16px 28px -8px color-mix(in srgb, var(--coral) 85%, transparent);
+}
+
+.proof {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: clamp(1.1rem, 2vw, 1.5rem);
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+/* ---------- product stage ---------- */
+
+.stage {
   position: relative;
-  width: 100%;
-  aspect-ratio: 347 / 460;
-  pointer-events: none;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
 }
 
-.pack {
+/* A soft halo so the bag reads as lit rather than pasted on. */
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--coral) 16%, transparent),
+    transparent 68%
+  );
+}
+
+.leader {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  opacity: 0;
-  transform: rotate(-7deg);
-  filter: drop-shadow(0 34px 46px rgb(0 0 0 / 0.55));
+  overflow: visible;
 }
 
-.pack[data-on] {
-  opacity: 1;
+.leader line {
+  stroke: color-mix(in srgb, var(--ink) 42%, transparent);
+  stroke-width: 0.55;
+  stroke-dasharray: 1.1 1.9;
+  stroke-linecap: round;
 }
 
-/* ---------- flavour dial (the signature) ---------- */
-
-.dial {
+.packWrap {
   position: relative;
-  width: var(--shell);
-  margin-inline: auto;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  border-top: 1px solid var(--line-soft);
+  width: 54%;
 }
 
-.tab {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-  padding: 1.125rem 1rem 1.125rem 0;
-  text-align: left;
-  border-right: 1px solid var(--line-soft);
-  position: relative;
+.pack {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 22px 26px rgb(38 16 31 / 0.28));
 }
 
-.tab:last-child {
-  border-right: 0;
-}
-
-/* The active marker is the only lit rule on the strip. */
-.tab::after {
-  content: "";
+.bubble {
   position: absolute;
-  inset: -1px auto auto 0;
-  height: 2px;
-  width: 100%;
-  background: var(--flavour);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.5s var(--ease);
-}
-
-.tab[data-on]::after {
-  transform: scaleX(1);
-}
-
-.thumb {
-  flex: none;
-  width: 40px;
-  aspect-ratio: 347 / 460;
-  overflow: hidden;
-}
-
-.thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: grayscale(1) contrast(1.05) brightness(0.82);
-  transition: filter 0.5s var(--ease);
-}
-
-.tab[data-on] .thumb img,
-.tab:hover .thumb img {
-  filter: none;
-}
-
-@media (hover: none) {
-  .tabName {
-    color: var(--bone);
-  }
-}
-
-.tabText {
+  translate: -50% -50%;
   display: grid;
-  gap: 0.2rem;
-  min-width: 0;
+  place-items: center;
+  gap: 0.05rem;
+  width: clamp(74px, 9.5vw, 108px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: 0 12px 24px -10px rgb(38 16 31 / 0.4);
+  text-align: center;
+  padding: 0.4rem;
 }
 
-.tabName {
-  color: var(--ash);
-  transition: color 0.35s var(--ease);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.bubbleBig {
+  font-size: clamp(1.1rem, 1.9vw, 1.5rem);
+  font-weight: 700;
+  color: var(--coral);
+  line-height: 1;
 }
 
-.tab[data-on] .tabName,
-.tab:hover .tabName {
-  color: var(--bone);
+.bubbleSmall {
+  font-size: 0.5rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.11em;
 }
 
-.heat {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-}
-
-.tabOrigin {
-  font-size: 0.625rem;
-  letter-spacing: 0.14em;
-  color: color-mix(in srgb, var(--bone) 30%, transparent);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ---------- responsive ---------- */
-
-@media (max-width: 900px) {
-  .dial {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .tab:nth-child(2) {
-    border-right: 0;
-  }
-  .tab:nth-child(-n + 2) {
-    border-bottom: 1px solid var(--line-soft);
-  }
-}
-
-@media (max-width: 860px) {
-  /* Single column: the pack rejoins the flow above the flavour copy. */
-  .body {
+@media (max-width: 880px) {
+  .capsule {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "eyebrow"
-      "headline"
-      "pack"
-      "deck";
   }
-  .packWrap {
-    width: clamp(190px, 46vw, 280px);
-    margin: 1.5rem 0 0 auto;
+  .stage {
+    order: -1;
+    max-width: 30rem;
+    margin-inline: auto;
+    width: 100%;
   }
-  .plate img {
-    object-position: 66% 38%;
-  }
-  .scrim {
-    background:
-      linear-gradient(to top, var(--ink) 26%, color-mix(in srgb, var(--ink) 60%, transparent) 64%, transparent),
-      linear-gradient(to right, var(--ink) 6%, transparent 70%),
-      linear-gradient(color-mix(in srgb, var(--ink) 34%, transparent), color-mix(in srgb, var(--ink) 34%, transparent));
+  .sub {
+    max-width: 46ch;
   }
 }
 
-@media (max-width: 900px) {
-  /* Origins truncate badly in a half-width tab; the name carries it alone. */
-  .tabOrigin {
-    display: none;
+@media (max-width: 480px) {
+  .bubble {
+    width: 68px;
   }
-}
-
-@media (max-width: 560px) {
-  /* Narrow the display width axis rather than shrink the headline further. */
-  .headline {
-    font-stretch: 100%;
-  }
-  .tab {
-    gap: 0.625rem;
-    padding-right: 0.5rem;
-  }
-  .thumb {
-    width: 30px;
+  .bubbleSmall {
+    font-size: 0.4375rem;
   }
 }

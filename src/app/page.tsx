@@ -1,25 +1,23 @@
 import { Nav } from "@/components/Nav";
 import { Hero } from "@/components/Hero";
-import { Marquee } from "@/components/Marquee";
-import { Flavours } from "@/components/Flavours";
-import { Honest } from "@/components/Honest";
-import { Sources } from "@/components/Sources";
-import { BuildBox } from "@/components/BuildBox";
+import { Shop } from "@/components/Shop";
+import { Compare } from "@/components/Compare";
+import { Why } from "@/components/Why";
+import { Reviews } from "@/components/Reviews";
+import { Box } from "@/components/Box";
 import { Footer } from "@/components/Footer";
-import { Grain } from "@/components/Grain";
 
 export default function Page() {
   return (
     <>
-      <Grain />
       <Nav />
       <main>
         <Hero />
-        <Marquee />
-        <Flavours />
-        <Honest />
-        <Sources />
-        <BuildBox />
+        <Shop />
+        <Compare />
+        <Why />
+        <Reviews />
+        <Box />
       </main>
       <Footer />
     </>

@@ -1,0 +1,126 @@
+.section {
+  padding-bottom: clamp(1rem, 2vw, 2rem);
+}
+
+.capsule {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  background: var(--coral);
+  color: var(--paper);
+  padding: clamp(1.75rem, 4vw, 3.5rem);
+}
+
+.kicker {
+  color: color-mix(in srgb, var(--paper) 72%, transparent);
+}
+
+.title {
+  font-size: clamp(2rem, 4.6vw, 3.25rem);
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+.hot {
+  color: var(--gold);
+}
+
+.text {
+  margin-top: 0.8rem;
+  max-width: 34ch;
+  color: color-mix(in srgb, var(--paper) 86%, transparent);
+}
+
+.buy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.now {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  line-height: 1;
+}
+
+.was {
+  opacity: 0.72;
+}
+
+.save {
+  background: var(--gold);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.5625rem;
+}
+
+.cta {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.also {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+  color: color-mix(in srgb, var(--paper) 68%, transparent);
+}
+
+.stockists {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.chip {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--paper) 18%, transparent);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+}
+
+.lineup {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.slot {
+  flex: 0 1 clamp(78px, 13vw, 150px);
+  margin-inline: clamp(-0.7rem, -0.5vw, -0.2rem);
+  rotate: calc((var(--i) - 1.5) * 4deg);
+  translate: 0 calc(abs(var(--i) - 1.5) * 10px);
+  transition: translate 0.25s var(--ease);
+}
+
+.slot:hover {
+  translate: 0 -10px;
+  z-index: 2;
+}
+
+.pack {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 16px 18px rgb(38 16 31 / 0.4));
+}
+
+@media (max-width: 880px) {
+  .capsule {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lineup {
+    order: -1;
+  }
+}

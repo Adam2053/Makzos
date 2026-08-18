@@ -1,27 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Instrument_Sans, DM_Mono } from "next/font/google";
+import { Fredoka, Manrope } from "next/font/google";
 import "./globals.css";
 
-/* Heavy, slightly expanded grotesque — the wordmark's own DNA. */
-const display = Archivo({
+/* Rounded and warm — modern DTC without tipping into childish. */
+const display = Fredoka({
   subsets: ["latin"],
-  axes: ["wdth"],
-  style: ["normal", "italic"],
+  weight: ["500", "600", "700"],
   variable: "--font-display",
   display: "swap",
 });
 
-const body = Instrument_Sans({
+const body = Manrope({
   subsets: ["latin"],
   variable: "--font-body",
-  display: "swap",
-});
-
-/* Every claim on this page is shown as a spec, not a boast. */
-const mono = DM_Mono({
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  variable: "--font-mono",
   display: "swap",
 });
 
@@ -32,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f0e0c",
+  themeColor: "#4e1140",
 };
 
 export default function RootLayout({
@@ -48,7 +39,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${display.variable} ${body.variable} ${mono.variable}`}>
+      <body className={`${display.variable} ${body.variable}`}>
         {children}
       </body>
     </html>
