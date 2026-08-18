@@ -1,11 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { EASE, MOTION_OFF, MOTION_OK, gsap, useGSAP } from "@/lib/motion";
+import { MOTION_OFF, MOTION_OK, POP, gsap, useGSAP } from "@/lib/motion";
 
 /**
- * Lifts children into place as they enter the viewport. The hidden start state
- * lives in CSS behind `html[data-js]`, so without JS nothing is ever hidden.
+ * Pops children into place on scroll. The hidden start state lives in CSS
+ * behind `html[data-js]`, so without JS nothing is ever hidden.
  */
 export function Reveal({
   children,
@@ -24,25 +24,22 @@ export function Reveal({
     () => {
       const el = ref.current;
       if (!el) return;
-
       const mm = gsap.matchMedia();
 
       mm.add(MOTION_OK, () => {
-        gsap.set(el, { opacity: 0, y: 26 });
+        gsap.set(el, { opacity: 0, y: 30, scale: 0.97 });
         gsap.to(el, {
           opacity: 1,
           y: 0,
-          duration: 0.85,
+          scale: 1,
+          duration: 0.7,
           delay: delay / 1000,
-          ease: EASE,
+          ease: POP,
           scrollTrigger: { trigger: el, start: "top 88%", once: true },
         });
       });
 
-      mm.add(MOTION_OFF, () => {
-        gsap.set(el, { opacity: 1, y: 0 });
-      });
-
+      mm.add(MOTION_OFF, () => gsap.set(el, { opacity: 1, y: 0, scale: 1 }));
       return () => mm.revert();
     },
     { scope: ref, dependencies: [delay] },

@@ -1,40 +1,28 @@
 /* ============================================================
-   MAKZO'S — design tokens
-   The page is a greyscale world. Colour is a variable, not a
-   constant: --flavour is the only chroma on screen at any time.
+   MAKZO'S — "halka snack, bhari swad"
+   A loud, product-first sweet shop. Warm butter ground, poster
+   type, and everything die-cut: hard ink outline, solid offset
+   shadow, never a blur.
    ============================================================ */
 
-@property --flavour {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: #f0a21c;
-}
-@property --deep {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: #2a1810;
-}
-
 :root {
-  /* Greyscale ground — warm, photographic, not a neutral UI dark mode */
-  --ink: #0f0e0c;
-  --soot: #17150f;
-  --slate: #221f1a;
-  --ash: #8b857a;
-  --chalk: #b9b2a6;
-  --bone: #f0eae0;
+  --cream: #fff3dc;
+  --paper: #fffdf7;
+  --butter: #ffc42e;
+  --ink: #1b1206;
+  --ink-soft: #6a5a44;
+  --tomato: #f2402a;
 
-  --line: color-mix(in srgb, var(--bone) 14%, transparent);
-  --line-soft: color-mix(in srgb, var(--bone) 7%, transparent);
+  --line: 3px;
+  --drop: 6px; /* offset shadow throw */
+  --radius: 22px;
 
-  --nav-h: 72px;
-  --shell: min(1360px, 100% - 2 * var(--gutter));
-  --gutter: clamp(1.25rem, 4vw, 4.5rem);
+  --shell: min(1300px, 100% - 2 * var(--gutter));
+  --gutter: clamp(1.1rem, 4vw, 3.5rem);
+  --step: clamp(3.75rem, 8vw, 7rem);
 
-  --step: clamp(4.5rem, 9vw, 9rem); /* vertical section rhythm */
-
+  --nav-h: 76px;
   --ease: cubic-bezier(0.22, 0.68, 0.24, 1);
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 *,
@@ -50,10 +38,10 @@ html {
 
 body {
   margin: 0;
-  background: var(--ink);
-  color: var(--bone);
+  background: var(--cream);
+  color: var(--ink);
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
+  font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.0625rem);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -68,14 +56,8 @@ h1,
 h2,
 h3,
 p,
-figure,
-blockquote {
+figure {
   margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
 }
 
 button {
@@ -86,20 +68,26 @@ button {
   cursor: pointer;
 }
 
-ul {
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 :focus-visible {
-  outline: 2px solid var(--flavour);
+  outline: 3px solid var(--ink);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: 6px;
 }
 
 ::selection {
-  background: var(--flavour);
+  background: var(--butter);
   color: var(--ink);
 }
 
@@ -107,51 +95,54 @@ ul {
 
 .u-display {
   font-family: var(--font-display), ui-sans-serif, sans-serif;
-  font-weight: 900;
-  font-stretch: 115%;
+  font-weight: 400; /* Bakbak One ships one very heavy weight */
   text-transform: uppercase;
-  line-height: 0.84;
-  letter-spacing: -0.028em;
+  line-height: 0.92;
+  letter-spacing: -0.012em;
   text-wrap: balance;
 }
 
-/* The wordmark is a heavy slanted grotesque; the flavour name echoes it. */
-.u-slant {
-  font-style: italic;
-  font-stretch: 108%;
-  letter-spacing: -0.02em;
-}
-
-.u-mono {
-  font-family: var(--font-mono), ui-monospace, monospace;
+.u-label {
+  font-family: var(--font-body), sans-serif;
+  font-weight: 800;
   font-size: 0.6875rem;
-  font-weight: 400;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 .u-lede {
-  font-size: clamp(1.0625rem, 0.95rem + 0.55vw, 1.375rem);
+  font-size: clamp(1.0625rem, 0.95rem + 0.5vw, 1.3125rem);
   line-height: 1.5;
-  color: var(--chalk);
+  color: var(--ink-soft);
   text-wrap: pretty;
 }
 
-/* ---------- Shared layout ---------- */
+/* Stamped, not printed. See components/Rough.tsx for the filter itself. */
+.u-rough {
+  filter: url(#makzo-rough);
+}
+
+@supports not (filter: url(#makzo-rough)) {
+  .u-rough {
+    filter: none;
+  }
+}
+
+/* ---------- The die-cut sticker system ---------- */
+
+.u-cut {
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--drop) var(--drop) 0 var(--ink);
+}
 
 .u-shell {
   width: var(--shell);
   margin-inline: auto;
 }
 
-/* Anchored sections must clear the sticky header. */
-:target,
-[id] {
-  scroll-margin-top: 5.5rem;
-}
-
-/* ---------- Scroll reveal ---------- */
+/* ---------- Scroll reveal (GSAP owns the motion) ---------- */
 
 html[data-js] [data-reveal] {
   opacity: 0;
@@ -161,6 +152,9 @@ html[data-js] [data-reveal] {
   html {
     scroll-behavior: auto;
   }
+  html[data-js] [data-reveal] {
+    opacity: 1;
+  }
   *,
   *::before,
   *::after {
@@ -168,8 +162,8 @@ html[data-js] [data-reveal] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
-  html[data-js] [data-reveal] {
-    opacity: 1;
-    transform: none;
-  }
+}
+
+[id] {
+  scroll-margin-top: calc(var(--nav-h) + 1.5rem);
 }

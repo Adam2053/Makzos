@@ -1,0 +1,30 @@
+.strip {
+  background: var(--ink);
+  color: var(--butter);
+  overflow: hidden;
+  padding-block: 0.6rem;
+}
+
+.track {
+  display: flex;
+  width: max-content;
+}
+
+.run {
+  display: flex;
+  flex: none;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-inline: 0.9rem 0;
+  white-space: nowrap;
+}
+
+.dot {
+  font-size: 0.6em;
+  opacity: 0.8;
+  padding-right: 0.9rem;
+}

@@ -2,9 +2,8 @@
   position: sticky;
   top: 0;
   z-index: 60;
-  background: color-mix(in srgb, var(--ink) 72%, transparent);
-  backdrop-filter: blur(14px) saturate(140%);
-  border-bottom: 1px solid var(--line-soft);
+  background: var(--cream);
+  border-bottom: var(--line) solid var(--ink);
 }
 
 .inner {
@@ -13,7 +12,7 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
   height: var(--nav-h);
 }
 
@@ -24,48 +23,53 @@
 
 .mark {
   width: auto;
-  height: 32px;
+  height: 34px;
 }
 
 .links {
   display: flex;
   justify-content: center;
-  gap: clamp(1.25rem, 3vw, 2.75rem);
+  gap: clamp(1rem, 2.6vw, 2.25rem);
 }
 
 .link {
-  color: var(--ash);
-  padding-block: 0.5rem;
-  transition: color 0.25s var(--ease);
+  font-weight: 700;
+  padding-block: 0.4rem;
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.2s var(--ease);
 }
 
 .link:hover {
-  color: var(--bone);
+  border-bottom-color: var(--ink);
 }
 
 .bag {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--bone);
-  border: 1px solid var(--line);
+  background: var(--butter);
+  border: var(--line) solid var(--ink);
   border-radius: 999px;
-  padding: 0.5rem 0.9rem;
-  transition:
-    border-color 0.25s var(--ease),
-    background 0.25s var(--ease);
+  padding: 0.6rem 1.1rem;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.16s var(--ease), box-shadow 0.16s var(--ease);
 }
 
 .bag:hover {
-  border-color: color-mix(in srgb, var(--bone) 38%, transparent);
-  background: color-mix(in srgb, var(--bone) 6%, transparent);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
 }
 
 .count {
-  color: var(--ash);
+  background: var(--ink);
+  color: var(--butter);
+  border-radius: 999px;
+  min-width: 1.35rem;
+  text-align: center;
+  padding: 0.05rem 0.3rem;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .links {
     display: none;
   }

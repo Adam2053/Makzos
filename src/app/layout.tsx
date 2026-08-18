@@ -1,38 +1,30 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Instrument_Sans, DM_Mono } from "next/font/google";
+import { Lilita_One, Figtree } from "next/font/google";
 import "./globals.css";
 
-/* Heavy, slightly expanded grotesque — the wordmark's own DNA. */
-const display = Archivo({
+/* A heavy condensed poster face with real character — the shape a snack packet
+   shouts in. Ships one very fat weight, which is all this page asks of it. */
+const display = Lilita_One({
   subsets: ["latin"],
-  axes: ["wdth"],
-  style: ["normal", "italic"],
+  weight: "400",
   variable: "--font-display",
   display: "swap",
 });
 
-const body = Instrument_Sans({
+const body = Figtree({
   subsets: ["latin"],
   variable: "--font-body",
-  display: "swap",
-});
-
-/* Every claim on this page is shown as a spec, not a boast. */
-const mono = DM_Mono({
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  variable: "--font-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "MAKZO'S — Roasted Makhana",
   description:
-    "Roasted makhana in four flavours. Nothing artificial, nothing unnecessary.",
+    "Halka snack, bhari swad. Roasted makhana in four flavours — nothing artificial, nothing unnecessary.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f0e0c",
+  themeColor: "#fff3dc",
 };
 
 export default function RootLayout({
@@ -48,7 +40,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${display.variable} ${body.variable} ${mono.variable}`}>
+      <body className={`${display.variable} ${body.variable}`}>
         {children}
       </body>
     </html>

@@ -7,16 +7,24 @@ export type Flavour = {
   note: string;
   heat: number;
   price: number;
-  accent: string;
+  mrp: number;
+  rating: number;
+  reviews: number;
+  tile: string;
+  ink: "dark" | "light";
   deep: string;
   pack: string;
   scene: string | null;
   sceneCaption?: string;
+  badge?: string;
+  ingredients: string;
+  allergens: string;
+  roast: string;
 };
 
 /**
- * Colours are lifted from the four printed bags: `accent` is the one hue each
- * pack lets through, `deep` is the body colour it sits on.
+ * `tile` is the flavour's poster colour, lifted from the printed bag and pushed
+ * to full saturation; `ink` says whether type on that tile reads dark or light.
  */
 export const FLAVOURS: Flavour[] = [
   {
@@ -25,16 +33,23 @@ export const FLAVOURS: Flavour[] = [
     short: "Chettinadu",
     origin: "Karaikudi, Tamil Nadu",
     packLine: "The spice that built fortunes.",
-    note:
-      "Black pepper, star anise and kalpasi — the trader's blend that once paid for mansions. We kept it whole and roasted it in.",
+    note: "Black pepper, star anise and kalpasi. Warm, not violent.",
     heat: 3,
     price: 60,
-    accent: "#F0A21C",
-    deep: "#2A1810",
+    mrp: 75,
+    rating: 4.7,
+    reviews: 214,
+    tile: "#F0A21C",
+    ink: "dark",
+    deep: "#3A2214",
     pack: "/brand/pack-chettinadu.png",
     scene: "/brand/scene-chettinadu",
-    sceneCaption:
-      "A spice merchant opens his case in Karaikudi. Everything in the room is grey except what is for sale.",
+    sceneCaption: "A spice merchant opens his case in Karaikudi.",
+    badge: "Bestseller",
+    ingredients:
+      "Roasted makhana (82%), black pepper, star anise, kalpasi, dried red chilli, rock salt, sunflower oil.",
+    allergens: "None. Packed in a facility that also handles milk.",
+    roast: "18 minutes, dry",
   },
   {
     id: "thai-chilli",
@@ -42,16 +57,23 @@ export const FLAVOURS: Flavour[] = [
     short: "Thai Chilli",
     origin: "Chiang Rai, Thailand",
     packLine: "The buzz around this heat is well deserved.",
-    note:
-      "Bird's eye chilli cut with wildflower honey. Sharp first, sweet after, and it doesn't overstay its welcome.",
+    note: "Bird's eye chilli cut with wildflower honey. Sharp, then sweet.",
     heat: 4,
     price: 60,
-    accent: "#F2402A",
-    deep: "#4A1440",
+    mrp: 75,
+    rating: 4.8,
+    reviews: 306,
+    tile: "#F2402A",
+    ink: "light",
+    deep: "#5C1850",
     pack: "/brand/pack-thai-chilli.png",
     scene: "/brand/scene-thai-chilli",
-    sceneCaption:
-      "Chilli picked beside the hives, so the honey and the heat come off the same hillside.",
+    sceneCaption: "Chilli picked beside the hives.",
+    badge: "Hot right now",
+    ingredients:
+      "Roasted makhana (80%), bird's eye chilli, cane sugar, honey powder, garlic, rock salt, sunflower oil.",
+    allergens: "None. Packed in a facility that also handles milk.",
+    roast: "16 minutes, dry",
   },
   {
     id: "curry-leaves",
@@ -59,14 +81,21 @@ export const FLAVOURS: Flavour[] = [
     short: "Curry Leaves",
     origin: "Backwaters of Kerala",
     packLine: "Fresh off the branch.",
-    note:
-      "Curry leaf, cracked pepper and a little rock salt, tempered in ghee the way it is at home — before it ever meets the seed.",
+    note: "Curry leaf, cracked pepper, rock salt. Tempered in ghee first.",
     heat: 1,
     price: 60,
-    accent: "#CBE05C",
+    mrp: 75,
+    rating: 4.6,
+    reviews: 168,
+    tile: "#B8D94A",
+    ink: "dark",
     deep: "#123B21",
     pack: "/brand/pack-curry-leaves.png",
     scene: null,
+    ingredients:
+      "Roasted makhana (84%), curry leaf, cracked black pepper, ghee, rock salt.",
+    allergens: "Contains milk (ghee).",
+    roast: "18 minutes, dry",
   },
   {
     id: "mac-cheese",
@@ -74,25 +103,49 @@ export const FLAVOURS: Flavour[] = [
     short: "Mac & Cheese",
     origin: "Your kitchen, 11pm",
     packLine: "Countdown to comfort.",
-    note:
-      "Aged cheddar and a whisper of mustard. The bowl you microwave at midnight, without the microwave.",
+    note: "Aged cheddar and a whisper of mustard. Zero microwave required.",
     heat: 0,
     price: 60,
-    accent: "#2FC2E2",
+    mrp: 75,
+    rating: 4.9,
+    reviews: 271,
+    tile: "#2FC2E2",
+    ink: "dark",
     deep: "#1B2A2E",
     pack: "/brand/pack-mac-cheese.png",
     scene: "/brand/scene-mac-cheese",
-    sceneCaption:
-      "Thirty seconds left. The only warm thing in the house is behind the glass.",
+    sceneCaption: "Thirty seconds left on the timer.",
+    badge: "Kid approved",
+    ingredients:
+      "Roasted makhana (78%), cheddar powder, whey, mustard, onion, rock salt, sunflower oil.",
+    allergens: "Contains milk.",
+    roast: "15 minutes, dry",
   },
 ];
 
 /** Printed on the back of every 55 g bag. */
 export const NUTRITION = [
   { label: "Energy", value: "1048 kJ", sub: "250 kcal" },
-  { label: "Fat", value: "15 g", sub: "of which saturates 6 g" },
-  { label: "Sugar", value: "5 g", sub: "no added sugar" },
+  { label: "Fat", value: "15 g", sub: "saturates 6 g" },
+  { label: "Sugar", value: "5 g", sub: "none added" },
   { label: "Salt", value: "0.2 g", sub: "rock salt only" },
 ];
 
+export const PROMISES = [
+  { t: "Roasted, never fried", d: "Dry heat and small batches. No oil bath, no shortcuts." },
+  { t: "Flavours with a passport", d: "Every seasoning comes from somewhere real, and we say where." },
+  { t: "Nothing artificial", d: "No palm oil, no MSG, no colours you can't pronounce." },
+  { t: "Grown in Bihar", d: "Hand-harvested lotus seeds from the ponds of Mithila." },
+];
+
+export const REVIEWS = [
+  { name: "Ananya R.", city: "Bengaluru", stars: 5, text: "Finished the Thai Chilli bag on the auto ride home. No regrets, only crumbs." },
+  { name: "Devansh M.", city: "Pune", stars: 5, text: "I bought it to be healthy. I kept buying it because the Chettinadu is genuinely good." },
+  { name: "Farida S.", city: "Hyderabad", stars: 4, text: "Curry Leaves tastes like my mother's tempering. That's a very high bar and it cleared it." },
+  { name: "Jai K.", city: "Delhi", stars: 5, text: "My kid asked for the cheese one by name. He's four. That's marketing I can't argue with." },
+];
+
+export const STOCKISTS = ["Blinkit", "Zepto", "Swiggy Instamart", "Amazon", "BigBasket", "DMart", "Flipkart"];
+
 export const BOX_PRICE = 220;
+export const BOX_MRP = 300;

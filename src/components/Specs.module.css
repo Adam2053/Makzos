@@ -1,0 +1,277 @@
+.section {
+  padding-block: var(--step);
+  border-top: var(--line) solid var(--ink);
+  background: var(--paper);
+}
+
+.head {
+  text-align: center;
+  max-width: 44rem;
+  margin-inline: auto;
+}
+
+.head > :global(.u-label) {
+  color: var(--ink-soft);
+}
+
+.title {
+  font-size: clamp(2.2rem, 5.6vw, 4rem);
+  margin-top: 0.6rem;
+}
+
+.pop {
+  color: var(--tomato);
+}
+
+.lede {
+  margin-top: 0.9rem;
+}
+
+/* ---------- flavour tabs ---------- */
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 800;
+  font-size: 0.9375rem;
+  background: var(--paper);
+  border: var(--line) solid var(--ink);
+  border-radius: 999px;
+  padding: 0.6rem 1.1rem;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.16s var(--ease), box-shadow 0.16s var(--ease), background 0.2s var(--ease);
+}
+
+.tab:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* The selected tab presses all the way in and takes the flavour's colour. */
+.tab[data-on] {
+  background: var(--tile);
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
+.swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: var(--tile);
+}
+
+.tab[data-on] .swatch {
+  background: var(--ink);
+}
+
+/* ---------- the board ---------- */
+
+.board {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 0;
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  border: var(--line) solid var(--ink);
+  border-radius: clamp(22px, 2.5vw, 32px);
+  box-shadow: var(--drop) var(--drop) 0 var(--ink);
+  overflow: hidden;
+}
+
+.shot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: var(--tile);
+  border-right: var(--line) solid var(--ink);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  min-height: 340px;
+  transition: background 0.45s var(--ease);
+}
+
+.pack {
+  grid-area: 1 / 1;
+  width: auto;
+  height: 100%;
+  max-height: 330px;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 18px rgb(27 18 6 / 0.3));
+}
+
+.panel {
+  padding: clamp(1.35rem, 2.6vw, 2.25rem);
+}
+
+.origin {
+  color: var(--ink-soft);
+}
+
+.name {
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
+  margin-top: 0.35rem;
+}
+
+.tagline {
+  margin-top: 0.4rem;
+  color: var(--ink-soft);
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
+/* ---------- spec table ---------- */
+
+.table {
+  margin: clamp(1.1rem, 2vw, 1.5rem) 0 0;
+  border-top: 2px solid color-mix(in srgb, var(--ink) 16%, transparent);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding-block: 0.7rem;
+  border-bottom: 2px solid color-mix(in srgb, var(--ink) 10%, transparent);
+}
+
+.rowKey {
+  color: var(--ink-soft);
+  padding-top: 0.2rem;
+}
+
+.rowVal {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* ---------- nutrition ---------- */
+
+.nutri {
+  margin-top: clamp(1.1rem, 2vw, 1.5rem);
+}
+
+.nutriHead {
+  color: var(--ink-soft);
+}
+
+.nutriGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.nutriCell {
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  padding: 0.7rem 0.75rem;
+}
+
+.nutriValue {
+  display: block;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.nutriLabel {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.5625rem;
+  color: var(--ink-soft);
+}
+
+.nutriSub {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.6875rem;
+  color: var(--ink-soft);
+}
+
+/* ---------- buy ---------- */
+
+.buy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.now {
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.was {
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+}
+
+.add {
+  background: var(--butter);
+  border: var(--line) solid var(--ink);
+  border-radius: 999px;
+  padding: 0.75rem 1.3rem;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.16s var(--ease), box-shadow 0.16s var(--ease);
+}
+
+.add:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+@media (max-width: 900px) {
+  .board {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .shot {
+    border-right: 0;
+    border-bottom: var(--line) solid var(--ink);
+    min-height: 280px;
+  }
+  .pack {
+    max-height: 260px;
+  }
+}
+
+@media (max-width: 560px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.2rem;
+  }
+  .nutriGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tab {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.9rem;
+  }
+}
