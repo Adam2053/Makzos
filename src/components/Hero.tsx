@@ -146,7 +146,10 @@ export function Hero() {
           <br />
           else is
           <br />
-          black<span className={styles.amp}>&amp;</span>white
+          black<wbr />
+          <span className={styles.amp}>&amp;</span>
+          <wbr />
+          white
         </h1>
 
         <div className={styles.deck}>

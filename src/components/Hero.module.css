@@ -97,7 +97,7 @@
 
 .headline {
   grid-area: headline;
-  font-size: clamp(2.25rem, 7vw, 7.5rem);
+  font-size: clamp(2.25rem, 6.8vw, 6.4rem);
 }
 
 /* The ampersand is set in the display italic so the line reads as one
