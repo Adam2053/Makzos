@@ -1,0 +1,41 @@
+.meter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--ash);
+}
+
+.cells {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.meter[data-compact] .cells {
+  flex-direction: column;
+  gap: 2px;
+}
+
+.meter[data-compact] .cell {
+  width: 4px;
+  height: 3px;
+}
+
+.cell {
+  width: 14px;
+  height: 4px;
+  background: color-mix(in srgb, var(--bone) 16%, transparent);
+  transition: background 0.4s var(--ease);
+}
+
+.cell[data-on] {
+  background: var(--flavour);
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

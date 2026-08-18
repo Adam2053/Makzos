@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MAKZO'S — homepage
 
-## Getting Started
-
-First, run the development server:
+Next.js 16 (App Router, TypeScript, CSS Modules) with GSAP for motion. No UI framework.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev      # http://localhost:3000
+npm run build
+npm run prep:images   # regenerate /public/brand from ../images
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Design rule
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The packs already state the brand's idea: a desaturated world with exactly one
+thing in colour. The page obeys the same rule. Everything — chrome, type,
+photography, even the packs — is greyscale, and colour exists only where the
+active flavour is. `--flavour` is registered with `@property` so the accent
+animates when you change flavour instead of snapping.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Display** Archivo, weight 900 on the width axis, italic for flavour names —
+  the wordmark's own heavy slanted grotesque.
+- **Body** Instrument Sans. **Data** DM Mono.
+- Structure encodes provenance, not sequence: flavours are labelled by where
+  the seasoning came from. The only numbered list on the page is the roasting
+  process, because that genuinely is a sequence — and the point is that it
+  stops at two.
 
-## Learn More
+## Motion
 
-To learn more about Next.js, take a look at the following resources:
+GSAP drives everything that moves: the hero's load timeline, the flavour
+crossfade, the marquee, and the scroll reveals (ScrollTrigger). The hero pack
+carries a slow `sine.inOut` yoyo — 10px and one degree — so it reads as
+suspended rather than animated.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Every tween sits inside `gsap.matchMedia()`. Under `prefers-reduced-motion:
+reduce` the float never starts and elements are simply `set` to their final
+state. The hidden start state for reveals lives in CSS behind `html[data-js]`,
+so with JavaScript off nothing is ever hidden.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The hero holds one height across all four flavours: flavour names run to one or
+two lines, so the deck reserves the taller case once and pins the buttons to its
+floor — the slack collects below the copy instead of opening a hole.
 
-## Deploy on Vercel
+## Assets
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`scripts/prep-images.mjs` cuts the packs out of their studio mockups. The
+backdrop and its drop shadow are neutral greys while the artwork is not, but
+each pack also carries a B&W photo panel that bleeds to its own edge — so a
+plain neutral test leaks into the bag. The script builds a silhouette from the
+strongly-coloured pixels, fills each column between its topmost and bottommost
+hit, and uses that envelope as a barrier the background fill can't cross.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Content gaps
+
+- **Curry Leaves has no scene photograph.** The other three flavours use one as
+  the hero backdrop; Curry Leaves falls back to a flavour-washed grain field.
+  It reads as deliberate, but a shot would complete the set.
+- **Prices are placeholders** (₹60 a bag, ₹220 a box) — swap in real ones.
+- **Nutrition** shows the pack's gram values only. The `%` reference intakes
+  printed on the bag don't add up (15 g fat marked 2%), so they're left off
+  rather than republished.

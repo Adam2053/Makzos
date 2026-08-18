@@ -1,0 +1,367 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: calc(100svh - var(--nav-h));
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+  transition:
+    --flavour 0.7s var(--ease),
+    --deep 0.7s var(--ease);
+}
+
+/* ---------- backdrop ---------- */
+
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.plate,
+.plateBlank {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.06);
+}
+
+.plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 42%;
+}
+
+.plateBlank {
+  background:
+    radial-gradient(120% 90% at 70% 20%, color-mix(in srgb, var(--deep) 88%, transparent), transparent 70%),
+    var(--ink);
+}
+
+.plate[data-on],
+.plateBlank[data-on] {
+  opacity: 1;
+  transform: none;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(100deg, var(--ink) 26%, color-mix(in srgb, var(--ink) 84%, transparent) 50%, color-mix(in srgb, var(--ink) 34%, transparent) 84%),
+    linear-gradient(to top, var(--ink) 4%, transparent 46%),
+    linear-gradient(color-mix(in srgb, var(--ink) 30%, transparent), color-mix(in srgb, var(--ink) 30%, transparent));
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    58% 46% at 78% 30%,
+    color-mix(in srgb, var(--flavour) 16%, transparent),
+    transparent 68%
+  );
+  mix-blend-mode: screen;
+  transition: background 0.7s var(--ease);
+}
+
+/* ---------- content ---------- */
+
+.body {
+  width: var(--shell);
+  margin-inline: auto;
+  align-self: center;
+  padding-block: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 3vw, 2.5rem);
+  /* Type and pack get their own columns, so the pack can never crop a word. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(200px, 25vw, 350px);
+  grid-template-areas:
+    "eyebrow pack"
+    "headline pack"
+    "deck pack";
+  column-gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-content: center;
+}
+
+.eyebrow {
+  grid-area: eyebrow;
+  color: var(--ash);
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+
+.dot {
+  color: color-mix(in srgb, var(--bone) 26%, transparent);
+  padding-inline: 0.35em;
+}
+
+.headline {
+  grid-area: headline;
+  font-size: clamp(2.25rem, 7vw, 7.5rem);
+}
+
+/* The ampersand is set in the display italic so the line reads as one
+   spoken phrase rather than three stacked words. */
+.amp {
+  font-style: italic;
+  font-stretch: 100%;
+  color: var(--ash);
+  padding-inline: 0.16em 0.1em;
+}
+
+.deck {
+  --name-size: clamp(1.75rem, 4.4vw, 3.4rem);
+  grid-area: deck;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 34rem;
+  min-height: calc(var(--name-size) * 1.68 + 12rem);
+  margin-top: clamp(1.75rem, 3.5vw, 3rem);
+}
+
+.origin {
+  color: var(--ash);
+}
+
+.flavourName {
+  font-size: var(--name-size);
+  color: var(--flavour);
+  margin-top: 0.35rem;
+}
+
+.line {
+  color: var(--chalk);
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.1875rem);
+  margin-top: 0.75rem;
+  max-width: 30ch;
+  min-height: 3.2em; /* two lines; slack sits above the buttons, not under the name */
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.buy {
+  background: var(--flavour);
+  color: var(--ink);
+  padding: 0.95rem 1.5rem;
+  border-radius: 999px;
+  font-weight: 500;
+  transition:
+    background 0.7s var(--ease),
+    transform 0.25s var(--ease);
+}
+
+.buy:hover {
+  transform: translateY(-2px);
+}
+
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.95rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--bone);
+  transition:
+    border-color 0.25s var(--ease),
+    background 0.25s var(--ease);
+}
+
+.ghost:hover {
+  border-color: color-mix(in srgb, var(--bone) 40%, transparent);
+  background: color-mix(in srgb, var(--bone) 6%, transparent);
+}
+
+/* ---------- floating pack ---------- */
+
+.packWrap {
+  grid-area: pack;
+  align-self: center;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 347 / 460;
+  pointer-events: none;
+}
+
+.pack {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transform: rotate(-7deg);
+  filter: drop-shadow(0 34px 46px rgb(0 0 0 / 0.55));
+}
+
+.pack[data-on] {
+  opacity: 1;
+}
+
+/* ---------- flavour dial (the signature) ---------- */
+
+.dial {
+  position: relative;
+  width: var(--shell);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--line-soft);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1.125rem 1rem 1.125rem 0;
+  text-align: left;
+  border-right: 1px solid var(--line-soft);
+  position: relative;
+}
+
+.tab:last-child {
+  border-right: 0;
+}
+
+/* The active marker is the only lit rule on the strip. */
+.tab::after {
+  content: "";
+  position: absolute;
+  inset: -1px auto auto 0;
+  height: 2px;
+  width: 100%;
+  background: var(--flavour);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease);
+}
+
+.tab[data-on]::after {
+  transform: scaleX(1);
+}
+
+.thumb {
+  flex: none;
+  width: 40px;
+  aspect-ratio: 347 / 460;
+  overflow: hidden;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: grayscale(1) contrast(1.05) brightness(0.82);
+  transition: filter 0.5s var(--ease);
+}
+
+.tab[data-on] .thumb img,
+.tab:hover .thumb img {
+  filter: none;
+}
+
+@media (hover: none) {
+  .tabName {
+    color: var(--bone);
+  }
+}
+
+.tabText {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.tabName {
+  color: var(--ash);
+  transition: color 0.35s var(--ease);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab[data-on] .tabName,
+.tab:hover .tabName {
+  color: var(--bone);
+}
+
+.heat {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.tabOrigin {
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  color: color-mix(in srgb, var(--bone) 30%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+  .dial {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tab:nth-child(2) {
+    border-right: 0;
+  }
+  .tab:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line-soft);
+  }
+}
+
+@media (max-width: 860px) {
+  /* Single column: the pack rejoins the flow above the flavour copy. */
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "eyebrow"
+      "headline"
+      "pack"
+      "deck";
+  }
+  .packWrap {
+    width: clamp(190px, 46vw, 280px);
+    margin: 1.5rem 0 0 auto;
+  }
+  .plate img {
+    object-position: 66% 38%;
+  }
+  .scrim {
+    background:
+      linear-gradient(to top, var(--ink) 26%, color-mix(in srgb, var(--ink) 60%, transparent) 64%, transparent),
+      linear-gradient(to right, var(--ink) 6%, transparent 70%),
+      linear-gradient(color-mix(in srgb, var(--ink) 34%, transparent), color-mix(in srgb, var(--ink) 34%, transparent));
+  }
+}
+
+@media (max-width: 900px) {
+  /* Origins truncate badly in a half-width tab; the name carries it alone. */
+  .tabOrigin {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Narrow the display width axis rather than shrink the headline further. */
+  .headline {
+    font-stretch: 100%;
+  }
+  .tab {
+    gap: 0.625rem;
+    padding-right: 0.5rem;
+  }
+  .thumb {
+    width: 30px;
+  }
+}

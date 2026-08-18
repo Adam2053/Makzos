@@ -1,0 +1,38 @@
+.band {
+  border-block: 1px solid var(--line-soft);
+  padding-block: 0.875rem;
+  overflow: hidden;
+  background: var(--soot);
+}
+
+.track {
+  display: flex;
+  width: max-content;
+}
+
+.run {
+  display: flex;
+  flex: none;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ash);
+  white-space: nowrap;
+}
+
+.sep {
+  color: color-mix(in srgb, var(--bone) 22%, transparent);
+  padding-inline: 1.5rem;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+

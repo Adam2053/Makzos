@@ -1,0 +1,78 @@
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--ink) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.inner {
+  width: var(--shell);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  height: var(--nav-h);
+}
+
+.brand {
+  display: block;
+  line-height: 0;
+}
+
+.mark {
+  width: auto;
+  height: 32px;
+}
+
+.links {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1.25rem, 3vw, 2.75rem);
+}
+
+.link {
+  color: var(--ash);
+  padding-block: 0.5rem;
+  transition: color 0.25s var(--ease);
+}
+
+.link:hover {
+  color: var(--bone);
+}
+
+.bag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--bone);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  transition:
+    border-color 0.25s var(--ease),
+    background 0.25s var(--ease);
+}
+
+.bag:hover {
+  border-color: color-mix(in srgb, var(--bone) 38%, transparent);
+  background: color-mix(in srgb, var(--bone) 6%, transparent);
+}
+
+.count {
+  color: var(--ash);
+}
+
+@media (max-width: 720px) {
+  .links {
+    display: none;
+  }
+  .inner {
+    grid-template-columns: auto 1fr;
+  }
+  .bag {
+    justify-self: end;
+  }
+}
