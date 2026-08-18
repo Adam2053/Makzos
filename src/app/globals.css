@@ -1,25 +1,58 @@
 /* ============================================================
    MAKZO'S — modern funky
+
+   The whole page is themed by whichever bag is selected in the
+   hero. Four custom properties carry it; they're registered so
+   the repaint animates instead of snapping.
+   ============================================================ */
+
+@property --ground {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #4e1140;
+}
+@property --accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f2402a;
+}
+@property --accent-text {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #c9301c;
+}
+@property --accent-on {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #26101f;
+}
+
+/* ============================================================
    The page is read like a campaign: a column of soft capsules
    floating on a deep berry ground. Big radii, orbiting stat
    bubbles, arc-cut colour blocks.
    ============================================================ */
 
 :root {
-  /* Ground and paper */
-  --berry: #4e1140;
-  --berry-deep: #2c0722;
-  --berry-soft: #6b1c58;
+  /* Ground and paper — --ground is swapped at runtime by the hero switcher */
+  --ground: #4e1140;
+  --ground-deep: color-mix(in srgb, var(--ground) 62%, #000);
+  --ground-soft: color-mix(in srgb, var(--ground) 84%, #fff);
   --cream: #fff7ec;
   --paper: #ffffff;
   --ink: #26101f;
   --ink-soft: #7c5f72;
 
-  /* The four flavours, straight off the bags */
-  --coral: #f2402a;
-  --gold: #f0a21c;
-  --lime: #b8d94a;
-  --sky: #2fc2e2;
+  /* Active flavour accents, also swapped at runtime */
+  --accent: #f2402a;
+  --accent-text: #c9301c;
+  --accent-on: #26101f;
+
+  transition:
+    --ground 0.6s var(--ease),
+    --accent 0.6s var(--ease),
+    --accent-text 0.6s var(--ease),
+    --accent-on 0.6s var(--ease);
 
   --r-capsule: clamp(28px, 3.4vw, 52px);
   --r-card: clamp(20px, 2vw, 30px);
@@ -45,7 +78,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--berry);
+  background: var(--ground);
   color: var(--ink);
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.0625rem);
@@ -88,14 +121,14 @@ ol {
 }
 
 :focus-visible {
-  outline: 3px solid var(--coral);
+  outline: 3px solid var(--accent-text);
   outline-offset: 3px;
   border-radius: 8px;
 }
 
 ::selection {
-  background: var(--coral);
-  color: var(--paper);
+  background: var(--accent);
+  color: var(--accent-on);
 }
 
 /* ---------- Type roles ---------- */

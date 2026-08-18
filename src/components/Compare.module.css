@@ -17,7 +17,7 @@
 }
 
 .kicker {
-  color: var(--coral);
+  color: var(--accent-text);
 }
 
 .title {
@@ -175,8 +175,8 @@
 }
 
 .add {
-  background: var(--coral);
-  color: var(--paper);
+  background: var(--accent);
+  color: var(--accent-on);
   padding: 0.7rem 1.3rem;
   font-size: 0.9375rem;
 }

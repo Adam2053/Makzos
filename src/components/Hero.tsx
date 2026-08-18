@@ -1,23 +1,40 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { FLAVOURS } from "@/lib/flavours";
 import { EASE, EASE_SOFT, MOTION_OFF, MOTION_OK, POP, gsap, useGSAP } from "@/lib/motion";
 import { Stars } from "./Bits";
 import styles from "./Hero.module.css";
 
 /* Stat bubbles orbiting the bag, each with a dotted leader running back to it.
-   x/y are percentages of the square stage, so the SVG viewBox maps 1:1. */
+   x/y are percentages of the square stage, so the SVG viewBox maps 1:1.
+   Three are true of every bag; the fourth reads off the selected flavour. */
 const BUBBLES = [
   { x: 9, y: 19, big: "0g", small: "palm oil", to: [35, 33] },
   { x: 90, y: 16, big: "100%", small: "roasted", to: [65, 30] },
   { x: 7, y: 76, big: "5g", small: "sugar", to: [35, 68] },
-  { x: 92, y: 72, big: "55g", small: "per bag", to: [66, 65] },
+  { x: 92, y: 72, big: null, small: "heat", to: [66, 65] },
 ];
 
 export function Hero() {
+  const [index, setIndex] = useState(1);
+  const active = FLAVOURS[index];
+
   const root = useRef<HTMLElement>(null);
   const pack = useRef<HTMLDivElement>(null);
+  const packs = useRef<(HTMLImageElement | null)[]>([]);
+  const first = useRef(true);
+
+  /* The selected bag themes the whole document, not just this section. */
+  useEffect(() => {
+    const el = document.documentElement;
+    const { ground, fill, text, onFill } = active.theme;
+    el.style.setProperty("--ground", ground);
+    el.style.setProperty("--accent", fill);
+    el.style.setProperty("--accent-text", text);
+    el.style.setProperty("--accent-on", onFill);
+  }, [active]);
 
   useGSAP(
     () => {
@@ -32,6 +49,7 @@ export function Hero() {
           .from(`.${styles.offer} > *`, { opacity: 0, y: 16, duration: 0.5, stagger: 0.08 }, "-=0.35")
           .from(`.${styles.proof}`, { opacity: 0, duration: 0.5 }, "-=0.3")
           .from(pack.current, { opacity: 0, scale: 0.9, duration: 0.8, ease: POP }, "-=0.75")
+          .from(`.${styles.pick}`, { opacity: 0, y: 14, duration: 0.45, stagger: 0.06 }, "-=0.4")
           .from(`.${styles.leader}`, { opacity: 0, duration: 0.5 }, "-=0.3")
           .from(
             `.${styles.bubble}`,
@@ -61,6 +79,33 @@ export function Hero() {
       return () => mm.revert();
     },
     { scope: root },
+  );
+
+  /* Crossfade the bag when the flavour changes — but not on first paint. */
+  useGSAP(
+    () => {
+      if (first.current) {
+        first.current = false;
+        return;
+      }
+      const mm = gsap.matchMedia();
+      mm.add(MOTION_OK, () => {
+        packs.current.forEach((el, i) => {
+          if (!el) return;
+          gsap.to(el, {
+            opacity: i === index ? 1 : 0,
+            scale: i === index ? 1 : 0.92,
+            duration: 0.45,
+            ease: i === index ? POP : EASE,
+          });
+        });
+      });
+      mm.add(MOTION_OFF, () => {
+        packs.current.forEach((el, i) => el && gsap.set(el, { opacity: i === index ? 1 : 0 }));
+      });
+      return () => mm.revert();
+    },
+    { scope: root, dependencies: [index] },
   );
 
   return (
@@ -98,34 +143,63 @@ export function Hero() {
           </p>
         </div>
 
-        <div className={styles.stage}>
-          <svg className={styles.leader} viewBox="0 0 100 100" aria-hidden="true">
-            {BUBBLES.map((b) => (
-              <line key={b.big} x1={b.x} y1={b.y} x2={b.to[0]} y2={b.to[1]} />
-            ))}
-          </svg>
+        <div className={styles.product}>
+          <div className={styles.stage}>
+            <svg className={styles.leader} viewBox="0 0 100 100" aria-hidden="true">
+              {BUBBLES.map((b) => (
+                <line key={b.big} x1={b.x} y1={b.y} x2={b.to[0]} y2={b.to[1]} />
+              ))}
+            </svg>
 
-          <div className={styles.packWrap} ref={pack}>
-            <Image
-              src="/brand/pack-thai-chilli.png"
-              alt="Makzo's Sweet Thai Chilli roasted makhana, 55 g pack"
-              width={347}
-              height={460}
-              priority
-              className={styles.pack}
-            />
+            <div className={styles.packWrap} ref={pack}>
+              {FLAVOURS.map((f, i) => (
+                <Image
+                  key={f.id}
+                  ref={(el) => {
+                    packs.current[i] = el;
+                  }}
+                  src={f.pack}
+                  alt={`Makzo's ${f.name} roasted makhana, 55 g pack`}
+                  width={347}
+                  height={460}
+                  priority={i === 1}
+                  className={styles.pack}
+                  data-on={i === index || undefined}
+                />
+              ))}
+            </div>
+
+            {BUBBLES.map((b) => (
+              <span
+                key={b.big}
+                className={styles.bubble}
+                style={{ left: `${b.x}%`, top: `${b.y}%` }}
+              >
+                <span className={`u-display ${styles.bubbleBig}`}>
+                  {b.big ?? `${active.heat}/5`}
+                </span>
+                <span className={`u-label ${styles.bubbleSmall}`}>{b.small}</span>
+              </span>
+            ))}
           </div>
 
-          {BUBBLES.map((b) => (
-            <span
-              key={b.big}
-              className={styles.bubble}
-              style={{ left: `${b.x}%`, top: `${b.y}%` }}
-            >
-              <span className={`u-display ${styles.bubbleBig}`}>{b.big}</span>
-              <span className={`u-label ${styles.bubbleSmall}`}>{b.small}</span>
-            </span>
-          ))}
+          <div className={styles.picker} role="tablist" aria-label="Choose a flavour">
+            {FLAVOURS.map((f, i) => (
+              <button
+                key={f.id}
+                type="button"
+                role="tab"
+                aria-selected={i === index}
+                className={styles.pick}
+                data-on={i === index || undefined}
+                style={{ "--swatch": f.theme.fill } as React.CSSProperties}
+                onClick={() => setIndex(i)}
+              >
+                <span className={styles.swatch} aria-hidden="true" />
+                {f.short}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>

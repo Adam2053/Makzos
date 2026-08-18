@@ -32,8 +32,15 @@ full-bleed sections. Nothing on the page has a straight outer edge.
   (`border-radius: 50% 50% … / 12% 12% …`); the product cards repeat that arc
   under their flavour colour; testimonials are offset pills alternating left and
   right, so the section reads as a conversation rather than a grid.
-- **The Compare capsule takes the flavour's colour**, so the whole block
-  repaints as you move along the tabs.
+- **The hero picker themes the whole document.** Choosing a bag swaps four
+  registered custom properties on `<html>` — ground, accent, a darkened accent
+  that stays legible as text on cream, and what sits on top of the accent — so
+  the page background, nav, buttons, Why block and footer all repaint together.
+  Registering them with `@property` means the repaint animates rather than
+  snapping. Three of the four stat bubbles are true of every bag; the fourth
+  reads the selected flavour's heat.
+- **The Compare capsule takes the flavour's colour**, so that block repaints
+  independently as you move along its tabs.
 - **Type** Fredoka for display — rounded and warm without tipping into childish
   — with Manrope for body.
 - The voucher chip and its **Use discount** button come from the campaign format
@@ -61,6 +68,12 @@ plain neutral test leaks into the bag. The script builds a silhouette from the
 strongly-coloured pixels, fills each column between its topmost and bottommost
 hit, and uses that envelope as a barrier the background fill can't cross.
 
+The knockout's column-fill envelope overshoots wherever a bag's zip strip and
+brand band are wider than its middle, which used to trap a band of backdrop
+against the bag — white on one side, cast shadow on the other. The edge-creep
+pass now crosses any neutral that isn't the bag itself, stopped by the bag's own
+dark or saturated edge and bounded by a depth cap.
+
 The puff in `public/brand/puff.png` is the bitten seed cropped out of the
 wordmark, reused as the icon on every promise card.
 
@@ -77,3 +90,7 @@ wordmark, reused as the icon on every promise card.
   printed on the bag don't add up (15 g fat marked 2%), so they're left off
   rather than republished.
 - Stockists are text chips; no logos were supplied and none were fabricated.
+
+Contrast was measured across all four themes: the weakest pairing is 4.71:1
+(Thai Chilli's button label), which is why the accent carries a separate
+darkened variant for text and why nothing sits white-on-coral.

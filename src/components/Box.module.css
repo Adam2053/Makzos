@@ -7,8 +7,8 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
   gap: clamp(1.5rem, 4vw, 3rem);
-  background: var(--coral);
-  color: var(--paper);
+  background: var(--ground-deep);
+  color: var(--cream);
   padding: clamp(1.75rem, 4vw, 3.5rem);
 }
 
@@ -23,7 +23,7 @@
 }
 
 .hot {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .text {
@@ -59,7 +59,7 @@
 }
 
 .save {
-  background: var(--gold);
+  background: var(--accent);
   color: var(--ink);
   border-radius: 999px;
   padding: 0.25rem 0.55rem;
@@ -67,8 +67,8 @@
 }
 
 .cta {
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--accent);
+  color: var(--accent-on);
 }
 
 .also {

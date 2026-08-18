@@ -20,6 +20,7 @@ export type Flavour = {
   ingredients: string;
   allergens: string;
   roast: string;
+  theme: { ground: string; fill: string; text: string; onFill: string };
 };
 
 /**
@@ -50,6 +51,7 @@ export const FLAVOURS: Flavour[] = [
       "Roasted makhana (82%), black pepper, star anise, kalpasi, dried red chilli, rock salt, sunflower oil.",
     allergens: "None. Packed in a facility that also handles milk.",
     roast: "18 minutes, dry",
+    theme: { ground: "#3B2412", fill: "#F0A21C", text: "#8F5A03", onFill: "#26101F" },
   },
   {
     id: "thai-chilli",
@@ -74,6 +76,7 @@ export const FLAVOURS: Flavour[] = [
       "Roasted makhana (80%), bird's eye chilli, cane sugar, honey powder, garlic, rock salt, sunflower oil.",
     allergens: "None. Packed in a facility that also handles milk.",
     roast: "16 minutes, dry",
+    theme: { ground: "#4E1140", fill: "#F2402A", text: "#C9301C", onFill: "#26101F" },
   },
   {
     id: "curry-leaves",
@@ -96,6 +99,7 @@ export const FLAVOURS: Flavour[] = [
       "Roasted makhana (84%), curry leaf, cracked black pepper, ghee, rock salt.",
     allergens: "Contains milk (ghee).",
     roast: "18 minutes, dry",
+    theme: { ground: "#153E24", fill: "#B8D94A", text: "#41660F", onFill: "#26101F" },
   },
   {
     id: "mac-cheese",
@@ -120,6 +124,7 @@ export const FLAVOURS: Flavour[] = [
       "Roasted makhana (78%), cheddar powder, whey, mustard, onion, rock salt, sunflower oil.",
     allergens: "Contains milk.",
     roast: "15 minutes, dry",
+    theme: { ground: "#16323B", fill: "#2FC2E2", text: "#0A6B82", onFill: "#26101F" },
   },
 ];
 

@@ -14,7 +14,7 @@
 }
 
 .kicker {
-  color: var(--coral);
+  color: var(--accent-text);
 }
 
 .title {
@@ -24,7 +24,7 @@
 }
 
 .hot {
-  color: var(--coral);
+  color: var(--accent-text);
 }
 
 .grid {
@@ -165,7 +165,7 @@
 }
 
 .add:hover {
-  background: var(--coral);
+  background: var(--accent);
   color: var(--paper);
 }
 

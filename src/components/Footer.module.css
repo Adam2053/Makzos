@@ -3,7 +3,7 @@
 }
 
 .capsule {
-  background: var(--berry-deep);
+  background: var(--ground-deep);
   color: var(--cream);
   padding: clamp(2rem, 4vw, 3.5rem);
 }
@@ -33,7 +33,7 @@
 }
 
 .colTitle {
-  color: var(--gold);
+  color: var(--accent);
   padding-bottom: 0.8rem;
   border-bottom: 1px solid color-mix(in srgb, var(--cream) 18%, transparent);
 }

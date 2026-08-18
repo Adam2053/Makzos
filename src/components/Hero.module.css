@@ -15,8 +15,8 @@
 
 .chip {
   display: inline-block;
-  background: color-mix(in srgb, var(--coral) 12%, transparent);
-  color: var(--coral);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent-text);
   border-radius: 999px;
   padding: 0.5rem 0.9rem;
 }
@@ -28,7 +28,7 @@
 }
 
 .hot {
-  color: var(--coral);
+  color: var(--accent-text);
 }
 
 .sub {
@@ -66,13 +66,13 @@
 }
 
 .cta {
-  background: var(--coral);
-  color: var(--paper);
-  box-shadow: 0 10px 22px -8px color-mix(in srgb, var(--coral) 80%, transparent);
+  background: var(--accent);
+  color: var(--accent-on);
+  box-shadow: 0 10px 22px -8px color-mix(in srgb, var(--accent) 80%, transparent);
 }
 
 .cta:hover {
-  box-shadow: 0 16px 28px -8px color-mix(in srgb, var(--coral) 85%, transparent);
+  box-shadow: 0 16px 28px -8px color-mix(in srgb, var(--accent) 85%, transparent);
 }
 
 .proof {
@@ -86,6 +86,12 @@
 }
 
 /* ---------- product stage ---------- */
+
+.product {
+  display: grid;
+  gap: clamp(0.75rem, 1.5vw, 1.1rem);
+  align-content: center;
+}
 
 .stage {
   position: relative;
@@ -102,7 +108,7 @@
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--coral) 16%, transparent),
+    color-mix(in srgb, var(--accent) 16%, transparent),
     transparent 68%
   );
 }
@@ -125,12 +131,60 @@
 .packWrap {
   position: relative;
   width: 54%;
+  aspect-ratio: 347 / 460;
 }
 
 .pack {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
   filter: drop-shadow(0 22px 26px rgb(38 16 31 / 0.28));
+}
+
+.pack[data-on] {
+  opacity: 1;
+}
+
+/* ---------- flavour picker ---------- */
+
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  color: var(--ink);
+  transition: background 0.25s var(--ease), color 0.25s var(--ease), transform 0.2s var(--ease);
+}
+
+.pick:hover {
+  transform: translateY(-2px);
+}
+
+.pick[data-on] {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.swatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--swatch);
 }
 
 .bubble {
@@ -151,7 +205,7 @@
 .bubbleBig {
   font-size: clamp(1.1rem, 1.9vw, 1.5rem);
   font-weight: 700;
-  color: var(--coral);
+  color: var(--accent-text);
   line-height: 1;
 }
 
@@ -165,7 +219,7 @@
   .capsule {
     grid-template-columns: minmax(0, 1fr);
   }
-  .stage {
+  .product {
     order: -1;
     max-width: 30rem;
     margin-inline: auto;

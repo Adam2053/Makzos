@@ -3,7 +3,7 @@
 }
 
 .capsule {
-  background: var(--berry-soft);
+  background: var(--ground-soft);
   color: var(--cream);
   padding: clamp(1.75rem, 4vw, 3.5rem);
 }
@@ -66,8 +66,8 @@
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: var(--coral);
-  color: var(--paper);
+  background: var(--accent);
+  color: var(--accent-on);
   font-family: var(--font-display), sans-serif;
   font-weight: 700;
   font-size: 1.15rem;

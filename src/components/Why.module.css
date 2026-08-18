@@ -4,7 +4,8 @@
 
 /* An arc cut into the top edge, the one shape the reference leans on hardest. */
 .capsule {
-  background: var(--gold);
+  background: var(--accent);
+  color: var(--accent-on);
   padding: clamp(2.75rem, 6vw, 5rem) clamp(1.75rem, 4vw, 3.5rem) clamp(1.75rem, 4vw, 3.5rem);
   border-radius: 50% 50% var(--r-capsule) var(--r-capsule) / 12% 12% var(--r-capsule) var(--r-capsule);
 }
@@ -46,7 +47,7 @@
   height: 76px;
   margin: 0 auto 0.9rem;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--gold) 26%, var(--paper));
+  background: color-mix(in srgb, var(--accent) 26%, var(--paper));
 }
 
 .itemTitle {

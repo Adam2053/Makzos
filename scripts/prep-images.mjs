@@ -67,21 +67,23 @@ async function knockout(srcFile, outFile, { chroma = 14, luma = 52, maxWidth = 1
     push(x + 1, y); push(x - 1, y); push(x, y + 1); push(x, y - 1);
   }
 
-  // The column-fill envelope can overshoot the pack's edge by a few pixels, leaving
-  // a bright sliver of backdrop inside the barrier. Creep inward from the cut edge
-  // over near-white neutrals only, depth-capped so it can never reach the artwork.
+  // The column-fill envelope overshoots wherever the bag's zip strip and brand
+  // band are wider than its middle, trapping a band of backdrop — white on one
+  // side, cast shadow on the other — against the bag. Creep inward from the cut
+  // edge across any neutral that isn't the bag itself; the bag's own dark or
+  // saturated edge stops it, and the depth cap bounds the damage if it doesn't.
   {
     const depth = new Int16Array(w * h).fill(-1);
     let frontier = [];
     for (let p = 0; p < w * h; p++) if (data[p * ch + 3] === 0) { depth[p] = 0; frontier.push(p); }
-    for (let d = 1; d <= 14 && frontier.length; d++) {
+    for (let d = 1; d <= 90 && frontier.length; d++) {
       const next = [];
       for (const p of frontier) {
         const x = p % w, y = (p / w) | 0;
         for (const q of [x < w - 1 ? p + 1 : -1, x > 0 ? p - 1 : -1, y < h - 1 ? p + w : -1, y > 0 ? p - w : -1]) {
           if (q < 0 || depth[q] >= 0) continue;
           const i = q * ch;
-          if (chromaAt(i) < 12 && lumaAt(i) > 165) { depth[q] = d; data[i + 3] = 0; next.push(q); }
+          if (chromaAt(i) < 16 && lumaAt(i) > 88) { depth[q] = d; data[i + 3] = 0; next.push(q); }
           else depth[q] = 32000;
         }
       }
