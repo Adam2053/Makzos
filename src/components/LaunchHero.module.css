@@ -53,3 +53,54 @@
   .shadow { width: 76vw; bottom: 13%; }
   .footer p:first-child { max-width: 22ch; }
 }
+
+/* Center-stage launch lockup: the white wordmark is the hero object. */
+.hero { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
+.header { justify-content: center; }
+.logo { width: clamp(15rem, 31vw, 28rem); }
+.copy { position: relative; justify-self: center; align-self: center; width: min(100%, 62rem); max-width: none; padding-block: 2rem 3rem; text-align: center; }
+.eyebrow { position: relative; z-index: 1; }
+.title { position: relative; z-index: 1; font-size: clamp(6rem, 15vw, 14rem); line-height: .76; letter-spacing: -.085em; }
+.title span { color: #f0a21c; }
+.intro { position: relative; z-index: 1; margin-inline: auto; color: #b9b2a6; }
+.status { position: relative; z-index: 1; }
+.halo { position: absolute; left: 50%; top: 50%; width: min(68vw, 54rem); aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -53%); background: radial-gradient(circle, rgb(240 162 28 / .16) 0, rgb(240 162 28 / .07) 35%, transparent 70%); filter: blur(2px); pointer-events: none; }
+.footer { width: 100%; }
+
+@media (max-width: 620px) {
+  .logo { width: min(78vw, 21rem); }
+  .copy { padding-block: 3.5rem 2rem; }
+  .title { font-size: clamp(5rem, 23vw, 8rem); }
+  .halo { width: 98vw; }
+}
+
+/* Compact one-viewport composition with the original orbit behind the copy. */
+.hero { gap: clamp(.5rem, 1.5vh, 1rem); padding-block: clamp(1rem, 2.5vh, 2rem); }
+.logo { width: clamp(12rem, 22vw, 20rem); }
+.copy { padding-block: clamp(.5rem, 1.5vh, 1.25rem); }
+.eyebrow { margin-bottom: clamp(.75rem, 1.5vh, 1.25rem); }
+.title { max-width: none; font-size: clamp(3.5rem, 8vw, 7.25rem); line-height: .82; letter-spacing: -.07em; }
+.intro { margin-top: clamp(.8rem, 1.8vh, 1.35rem); }
+.status { margin-top: clamp(.9rem, 2vh, 1.5rem); padding: .7rem .95rem; }
+.circleScene { position: absolute; inset: 50% auto auto 50%; z-index: 0; width: min(50vw, 35rem); aspect-ratio: 1; display: grid; place-items: center; transform: translate(-50%, -50%); pointer-events: none; }
+.circleScene .sun { position: relative; grid-area: 1 / 1; width: 82%; }
+.circleScene .orbit { position: relative; grid-area: 1 / 1; width: 100%; }
+.circleScene .halo { left: 50%; top: 50%; width: 118%; transform: translate(-50%, -50%); opacity: .58; }
+
+@media (max-width: 620px) {
+  .hero { padding: 1rem 1.1rem; }
+  .logo { width: min(58vw, 15rem); }
+  .copy { padding-block: .5rem; }
+  .title { font-size: clamp(3.15rem, 15vw, 4.8rem); line-height: .84; }
+  .intro { font-size: .95rem; }
+  .circleScene { width: min(92vw, 30rem); }
+  .footer { font-size: .62rem; }
+}
+
+@media (max-height: 680px) {
+  .logo { width: clamp(10rem, 18vw, 15rem); }
+  .title { font-size: clamp(3rem, 7vw, 5.4rem); }
+  .eyebrow { margin-bottom: .65rem; }
+  .intro { margin-top: .65rem; }
+  .status { margin-top: .75rem; }
+}
