@@ -1,50 +1,57 @@
-/* Chettinadu pack: amber lit from above, roasted brown for type and panels, chilli for the one hot accent. */
+/*
+ * A pantry at night. `.room` is the room with the lights on and never repaints; the `.dark`
+ * canvas on top paints the night with a soft hole where the torch points. Everything that
+ * moves does so by transform only.
+ */
 .page {
-  --amber: #F0A21C; --amber-lit: #FFC54D; --amber-deep: #D8780E; --roast: #2A1810; --roast-2: #3D2416; --bone: #f0eae0; --chilli: #F2402A;
-  position: relative; isolation: isolate; min-height: 100svh; overflow: hidden; color: var(--roast); font-family: var(--font-archivo), sans-serif; touch-action: manipulation;
-  background: radial-gradient(125% 95% at 50% 32%, var(--amber-lit) 0%, var(--amber) 46%, var(--amber-deep) 100%);
+  --night: #140b06; --roast: #2A1810; --amber: #F0A21C; --bone: #f0eae0;
+  position: relative; isolation: isolate; height: 100svh; overflow: hidden; background: var(--night); color: var(--bone); font-family: var(--font-archivo), sans-serif; touch-action: none;
 }
-/* Halftone dots, like the print on a snack pack, heavier toward the edges. */
-.page::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background-image: radial-gradient(rgb(42 24 16 / .2) 1.1px, transparent 1.7px); background-size: 9px 9px;
-  mask-image: radial-gradient(ellipse 75% 65% at 50% 40%, transparent 35%, #000 100%); }
-/* Paper grain over everything. */
-.page::after { content: ""; position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: .09; mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 @media (pointer: fine) and (prefers-reduced-motion: no-preference) { .page { cursor: none; } }
 
-/* No z-index here: the name sits under the puffs, the text above them. */
-.stage { position: relative; min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; padding: clamp(1rem, 2.6vw, 2.25rem); pointer-events: none; }
-.top { position: relative; z-index: 3; font-size: clamp(.9rem, 1.1vw, 1.05rem); font-weight: 700; font-variation-settings: "wdth" 100; }
+.room { position: absolute; inset: 0; display: grid; place-items: center;
+  background:
+    radial-gradient(rgb(240 162 28 / .16) 1px, transparent 1.6px) 0 0 / 10px 10px,
+    radial-gradient(80% 70% at 50% 45%, #4a2b17 0%, var(--roast) 75%); }
 
-.word { position: relative; z-index: 1; align-self: center; justify-self: center; display: flex; align-items: flex-start; width: min(92vw, 90rem); margin: 0 0 12vh; filter: drop-shadow(0 .5rem 1.2rem rgb(42 24 16 / .28)); }
-.glyph { display: block; will-change: transform; }
+.dark { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; display: block; pointer-events: none; background: var(--night); }
+
+/* Vignette and paper grain, static. */
+.page::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse 80% 75% at 50% 50%, transparent 55%, rgb(8 4 2 / .55) 100%); }
+.page::before { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+.word { position: relative; display: flex; align-items: flex-start; width: min(90vw, 86rem); margin-top: -4vh; will-change: transform; }
+.glyph { display: block; will-change: transform, opacity; }
 .glyph img { display: block; width: 100%; height: auto; will-change: transform; }
-.o { position: relative; z-index: 1; }
 
-.bottom { position: relative; z-index: 3; display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
-.panel { padding: clamp(.7rem, 1.2vw, 1rem); border-radius: 6px; background: var(--roast); color: var(--bone); box-shadow: 0 .8rem 2rem rgb(42 24 16 / .35); }
-.label { margin-bottom: .6rem; font-size: clamp(.95rem, 1.2vw, 1.15rem); font-weight: 800; font-variation-settings: "wdth" 110; }
-.hint { max-width: 24ch; font-size: .9rem; font-weight: 500; line-height: 1.35; font-variation-settings: "wdth" 100; }
+.secrets { position: absolute; inset: -4%; pointer-events: none; will-change: transform; }
+.secret { position: absolute; color: var(--amber); font-weight: 800; font-variation-settings: "wdth" 118; line-height: 1; white-space: nowrap; opacity: 0; }
+.puff { position: absolute; display: block; aspect-ratio: 1; opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .secret, .puff { opacity: 1; } }
 
-/* Opening: flavour colours stacked over the page, each clipped to a circle that pops open. */
-.bursts { position: fixed; inset: 0; z-index: 10; background: var(--roast); }
-.burst { position: absolute; inset: 0; display: grid; place-items: center; padding: 1rem; clip-path: circle(0% at 50% 50%); }
-/* The last burst is Chettinadu: the page's own lit amber, so lifting the stack shows no seam. */
-.burst:last-child { background: radial-gradient(125% 95% at 50% 32%, var(--amber-lit) 0%, var(--amber) 46%, var(--amber-deep) 100%); }
-.flavour { font-size: clamp(3.4rem, 13vw, 14rem); font-weight: 900; line-height: .9; letter-spacing: -.01em; text-align: center; text-wrap: balance; font-variation-settings: "wdth" 115; }
-@media (prefers-reduced-motion: reduce) { .bursts { display: none; } }
+.ui { position: absolute; inset: auto 0 0; z-index: 4; display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; padding: clamp(1rem, 2.6vw, 2.25rem); pointer-events: none; }
+.coming { font-size: clamp(1.4rem, 2.6vw, 2.4rem); font-weight: 800; line-height: 1; font-variation-settings: "wdth" 115; }
+.hint { max-width: 30ch; color: rgb(240 234 224 / .62); font-size: .95rem; line-height: 1.4; text-align: right; }
+.touchHint { display: none; }
+@media (pointer: coarse) { .mouseHint { display: none; } .touchHint { display: inline; } }
+@media (prefers-reduced-motion: no-preference) { .reveal { opacity: 0; } }
 
-/* The cursor is a makhana too: it tilts with travel, grows over the name, squashes on click. */
-.cursor { position: fixed; left: 0; top: 0; z-index: 20; pointer-events: none; opacity: 0; transition: opacity .3s; }
+/* The lens of the torch, riding the pointer. */
+.lens { position: fixed; left: 0; top: 0; z-index: 5; pointer-events: none; opacity: 0; transition: opacity .4s; }
+.lens span { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; border: 1.5px solid rgb(240 234 224 / .75); border-radius: 50%; box-shadow: 0 0 1rem rgb(255 190 90 / .5), inset 0 0 .5rem rgb(255 190 90 / .4); transition: transform .5s cubic-bezier(.2,.9,.3,1.2); }
 .seen { opacity: 1; }
-.cursor span { position: absolute; display: block; width: 34px; height: 34px; margin: -17px 0 0 -17px; filter: drop-shadow(0 3px 4px rgb(42 24 16 / .4)); transition: width .4s cubic-bezier(.2,.9,.3,1.3), height .4s cubic-bezier(.2,.9,.3,1.3), margin .4s cubic-bezier(.2,.9,.3,1.3); }
-.big span { width: 76px; height: 76px; margin: -38px 0 0 -38px; }
-@media (pointer: coarse), (prefers-reduced-motion: reduce) { .cursor { display: none; } }
+.held span { transform: scale(1.6); }
+@media (pointer: coarse), (prefers-reduced-motion: reduce) { .lens { display: none; } }
+
+/* Without motion, leave the lights on. */
+@media (prefers-reduced-motion: reduce) { .dark { display: none; } }
 
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 @media (max-width: 620px) {
-  .word { margin-bottom: 4vh; }
-  .bottom { flex-direction: column; align-items: flex-start; }
+  .word { width: 92vw; }
+  .ui { flex-direction: column; align-items: flex-start; }
+  .hint { text-align: left; }
 }

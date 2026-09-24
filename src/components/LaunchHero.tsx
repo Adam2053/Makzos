@@ -1,70 +1,44 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { EASE, EASE_SOFT, MOTION_OFF, MOTION_OK, gsap, useGSAP } from "@/lib/motion";
-import { FlapBoard } from "./FlapBoard";
-import { PuffField } from "./PuffField";
-import { FLAVOURS } from "@/lib/flavours";
+import { useRef } from "react";
+import { EASE, MOTION_OK, gsap, useGSAP } from "@/lib/motion";
+import { createTorch, type Beam } from "@/lib/torch";
 import styles from "./LaunchHero.module.css";
-
-const STATES = [
-  "Kerala", "Punjab", "Assam", "Maharashtra", "Tamil Nadu", "Rajasthan", "West Bengal", "Goa",
-  "Karnataka", "Arunachal Pradesh", "Gujarat", "Odisha", "Uttar Pradesh", "Sikkim", "Telangana",
-  "Bihar", "Himachal Pradesh", "Meghalaya", "Madhya Pradesh", "Nagaland", "Andhra Pradesh",
-  "Jharkhand", "Manipur", "Haryana", "Tripura", "Uttarakhand", "Mizoram", "Chhattisgarh",
-];
 
 /** The wordmark as single glyphs; widths are each cut's share of the 1200px logo. */
 const LETTERS = [
-  { id: "m", width: 225, tilt: -28 },
-  { id: "a", width: 170, tilt: 22 },
-  { id: "k", width: 173, tilt: -14 },
-  { id: "z", width: 174, tilt: 31 },
-  { id: "o", width: 246, tilt: 0 },
-  { id: "s", width: 212, tilt: -20 },
+  { id: "m", width: 225 },
+  { id: "a", width: 170 },
+  { id: "k", width: 173 },
+  { id: "z", width: 174 },
+  { id: "o", width: 246 },
+  { id: "s", width: 212 },
 ];
 
-/**
- * The opening: one word per pack colour, each bursting open in turn. It ends on Chettinadu amber,
- * which is the page itself.
- */
-const BURSTS = [
-  { word: "We", flavour: "mac-cheese" },
-  { word: "are", flavour: "curry-leaves" },
-  { word: "launching", flavour: "thai-chilli" },
-  { word: "soon", flavour: "chettinadu" },
-].map(({ word, flavour }) => ({ word, ...FLAVOURS.find((f) => f.id === flavour)! }));
+/** Hidden in the dark, found only by torchlight: [name, left %, top %, rotation, size in rem]. */
+const HIDDEN_STATES: [string, number, number, number, number][] = [
+  ["Kerala", 7, 13, -8, 2.6], ["Punjab", 70, 8, 6, 2.2], ["Assam", 86, 26, -12, 1.8],
+  ["Goa", 31, 7, 10, 1.6], ["Tamil Nadu", 5, 74, 7, 2.3], ["Maharashtra", 57, 84, -5, 2.6],
+  ["Rajasthan", 38, 91, 4, 1.7], ["West Bengal", 77, 69, 9, 2], ["Sikkim", 50, 19, -4, 1.4],
+  ["Gujarat", 17, 33, 12, 1.5], ["Odisha", 86, 90, -9, 1.6], ["Karnataka", 20, 86, -11, 1.9],
+  ["Telangana", 63, 29, 7, 1.3], ["Himachal Pradesh", 30, 71, -3, 1.3], ["Meghalaya", 88, 47, -90, 1.3],
+  ["Nagaland", 3, 44, 90, 1.3],
+];
 
-/** A lumpy makhana outline for the cursor, fixed so server and client agree. */
-function lumpyPath(cx: number, cy: number, r: number) {
-  const offs = [0.05, -0.04, 0.06, -0.02, 0.04, -0.05, 0.03, -0.03, 0.06, -0.04, 0.02];
-  const pts = offs.map((o, i) => {
-    const a = (i / offs.length) * Math.PI * 2;
-    return [cx + Math.cos(a) * r * (1 + o), cy + Math.sin(a) * r * (1 + o)];
-  });
-  const mid = (i: number) => {
-    const [ax, ay] = pts[i % pts.length], [bx, by] = pts[(i + 1) % pts.length];
-    return `${((ax + bx) / 2).toFixed(1)} ${((ay + by) / 2).toFixed(1)}`;
-  };
-  let d = `M${mid(0)}`;
-  for (let i = 1; i <= pts.length; i++) {
-    const [px, py] = pts[i % pts.length];
-    d += ` Q${px.toFixed(1)} ${py.toFixed(1)} ${mid(i)}`;
-  }
-  return `${d}Z`;
-}
+/** A few makhana doodles tucked into corners: [left %, top %, rotation, size in rem]. */
+const HIDDEN_PUFFS: [number, number, number, number][] = [
+  [14, 22, 20, 5.5], [80, 14, -15, 4.5], [91, 76, 30, 6], [46, 74, -8, 3.8], [8, 88, 12, 4.8], [42, 27, -25, 3.4],
+];
 
-function MakhanaCursor() {
+function Puff() {
   return (
-    <svg viewBox="0 0 100 100" width="100%" height="100%">
-      <path d={lumpyPath(50, 50, 44)} fill="#f0eae0" />
-      <path d={lumpyPath(47, 46, 35)} fill="#0f0e0c" />
+    <svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">
+      <path d="M50 6 Q70 5 82 18 Q97 32 94 52 Q93 74 76 87 Q58 98 38 93 Q15 87 8 66 Q2 44 14 26 Q28 7 50 6Z" fill="#f0eae0" />
+      <path d="M47 15 Q64 13 75 25 Q86 38 83 53 Q80 70 65 78 Q49 85 33 78 Q18 70 15 53 Q13 34 25 23 Q34 15 47 15Z" fill="#0f0e0c" />
       <g fill="#f0eae0">
-        <ellipse cx="36" cy="44" rx="4" ry="6" />
-        <ellipse cx="50" cy="42" rx="4" ry="6" />
-        <ellipse cx="35" cy="58" rx="4.5" ry="3" />
-        <ellipse cx="48" cy="59" rx="6" ry="3" />
+        <ellipse cx="38" cy="44" rx="4" ry="6" /><ellipse cx="52" cy="42" rx="4" ry="6" />
+        <ellipse cx="37" cy="59" rx="4.5" ry="3" /><ellipse cx="50" cy="60" rx="6" ry="3" />
       </g>
     </svg>
   );
@@ -72,16 +46,6 @@ function MakhanaCursor() {
 
 export function LaunchHero() {
   const root = useRef<HTMLElement>(null);
-  const [landed, setLanded] = useState(false);
-  const [still, setStill] = useState(false);
-
-  useEffect(() => {
-    const query = window.matchMedia(MOTION_OFF);
-    const sync = () => setStill(query.matches);
-    sync();
-    query.addEventListener("change", sync);
-    return () => query.removeEventListener("change", sync);
-  }, []);
 
   useGSAP(
     () => {
@@ -89,89 +53,151 @@ export function LaunchHero() {
       const mm = gsap.matchMedia();
 
       mm.add(MOTION_OK, () => {
-        const glyphs = q(`.${styles.glyph}:not(.${styles.o}) img`);
-        const mark = q(`.${styles.o} img`);
+        const fine = window.matchMedia("(pointer: fine)").matches;
+        const canvas = q(`.${styles.dark}`)[0] as HTMLCanvasElement;
+        const torch = createTorch(canvas);
+        const baseR = () => gsap.utils.clamp(170, 360, Math.min(innerWidth, innerHeight) * 0.32);
+        const beam: Beam = { x: innerWidth / 2, y: innerHeight * 0.46, r: 0 };
+        // Where the torch wants to be; the beam eases toward it every frame.
+        const aim = { x: beam.x, y: beam.y };
+        let mode: "intro" | "pointer" | "roam" = "intro";
+        let idleTimer = 0;
 
-        const bursts = q(`.${styles.burst}`);
-        const names = q(`.${styles.flavour}`);
-        const intro = gsap.timeline({ delay: 0.15 });
+        const word = q(`.${styles.word}`)[0];
+        const secrets = q(`.${styles.secrets}`)[0];
+        const setWord = { x: gsap.quickSetter(word, "x", "px"), y: gsap.quickSetter(word, "y", "px") };
+        const setSecrets = { x: gsap.quickSetter(secrets, "x", "px"), y: gsap.quickSetter(secrets, "y", "px") };
 
-        // Each colour pops open from the centre, carrying the next word.
-        bursts.forEach((burst, i) => {
-          const at = i * 0.5;
-          intro
-            .fromTo(burst, { clipPath: "circle(0% at 50% 50%)" }, { clipPath: "circle(75% at 50% 50%)", duration: 0.7, ease: "power4.out" }, at)
-            .fromTo(names[i], { scale: 1.35, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.55, ease: "power3.out" }, at + 0.05);
+        // Hidden things only exist in the light: fade each by its distance from the beam.
+        // Centres are measured without parallax; the tick adds the current shift back in.
+        const hidden = q(`.${styles.secret}, .${styles.puff}`).map((el) => ({ el, cx: 0, cy: 0, set: gsap.quickSetter(el, "opacity") }));
+        let shift = { x: 0, y: 0 };
+        const measure = () => {
+          for (const h of hidden) {
+            const box = h.el.getBoundingClientRect();
+            h.cx = box.left + box.width / 2 - shift.x;
+            h.cy = box.top + box.height / 2 - shift.y;
+          }
+        };
+        measure();
+
+        const tick = (time: number, deltaMs: number) => {
+          const dt = Math.min(deltaMs, 50) / 1000;
+          if (mode === "roam") {
+            // A slow figure-of-eight when nobody is holding the torch.
+            aim.x = innerWidth / 2 + Math.sin(time * 0.4) * innerWidth * 0.34;
+            aim.y = innerHeight * 0.5 + Math.sin(time * 0.8) * innerHeight * 0.26;
+          }
+          if (mode !== "intro") {
+            // Frame-rate independent easing, so it glides the same at 60Hz and 120Hz.
+            const k = 1 - Math.exp(-dt * (mode === "roam" ? 1.6 : 7));
+            beam.x += (aim.x - beam.x) * k;
+            beam.y += (aim.y - beam.y) * k;
+          }
+          torch.draw(beam, time, dt);
+          // The room shifts against the torch for depth; hidden words sit nearer than the name.
+          const dx = (beam.x - innerWidth / 2) / innerWidth, dy = (beam.y - innerHeight / 2) / innerHeight;
+          setWord.x(dx * -20);
+          setWord.y(dy * -12);
+          shift = { x: dx * -56, y: dy * -36 };
+          setSecrets.x(shift.x);
+          setSecrets.y(shift.y);
+          for (const h of hidden) {
+            const d = Math.hypot(h.cx + shift.x - beam.x, h.cy + shift.y - beam.y);
+            h.set(1 - gsap.utils.clamp(0, 1, (d - beam.r * 0.45) / (beam.r * 0.45)));
+          }
+        };
+        gsap.ticker.add(tick);
+
+        // The name is not there at first: the torch flickers on to an empty room, then the
+        // letters rise into the light, centre first, and the beam opens up to take it all in.
+        const glyphs = q(`.${styles.glyph}`);
+        gsap.set(glyphs, { yPercent: 70, opacity: 0, scale: 0.86 });
+        const flicker: [number, number][] = [[0, 0.5], [0.07, 0], [0.15, 0.25], [0.21, 0], [0.34, 0.9], [0.41, 0.3], [0.48, 1]];
+        const intro = gsap.timeline({ delay: 0.5 });
+        flicker.forEach(([at, power]) => intro.set(beam, { r: () => baseR() * 0.75 * power }, at));
+        intro
+          .to(glyphs, { yPercent: 0, opacity: 1, scale: 1, duration: 1.6, ease: "expo.out", stagger: { each: 0.09, from: "center" } }, 1.1)
+          .to(beam, { r: () => Math.max(innerWidth * 0.62, baseR() * 1.6), duration: 1.6, ease: "power2.inOut" }, 1.3)
+          .addLabel("lit")
+          .to(beam, { r: baseR, duration: 1.4, ease: "power3.inOut" }, "lit+=0.5")
+          .fromTo(q(`.${styles.reveal}`), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1, ease: EASE, stagger: 0.14 }, "lit+=0.9")
+          .call(() => {
+            aim.x = beam.x;
+            aim.y = beam.y;
+            mode = fine ? "pointer" : "roam";
+          });
+
+        // Once risen, the letters ripple in a slow wave; the makhana wobbles harder than the rest.
+        LETTERS.forEach((l, i) => {
+          const makhana = l.id === "o";
+          const wave = gsap.fromTo(q(`.${styles.glyph}[data-i="${i}"] img`),
+            { y: 8, rotation: makhana ? -7 : -1.2, scale: 1 },
+            { y: -8, rotation: makhana ? 7 : 1.2, scale: makhana ? 1.05 : 1, duration: makhana ? 1.2 : 1.6, ease: "sine.inOut", yoyo: true, repeat: -1, paused: true },
+          );
+          wave.totalTime(i * 0.26);
+          intro.call(() => void wave.play(), [], 1.4);
         });
 
-        intro
-          .to(names[names.length - 1], { yPercent: -60, opacity: 0, duration: 0.45, ease: "power3.in" }, "+=0.15")
-          .set(q(`.${styles.bursts}`), { autoAlpha: 0 })
-          // The letters fall into place one after another...
-          .from(glyphs, {
-            y: () => -window.innerHeight * 1.1,
-            rotation: (i) => LETTERS.filter((l) => l.id !== "o")[i].tilt,
-            duration: 1.1,
-            ease: "bounce.out",
-            stagger: 0.09,
-          }, "-=0.1")
-          // ...and the makhana drops last, spinning, into the gap left for it.
-          .from(mark, { y: () => -window.innerHeight * 1.3, rotation: -540, duration: 0.85, ease: "power2.in" }, "-=0.35")
-          .addLabel("settled")
-          .to(mark, { scaleX: 1.22, scaleY: 0.74, duration: 0.09, ease: "power2.out", transformOrigin: "50% 100%" }, "settled")
-          .to(mark, { scaleX: 1, scaleY: 1, duration: 0.9, ease: "elastic.out(1.1, 0.35)" }, "settled+=0.09")
-          // The landing knocks its neighbours off the ground for a moment.
-          .to(glyphs, { y: (i) => -[14, 22, 34, 48, 40][i], rotation: (i) => [-3, 2, -4, 5, -6][i], duration: 0.16, ease: "power2.out" }, "settled")
-          .to(glyphs, { y: 0, rotation: 0, duration: 0.6, ease: "bounce.out" }, "settled+=0.16")
-          .call(() => setLanded(true), [], "settled+=0.2")
-          .from(q(`.${styles.reveal}`), { opacity: 0, y: 16, duration: 0.8, ease: EASE, stagger: 0.12 }, "settled+=0.5");
-
-        intro.to(mark, { rotation: 6, duration: 1.8, repeat: -1, yoyo: true, ease: EASE_SOFT }, "settled+=1.1");
-
-        // Letters lean toward a nearby pointer; the cursor is a makhana that tilts as it travels.
-        const movers = q(`.${styles.glyph}`).map((g) => ({
-          el: g,
-          x: gsap.quickTo(g, "x", { duration: 0.6, ease: "power3.out" }),
-          y: gsap.quickTo(g, "y", { duration: 0.6, ease: "power3.out" }),
-          r: gsap.quickTo(g, "rotation", { duration: 0.8, ease: "power3.out" }),
-        }));
-        const cursor = q(`.${styles.cursor}`)[0];
-        const puff = cursor.firstElementChild as HTMLElement;
-        const cx = gsap.quickTo(cursor, "x", { duration: 0.3, ease: "power3.out" });
-        const cy = gsap.quickTo(cursor, "y", { duration: 0.3, ease: "power3.out" });
-        const tilt = gsap.quickTo(puff, "rotation", { duration: 0.5, ease: "power3.out" });
-        let lastX = 0;
+        const br = gsap.quickTo(beam, "r", { duration: 0.8, ease: "power3.out" });
+        const lens = q(`.${styles.lens}`)[0];
+        const lx = gsap.quickTo(lens, "x", { duration: 0.12, ease: "power3.out" });
+        const ly = gsap.quickTo(lens, "y", { duration: 0.12, ease: "power3.out" });
+        let held = false;
 
         const onMove = (e: PointerEvent) => {
-          cursor.classList.add(styles.seen);
-          cx(e.clientX);
-          cy(e.clientY);
-          tilt(gsap.utils.clamp(-40, 40, (e.clientX - lastX) * 2.5));
-          lastX = e.clientX;
-          if (intro.time() < intro.labels.settled + 0.8) return;
-          let near = false;
-          for (const m of movers) {
-            const box = m.el.getBoundingClientRect();
-            const dx = e.clientX - (box.left + box.width / 2), dy = e.clientY - (box.top + box.height / 2);
-            const reach = box.height * 1.4, pull = Math.max(0, 1 - Math.hypot(dx, dy) / reach);
-            near ||= pull > 0.4;
-            m.x(dx * pull * 0.35);
-            m.y(dy * pull * 0.35);
-            m.r(dx * pull * 0.05);
-          }
-          cursor.classList.toggle(styles.big, near);
+          lens.classList.add(styles.seen);
+          lx(e.clientX);
+          ly(e.clientY);
+          if (mode === "intro") return;
+          // Touch steers only while a finger is down; a mouse always steers.
+          if (e.pointerType !== "mouse" && !held) return;
+          mode = "pointer";
+          aim.x = e.clientX;
+          aim.y = e.clientY;
         };
-        const onDown = () =>
-          gsap.fromTo(puff, { scaleX: 1.35, scaleY: 0.65 }, { scaleX: 1, scaleY: 1, duration: 0.7, ease: "elastic.out(1.2, 0.35)" });
+        const onDown = (e: PointerEvent) => {
+          held = true;
+          lens.classList.add(styles.held);
+          if (mode === "intro") return;
+          window.clearTimeout(idleTimer);
+          mode = "pointer";
+          aim.x = e.clientX;
+          aim.y = e.clientY;
+          br(baseR() * 1.8);
+        };
+        const onUp = (e: PointerEvent) => {
+          held = false;
+          lens.classList.remove(styles.held);
+          if (mode === "intro") return;
+          br(baseR());
+          if (e.pointerType !== "mouse") idleTimer = window.setTimeout(() => void (mode = "roam"), 2200);
+        };
+        const onLeave = () => { if (mode === "pointer") mode = "roam"; };
+        const onResize = () => {
+          torch.resize();
+          measure();
+          if (mode !== "intro") br(held ? baseR() * 1.8 : baseR());
+        };
+
         window.addEventListener("pointermove", onMove);
         window.addEventListener("pointerdown", onDown);
+        window.addEventListener("pointerup", onUp);
+        window.addEventListener("pointercancel", onUp);
+        document.documentElement.addEventListener("pointerleave", onLeave);
+        window.addEventListener("resize", onResize);
         return () => {
+          gsap.ticker.remove(tick);
+          window.clearTimeout(idleTimer);
           window.removeEventListener("pointermove", onMove);
           window.removeEventListener("pointerdown", onDown);
+          window.removeEventListener("pointerup", onUp);
+          window.removeEventListener("pointercancel", onUp);
+          document.documentElement.removeEventListener("pointerleave", onLeave);
+          window.removeEventListener("resize", onResize);
         };
       });
 
-      mm.add(MOTION_OFF, () => setLanded(true));
       return () => mm.revert();
     },
     { scope: root },
@@ -179,45 +205,43 @@ export function LaunchHero() {
 
   return (
     <main ref={root} className={styles.page}>
-      <PuffField active={landed} still={still} />
+      <h1 className={styles.sr}>Makzo&rsquo;s is coming soon</h1>
 
-      <div className={styles.stage}>
-        <p className={`${styles.top} ${styles.reveal}`}>We are coming soon</p>
-
-        <h1 className={styles.word}>
-          <span className={styles.sr}>Makzo&rsquo;s</span>
-          {LETTERS.map((l) => (
-            <span
-              key={l.id}
-              className={l.id === "o" ? `${styles.glyph} ${styles.o}` : styles.glyph}
-              style={{ width: `${(l.width / 1200) * 100}%` }}
-            >
-              <Image src={`/brand/letter-${l.id}.png`} alt="" width={l.width} height={296} priority />
+      {/* The room with the lights on. The canvas above paints the dark over it. */}
+      <div className={styles.room}>
+        <div className={styles.secrets} aria-hidden="true">
+          {HIDDEN_STATES.map(([name, left, top, rot, size]) => (
+            <span key={name} className={styles.secret} style={{ left: `${left}%`, top: `${top}%`, rotate: `${rot}deg`, fontSize: `${size}rem` }}>
+              {name}
             </span>
           ))}
-        </h1>
-
-        <div className={styles.bottom}>
-          <div className={`${styles.panel} ${styles.reveal}`}>
-            <p className={styles.label}>Launching soon in</p>
-            <FlapBoard words={STATES} active={landed} still={still} />
-            <p className={styles.sr}>Launching soon across India.</p>
-          </div>
-          <p className={`${styles.panel} ${styles.hint} ${styles.reveal}`}>Tap or click anywhere to pop a few more.</p>
+          {HIDDEN_PUFFS.map(([left, top, rot, size], i) => (
+            <span key={i} className={styles.puff} style={{ left: `${left}%`, top: `${top}%`, rotate: `${rot}deg`, width: `${size}rem` }}>
+              <Puff />
+            </span>
+          ))}
+        </div>
+        <div className={styles.word} aria-hidden="true">
+          {LETTERS.map((l, i) => (
+            <span key={l.id} className={styles.glyph} data-i={i} style={{ width: `${(l.width / 1200) * 100}%` }}>
+              <Image src={`/brand/letter-light-${l.id}.png`} alt="" width={l.width} height={296} priority />
+            </span>
+          ))}
         </div>
       </div>
 
-      <div className={styles.bursts} aria-hidden="true">
-        {BURSTS.map((f) => (
-          <div key={f.id} className={styles.burst} style={{ background: f.id === "chettinadu" ? undefined : f.accent }}>
-            <p className={styles.flavour} style={{ color: f.deep }}>{f.word}</p>
-          </div>
-        ))}
+      <canvas className={styles.dark} aria-hidden="true" />
+
+      <div className={styles.ui}>
+        <p className={`${styles.coming} ${styles.reveal}`}>We are coming soon.</p>
+        <p className={`${styles.hint} ${styles.reveal}`}>
+          <span className={styles.mouseHint}>Move the torch to find where we&rsquo;re launching. Hold to turn it up.</span>
+          <span className={styles.touchHint}>Drag the torch to find where we&rsquo;re launching.</span>
+        </p>
+        <p className={styles.sr}>Launching soon across India.</p>
       </div>
 
-      <div className={styles.cursor} aria-hidden="true">
-        <span><MakhanaCursor /></span>
-      </div>
+      <div className={styles.lens} aria-hidden="true"><span /></div>
     </main>
   );
 }

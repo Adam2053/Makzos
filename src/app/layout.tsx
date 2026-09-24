@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Makzo's roasted makhana is launching soon in four bold flavours.",
 };
 
-export const viewport: Viewport = { themeColor: "#F0A21C" };
+export const viewport: Viewport = { themeColor: "#140b06" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="en"><body className={archivo.variable}>{children}</body></html>;

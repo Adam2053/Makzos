@@ -2,7 +2,10 @@
 // Columns sit in the transparent gaps between letters.
 import sharp from "sharp";
 
-const SRC = "public/brand/logo-dark.png";
+const SOURCES = [
+  ["public/brand/logo-dark.png", "letter"],
+  ["public/brand/logo-light.png", "letter-light"],
+];
 const CUTS = [
   ["m", 0, 225],
   ["a", 225, 395],
@@ -12,6 +15,8 @@ const CUTS = [
   ["s", 988, 1200],
 ];
 
-for (const [name, from, to] of CUTS) {
-  await sharp(SRC).extract({ left: from, top: 0, width: to - from, height: 296 }).png().toFile(`public/brand/letter-${name}.png`);
+for (const [src, prefix] of SOURCES) {
+  for (const [name, from, to] of CUTS) {
+    await sharp(src).extract({ left: from, top: 0, width: to - from, height: 296 }).png().toFile(`public/brand/${prefix}-${name}.png`);
+  }
 }
