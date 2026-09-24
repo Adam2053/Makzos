@@ -1,0 +1,5 @@
+.board { display: flex; gap: clamp(2px, .3vw, 4px); }
+.cell { position: relative; display: grid; place-items: center; width: clamp(1.05rem, 2.7vw, 2.3rem); height: clamp(1.6rem, 4vw, 3.3rem); overflow: hidden; border-radius: 3px; background: linear-gradient(#4a2c1b 0 50%, #33200f 50% 100%); box-shadow: 0 2px 0 rgb(0 0 0 / .35); }
+/* The hinge line across every flap. */
+.cell::after { content: ""; position: absolute; inset: 50% 0 auto; height: 1px; background: rgb(0 0 0 / .8); }
+.char { display: block; color: #f0eae0; font-family: var(--font-archivo), sans-serif; font-variation-settings: "wdth" 70; font-weight: 700; font-size: clamp(1rem, 2.5vw, 2.1rem); line-height: 1; white-space: pre; transform-origin: 50% 50%; }
