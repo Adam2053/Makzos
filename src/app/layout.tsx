@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Epilogue, Fraunces } from "next/font/google";
+import { Big_Shoulders, Epilogue, Fraunces } from "next/font/google";
 import "./globals.css";
 
 const serif = Fraunces({ subsets: ["latin"], variable: "--font-serif", display: "swap" });
+const display = Big_Shoulders({ subsets: ["latin"], weight: ["800"], variable: "--font-display", display: "swap" });
 const sans = Epilogue({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
 export const metadata: Metadata = {
@@ -13,5 +14,5 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#0f0e0c" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body className={`${serif.variable} ${sans.variable}`}>{children}</body></html>;
+  return <html lang="en"><body className={`${serif.variable} ${sans.variable} ${display.variable}`}>{children}</body></html>;
 }
