@@ -1,18 +1,17 @@
 import { FLAVOURS } from "@/lib/flavours";
 
 /**
- * Lays out the things hidden in the dark: every state plus a few makhana doodles, dropped
- * into a jittered grid that keeps clear of the wordmark. Seeded, so server and client
+ * Lays out the things hidden in the dark: a handful of states plus a few makhana doodles,
+ * dropped into a jittered grid that keeps clear of the wordmark and leaves gaps between. Seeded, so server and client
  * render the same room, and coloured so no two neighbours share a pack accent.
  */
 const NAMES = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
-  "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
-  "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan",
-  "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
-  "Delhi", "Ladakh",
+  "Kerala", "Punjab", "Assam", "Goa", "Tamil Nadu", "Maharashtra", "Rajasthan", "West Bengal",
+  "Sikkim", "Gujarat", "Odisha", "Karnataka", "Telangana", "Himachal Pradesh", "Meghalaya", "Nagaland",
 ];
 const PUFFS = 6;
+/** The grids have 36 cells; whatever the names and doodles don't fill stays dark. */
+const CELLS = 36;
 
 /**
  * A layout is grid centres in % of the hidden layer: columns across, rows above and below
@@ -61,9 +60,11 @@ const tallCell = (i: number) => {
   const { c, r } = wideCell(i);
   return { c: c % 3, r: r * 2 + (c >= 3 ? 1 : 0) };
 };
-/** Side by side or stacked; diagonal neighbours sit far enough apart to share a colour. */
-const near = (a: { c: number; r: number }, b: { c: number; r: number }) => Math.abs(a.c - b.c) + Math.abs(a.r - b.r) === 1;
-const touching = (i: number, j: number) => near(wideCell(i), wideCell(j)) || near(tallCell(i), tallCell(j));
+/** Within `reach` steps, counting across empty cells, so names with a gap between still read as neighbours. */
+const near = (a: { c: number; r: number }, b: { c: number; r: number }, reach: number) =>
+  Math.abs(a.c - b.c) + Math.abs(a.r - b.r) <= reach;
+const touching = (i: number, j: number, reach: number) =>
+  near(wideCell(i), wideCell(j), reach) || near(tallCell(i), tallCell(j), reach);
 
 function build(seed: number) {
   const rand = mulberry32(seed);
@@ -76,39 +77,47 @@ function build(seed: number) {
     return [g.xs[c] + between(-g.jx, g.jx), y, -50];
   };
 
-  const pool: (string | null)[] = [...NAMES, ...Array<null>(PUFFS).fill(null)];
+  // undefined marks an empty cell.
+  const pool: (string | null | undefined)[] = [
+    ...NAMES,
+    ...Array<null>(PUFFS).fill(null),
+    ...Array<undefined>(CELLS - NAMES.length - PUFFS).fill(undefined),
+  ];
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(rand() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
 
-  const items: Hidden[] = pool.map((name, i) => ({
+  const items = pool.map((name, i) => ({
     key: name ?? `puff-${i}`,
-    name,
+    name: name ?? null,
+    empty: name === undefined,
+    color: undefined as string | undefined,
     wide: place(WIDE, wideCell(i)),
     tall: place(TALL, tallCell(i)),
     rot: name ? between(-14, 14) : between(-35, 35),
-    size: name ? Math.max(1, Math.min(between(1.2, 2.3), 17 / name.length)) : between(3.4, 6),
+    size: name ? Math.max(1.1, Math.min(between(1.3, 2.6), 20 / name.length)) : between(3.4, 6),
   }));
 
   // Backtracking colouring: each state tries the accents in a random order and backs up
-  // whenever it has boxed a later state in, so no neighbours in either layout match.
+  // whenever it has boxed a later state in, so no neighbours in either layout match. Some
+  // shuffles can't keep names two cells apart distinct; those settle for adjacent ones.
   const accents = FLAVOURS.map((f) => f.accent);
   const states = items.map((it, i) => (it.name ? i : -1)).filter((i) => i >= 0);
   const orders = states.map(() => [...accents].sort(() => rand() - 0.5));
-  const paint = (k: number): boolean => {
+  const paint = (k: number, reach: number): boolean => {
     if (k === states.length) return true;
     const i = states[k];
     for (const color of orders[k]) {
-      if (states.slice(0, k).some((j) => items[j].color === color && touching(i, j))) continue;
+      if (states.slice(0, k).some((j) => items[j].color === color && touching(i, j, reach))) continue;
       items[i].color = color;
-      if (paint(k + 1)) return true;
+      if (paint(k + 1, reach)) return true;
     }
     items[i].color = undefined;
     return false;
   };
-  paint(0);
-  return items;
+  if (!paint(0, 2)) paint(0, 1);
+  return items.filter((it) => !it.empty);
 }
 
 export const HIDDEN = build(SEED);

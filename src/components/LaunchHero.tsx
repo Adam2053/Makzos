@@ -79,6 +79,8 @@ export function LaunchHero() {
         // Centres are measured without parallax; the tick adds the current shift back in.
         const hidden = q(`.${styles.secret}, .${styles.puff}`).map((el) => ({ el, cx: 0, cy: 0, set: gsap.quickSetter(el, "opacity") }));
         let shift = { x: 0, y: 0 };
+        // Held at zero through the logo intro, so the name has the stage to itself.
+        const found = { v: 0 };
         const measure = () => {
           for (const h of hidden) {
             const box = h.el.getBoundingClientRect();
@@ -111,7 +113,7 @@ export function LaunchHero() {
           setSecrets.y(shift.y);
           for (const h of hidden) {
             const d = Math.hypot(h.cx + shift.x - beam.x, h.cy + shift.y - beam.y);
-            h.set(1 - gsap.utils.clamp(0, 1, (d - beam.r * 0.45) / (beam.r * 0.45)));
+            h.set(found.v * (1 - gsap.utils.clamp(0, 1, (d - beam.r * 0.45) / (beam.r * 0.45))));
           }
         };
         gsap.ticker.add(tick);
@@ -136,6 +138,7 @@ export function LaunchHero() {
           .addLabel("lit")
           .to(beam, { r: () => baseR() * ROAM_R, duration: 1.4, ease: "power3.inOut" }, "lit+=0.5")
           .fromTo(q(`.${styles.reveal}`), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1, ease: EASE, stagger: 0.14 }, "lit+=0.9")
+          .to(found, { v: 1, duration: 1.2, ease: "power1.inOut" })
           .call(() => {
             aim.x = beam.x;
             aim.y = beam.y;
@@ -143,7 +146,7 @@ export function LaunchHero() {
               mode = "pointer";
               wake();
             } else mode = "roam";
-          });
+          }, [], "<");
 
         // Once risen, the letters ripple in a slow wave; the makhana wobbles harder than the rest.
         LETTERS.forEach((l, i) => {
