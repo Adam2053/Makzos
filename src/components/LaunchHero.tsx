@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 import { EASE, MOTION_OK, gsap, useGSAP } from "@/lib/motion";
+import { HIDDEN } from "@/lib/scatter";
 import { createTorch, type Beam } from "@/lib/torch";
 import styles from "./LaunchHero.module.css";
 
@@ -16,20 +17,13 @@ const LETTERS = [
   { id: "s", width: 212 },
 ];
 
-/** Hidden in the dark, found only by torchlight: [name, left %, top %, rotation, size in rem]. */
-const HIDDEN_STATES: [string, number, number, number, number][] = [
-  ["Kerala", 7, 13, -8, 2.6], ["Punjab", 70, 8, 6, 2.2], ["Assam", 86, 26, -12, 1.8],
-  ["Goa", 31, 7, 10, 1.6], ["Tamil Nadu", 5, 74, 7, 2.3], ["Maharashtra", 57, 84, -5, 2.6],
-  ["Rajasthan", 38, 91, 4, 1.7], ["West Bengal", 77, 69, 9, 2], ["Sikkim", 50, 19, -4, 1.4],
-  ["Gujarat", 17, 33, 12, 1.5], ["Odisha", 86, 90, -9, 1.6], ["Karnataka", 20, 86, -11, 1.9],
-  ["Telangana", 63, 29, 7, 1.3], ["Himachal Pradesh", 30, 71, -3, 1.3], ["Meghalaya", 88, 47, -90, 1.3],
-  ["Nagaland", 3, 44, 90, 1.3],
-];
+/** The makhana "o" sits at 72.08% of the wordmark; this shifts it to the page centre. */
+const MARK_CENTRE = -22.08;
 
-/** A few makhana doodles tucked into corners: [left %, top %, rotation, size in rem]. */
-const HIDDEN_PUFFS: [number, number, number, number][] = [
-  [14, 22, 20, 5.5], [80, 14, -15, 4.5], [91, 76, 30, 6], [46, 74, -8, 3.8], [8, 88, 12, 4.8], [42, 27, -25, 3.4],
-];
+/** No pointer activity for this long and the torch starts searching the room on its own. */
+const IDLE_MS = 2800;
+/** The searching beam is wider than a hand-held one, so it gives more away. */
+const ROAM_R = 1.4;
 
 function Puff() {
   return (
@@ -41,6 +35,19 @@ function Puff() {
         <ellipse cx="37" cy="59" rx="4.5" ry="3" /><ellipse cx="50" cy="60" rx="6" ry="3" />
       </g>
     </svg>
+  );
+}
+
+/** Left of the makhana, the makhana itself, right of it: widths are shares of their own group. */
+const LEFT_W = LETTERS.slice(0, 4).reduce((sum, l) => sum + l.width, 0);
+const groupWidth = (i: number) => (i < 4 ? LEFT_W : 1200);
+
+function glyph(l: (typeof LETTERS)[number], i: number) {
+  const share = i === 5 ? 100 : (l.width / groupWidth(i)) * 100;
+  return (
+    <span key={l.id} className={`${styles.glyph} ${i === 4 ? styles.mark : ""}`} data-i={i} style={{ width: `${share}%` }}>
+      <Image src={`/brand/letter-light-${l.id}.png`} alt="" width={l.width} height={296} priority draggable={false} />
+    </span>
   );
 }
 
@@ -84,9 +91,9 @@ export function LaunchHero() {
         const tick = (time: number, deltaMs: number) => {
           const dt = Math.min(deltaMs, 50) / 1000;
           if (mode === "roam") {
-            // A slow figure-of-eight when nobody is holding the torch.
-            aim.x = innerWidth / 2 + Math.sin(time * 0.4) * innerWidth * 0.34;
-            aim.y = innerHeight * 0.5 + Math.sin(time * 0.8) * innerHeight * 0.26;
+            // A slow figure-of-eight when nobody is holding the torch, wide enough to find the corners.
+            aim.x = innerWidth / 2 + Math.sin(time * 0.4) * innerWidth * 0.38;
+            aim.y = innerHeight * 0.5 + Math.sin(time * 0.8) * innerHeight * 0.32;
           }
           if (mode !== "intro") {
             // Frame-rate independent easing, so it glides the same at 60Hz and 120Hz.
@@ -109,23 +116,33 @@ export function LaunchHero() {
         };
         gsap.ticker.add(tick);
 
-        // The name is not there at first: the torch flickers on to an empty room, then the
-        // letters rise into the light, centre first, and the beam opens up to take it all in.
-        const glyphs = q(`.${styles.glyph}`);
-        gsap.set(glyphs, { yPercent: 70, opacity: 0, scale: 0.86 });
-        const flicker: [number, number][] = [[0, 0.5], [0.07, 0], [0.15, 0.25], [0.21, 0], [0.34, 0.9], [0.41, 0.3], [0.48, 1]];
-        const intro = gsap.timeline({ delay: 0.5 });
-        flicker.forEach(([at, power]) => intro.set(beam, { r: () => baseR() * 0.75 * power }, at));
-        intro
-          .to(glyphs, { yPercent: 0, opacity: 1, scale: 1, duration: 1.6, ease: "expo.out", stagger: { each: 0.09, from: "center" } }, 1.1)
-          .to(beam, { r: () => Math.max(innerWidth * 0.62, baseR() * 1.6), duration: 1.6, ease: "power2.inOut" }, 1.3)
+        // The makhana pops into a small pool of light on its own, then the name slides out
+        // from behind it on both sides while the beam opens up to take it all in.
+        const mark = q(`.${styles.mark}`)[0];
+        const sides = q(`.${styles.left}, .${styles.right}`);
+        gsap.set(word, { xPercent: MARK_CENTRE });
+        gsap.set(q(`.${styles.left} .${styles.slide}`), { xPercent: 100 });
+        gsap.set(q(`.${styles.right} .${styles.slide}`), { xPercent: -100 });
+        const intro = gsap
+          .timeline({ delay: 0.25 })
+          .from(mark, { scale: 0, rotation: -24, duration: 0.9, ease: "back.out(2.2)", transformOrigin: "50% 60%" })
+          .to(beam, { r: () => baseR() * 0.9, duration: 0.9, ease: "power2.out" }, 0)
+          .addLabel("open", "+=0.35")
+          .to(word, { xPercent: 0, duration: 1.05, ease: "expo.inOut" }, "open")
+          .to(q(`.${styles.slide}`), { xPercent: 0, duration: 1.05, ease: "expo.inOut" }, "open")
+          .to(beam, { r: () => Math.max(innerWidth * 0.62, baseR() * 1.6), duration: 1.3, ease: "power2.inOut" }, "open")
+          // The sides clip only while the letters slide out; after that the wave needs room.
+          .set(sides, { overflow: "visible" })
           .addLabel("lit")
-          .to(beam, { r: baseR, duration: 1.4, ease: "power3.inOut" }, "lit+=0.5")
+          .to(beam, { r: () => baseR() * ROAM_R, duration: 1.4, ease: "power3.inOut" }, "lit+=0.5")
           .fromTo(q(`.${styles.reveal}`), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1, ease: EASE, stagger: 0.14 }, "lit+=0.9")
           .call(() => {
             aim.x = beam.x;
             aim.y = beam.y;
-            mode = fine ? "pointer" : "roam";
+            if (fine) {
+              mode = "pointer";
+              wake();
+            } else mode = "roam";
           });
 
         // Once risen, the letters ripple in a slow wave; the makhana wobbles harder than the rest.
@@ -136,7 +153,7 @@ export function LaunchHero() {
             { y: -8, rotation: makhana ? 7 : 1.2, scale: makhana ? 1.05 : 1, duration: makhana ? 1.2 : 1.6, ease: "sine.inOut", yoyo: true, repeat: -1, paused: true },
           );
           wave.totalTime(i * 0.26);
-          intro.call(() => void wave.play(), [], 1.4);
+          intro.call(() => void wave.play(), [], "lit");
         });
 
         const br = gsap.quickTo(beam, "r", { duration: 0.8, ease: "power3.out" });
@@ -145,6 +162,24 @@ export function LaunchHero() {
         const ly = gsap.quickTo(lens, "y", { duration: 0.12, ease: "power3.out" });
         let held = false;
 
+        // Left alone, the torch goes looking by itself with a wider beam; any touch or
+        // mouse movement hands it back and restarts the countdown.
+        const roam = () => {
+          if (held) return;
+          mode = "roam";
+          br(baseR() * ROAM_R);
+        };
+        const wake = (ms = IDLE_MS) => {
+          window.clearTimeout(idleTimer);
+          idleTimer = window.setTimeout(roam, ms);
+        };
+        const take = (x: number, y: number) => {
+          if (mode === "roam") br(baseR() * (held ? 1.8 : 1));
+          mode = "pointer";
+          aim.x = x;
+          aim.y = y;
+        };
+
         const onMove = (e: PointerEvent) => {
           lens.classList.add(styles.seen);
           lx(e.clientX);
@@ -152,18 +187,15 @@ export function LaunchHero() {
           if (mode === "intro") return;
           // Touch steers only while a finger is down; a mouse always steers.
           if (e.pointerType !== "mouse" && !held) return;
-          mode = "pointer";
-          aim.x = e.clientX;
-          aim.y = e.clientY;
+          take(e.clientX, e.clientY);
+          if (e.pointerType === "mouse") wake();
         };
         const onDown = (e: PointerEvent) => {
           held = true;
           lens.classList.add(styles.held);
           if (mode === "intro") return;
           window.clearTimeout(idleTimer);
-          mode = "pointer";
-          aim.x = e.clientX;
-          aim.y = e.clientY;
+          take(e.clientX, e.clientY);
           br(baseR() * 1.8);
         };
         const onUp = (e: PointerEvent) => {
@@ -171,13 +203,17 @@ export function LaunchHero() {
           lens.classList.remove(styles.held);
           if (mode === "intro") return;
           br(baseR());
-          if (e.pointerType !== "mouse") idleTimer = window.setTimeout(() => void (mode = "roam"), 2200);
+          wake(e.pointerType === "mouse" ? IDLE_MS : 2200);
         };
-        const onLeave = () => { if (mode === "pointer") mode = "roam"; };
+        const onLeave = () => {
+          if (mode !== "pointer") return;
+          window.clearTimeout(idleTimer);
+          roam();
+        };
         const onResize = () => {
           torch.resize();
           measure();
-          if (mode !== "intro") br(held ? baseR() * 1.8 : baseR());
+          if (mode !== "intro") br(baseR() * (held ? 1.8 : mode === "roam" ? ROAM_R : 1));
         };
 
         window.addEventListener("pointermove", onMove);
@@ -210,23 +246,28 @@ export function LaunchHero() {
       {/* The room with the lights on. The canvas above paints the dark over it. */}
       <div className={styles.room}>
         <div className={styles.secrets} aria-hidden="true">
-          {HIDDEN_STATES.map(([name, left, top, rot, size]) => (
-            <span key={name} className={styles.secret} style={{ left: `${left}%`, top: `${top}%`, rotate: `${rot}deg`, fontSize: `${size}rem` }}>
-              {name}
-            </span>
-          ))}
-          {HIDDEN_PUFFS.map(([left, top, rot, size], i) => (
-            <span key={i} className={styles.puff} style={{ left: `${left}%`, top: `${top}%`, rotate: `${rot}deg`, width: `${size}rem` }}>
-              <Puff />
-            </span>
-          ))}
+          {HIDDEN.map((h) => {
+            // Positions for both layouts ride along as custom properties; CSS picks one by orientation.
+            const style = {
+              "--x": `${h.wide[0]}%`, "--y": `${h.wide[1]}%`, "--ax": `${h.wide[2]}%`,
+              "--tx": `${h.tall[0]}%`, "--ty": `${h.tall[1]}%`, "--tax": `${h.tall[2]}%`,
+              "--s": h.size, rotate: `${h.rot}deg`, color: h.color,
+            } as CSSProperties;
+            return h.name ? (
+              <span key={h.key} className={styles.secret} style={style}>{h.name}</span>
+            ) : (
+              <span key={h.key} className={styles.puff} style={style}><Puff /></span>
+            );
+          })}
         </div>
         <div className={styles.word} aria-hidden="true">
-          {LETTERS.map((l, i) => (
-            <span key={l.id} className={styles.glyph} data-i={i} style={{ width: `${(l.width / 1200) * 100}%` }}>
-              <Image src={`/brand/letter-light-${l.id}.png`} alt="" width={l.width} height={296} priority />
-            </span>
-          ))}
+          <span className={styles.left}>
+            <span className={styles.slide}>{LETTERS.slice(0, 4).map(glyph)}</span>
+          </span>
+          {glyph(LETTERS[4], 4)}
+          <span className={styles.right}>
+            <span className={styles.slide}>{glyph(LETTERS[5], 5)}</span>
+          </span>
         </div>
       </div>
 

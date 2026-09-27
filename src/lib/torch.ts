@@ -5,7 +5,7 @@
  */
 export type Beam = { x: number; y: number; r: number };
 
-const NIGHT = "20 11 6";
+const NIGHT = "15 14 12";
 /** How dark the room is outside the beam: enough to hide detail, not enough to hide shapes. */
 const OUTSIDE = 0.92;
 
@@ -45,12 +45,12 @@ export function createTorch(canvas: HTMLCanvasElement) {
       ctx.fillStyle = dark;
       ctx.fillRect(0, 0, w, h);
 
-      // Warm spill, added on top so the lit patch glows rather than just showing through.
+      // A soft white spill, added on top so the lit patch glows rather than just showing through.
       ctx.globalCompositeOperation = "lighter";
       const spill = ctx.createRadialGradient(beam.x, beam.y, 0, beam.x, beam.y, beam.r * 0.9);
-      spill.addColorStop(0, "rgb(255 185 95 / .24)");
-      spill.addColorStop(0.5, "rgb(255 160 60 / .09)");
-      spill.addColorStop(1, "rgb(255 160 60 / 0)");
+      spill.addColorStop(0, "rgb(255 248 238 / .16)");
+      spill.addColorStop(0.5, "rgb(255 248 238 / .06)");
+      spill.addColorStop(1, "rgb(255 248 238 / 0)");
       ctx.fillStyle = spill;
       ctx.fillRect(beam.x - beam.r, beam.y - beam.r, beam.r * 2, beam.r * 2);
 
@@ -60,7 +60,7 @@ export function createTorch(canvas: HTMLCanvasElement) {
         if (d > beam.r * 0.8) continue;
         const lit = 1 - d / (beam.r * 0.8);
         const twinkle = 0.4 + 0.6 * Math.sin(time * 1.6 + m.phase) ** 2;
-        ctx.fillStyle = `rgb(255 222 170 / ${lit * twinkle * (0.4 + m.r * 0.25)})`;
+        ctx.fillStyle = `rgb(245 240 232 / ${lit * twinkle * (0.4 + m.r * 0.25)})`;
         ctx.beginPath();
         ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
         ctx.fill();
