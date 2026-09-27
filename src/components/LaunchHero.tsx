@@ -62,9 +62,11 @@ export function LaunchHero() {
         const setWord = { x: gsap.quickSetter(word, "x", "px"), y: gsap.quickSetter(word, "y", "px") };
         const setSecrets = { x: gsap.quickSetter(secrets, "x", "px"), y: gsap.quickSetter(secrets, "y", "px") };
 
-        // Hidden things only exist in the light: fade each by its distance from the beam.
-        // Centres are measured without parallax; the tick adds the current shift back in.
-        const hidden = q(`.${styles.secret}, .${styles.puff}`).map((el) => ({ el, cx: 0, cy: 0, set: gsap.quickSetter(el, "opacity") }));
+        // State names sit at full opacity and the dark alone hides them. Makhanas only exist
+        // in the light: each fades by its distance from the beam. Centres are measured
+        // without parallax; the tick adds the current shift back in.
+        const states = q(`.${styles.secret}`);
+        const hidden = q(`.${styles.puff}`).map((el) => ({ el, cx: 0, cy: 0, set: gsap.quickSetter(el, "opacity") }));
         let shift = { x: 0, y: 0 };
         // Held at zero through the logo intro, so the name has the stage to itself.
         const found = { v: 0 };
@@ -126,6 +128,7 @@ export function LaunchHero() {
           .to(beam, { r: () => baseR() * ROAM_R, duration: 1.4, ease: "power3.inOut" }, "lit+=0.5")
           .fromTo(q(`.${styles.reveal}`), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1, ease: EASE, stagger: 0.14 }, "lit+=0.9")
           .to(found, { v: 1, duration: 1.2, ease: "power1.inOut" })
+          .to(states, { opacity: 1, duration: 1.2, ease: "power1.inOut" }, "<")
           .call(() => {
             aim.x = beam.x;
             aim.y = beam.y;
