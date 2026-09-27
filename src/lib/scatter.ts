@@ -1,46 +1,46 @@
 import { FLAVOURS } from "@/lib/flavours";
 
 /**
- * Lays out the things hidden in the dark: a handful of states plus a few makhana doodles,
- * dropped into a jittered grid that keeps clear of the wordmark and leaves gaps between. Seeded, so server and client
- * render the same room, and coloured so no two neighbours share a pack accent.
+ * Lays out the things hidden in the dark: a handful of states plus a few makhanas, split
+ * evenly above and below the wordmark and spread across the full width. Seeded, so server
+ * and client render the same room, and coloured so nearby names never share a pack accent.
+ *
+ * Positions are % of the hidden layer, which overhangs the viewport by 4% on each side.
  */
 const NAMES = [
   "Kerala", "Punjab", "Assam", "Goa", "Tamil Nadu", "Maharashtra", "Rajasthan", "West Bengal",
   "Sikkim", "Gujarat", "Odisha", "Karnataka", "Telangana", "Himachal Pradesh", "Meghalaya", "Nagaland",
 ];
 const PUFFS = 6;
-/** The grids have 36 cells; whatever the names and doodles don't fill stays dark. */
-const CELLS = 36;
-
-/**
- * A layout is grid centres in % of the hidden layer: columns across, rows above and below
- * the name. Edge columns are anchored by their outer end instead, so long names never
- * run off the screen.
- */
-type Grid = { xs: number[]; ys: number[]; jx: number; jy: number; stagger: number };
-// Bands are sized for 16:9, where the name takes the most height: 3–25% and 68–88% of the screen.
-const WIDE: Grid = { xs: [5, 23, 41, 59, 77, 95], ys: [10.5, 16.8, 23, 70.5, 76, 81.5], jx: 4, jy: 0.5, stagger: 1.8 };
-const TALL: Grid = {
-  xs: [5, 50, 95],
-  ys: [7, 13, 19, 25, 31, 37, 56, 61, 66, 71, 76, 81],
-  jx: 5,
-  jy: 0.6,
-  stagger: 1.4,
-};
 
 /** Change this to reshuffle the whole room. */
 const SEED = 20;
 
+/** Leftmost and rightmost slot. Items anchor by how far across they sit, so nothing runs off either edge. */
+const X_MIN = 5;
+const X_MAX = 95;
+
+/**
+ * Landscape: each band is a row of evenly spaced slots, each dropped onto one of four
+ * lines. A slot never shares a line with the two before it, so side-by-side names can't
+ * collide, yet the pattern never settles into a staircase. Sized for 16:9, where the
+ * wordmark takes the most height.
+ */
+const WIDE_LINES = { top: [10.5, 15, 19.5, 24], bottom: [70, 74.5, 79, 83.5] };
+/** Portrait: rows alternate two items (one each side) and one (near the middle). */
+const TALL_ROWS = { top: [7, 12.3, 17.6, 22.9, 28.2, 33.5, 38.8], bottom: [57, 61.3, 65.6, 69.9, 74.2, 78.5, 82.8] };
+
+type Band = keyof typeof WIDE_LINES;
+
 export type Hidden = {
   key: string;
-  /** Null for a makhana doodle. */
+  /** Null for a makhana. */
   name: string | null;
   /** [x %, y %, horizontal anchor %] in each layout. */
   wide: [number, number, number];
   tall: [number, number, number];
   rot: number;
-  /** Font size (or doodle width) in units the CSS scales down on small screens. */
+  /** Font size (or makhana width) in units the CSS scales down on small screens. */
   size: number;
   color?: string;
 };
@@ -54,70 +54,102 @@ function mulberry32(a: number) {
   };
 }
 
-/** Item i's cell in the wide grid; the tall grid folds each wide row into two, so neighbours mostly stay neighbours. */
-const wideCell = (i: number) => ({ c: i % 6, r: Math.floor(i / 6) });
-const tallCell = (i: number) => {
-  const { c, r } = wideCell(i);
-  return { c: c % 3, r: r * 2 + (c >= 3 ? 1 : 0) };
-};
-/** Within `reach` steps, counting across empty cells, so names with a gap between still read as neighbours. */
-const near = (a: { c: number; r: number }, b: { c: number; r: number }, reach: number) =>
-  Math.abs(a.c - b.c) + Math.abs(a.r - b.r) <= reach;
-const touching = (i: number, j: number, reach: number) =>
-  near(wideCell(i), wideCell(j), reach) || near(tallCell(i), tallCell(j), reach);
-
-function build(seed: number) {
+function build(seed: number): Hidden[] {
   const rand = mulberry32(seed);
   const between = (lo: number, hi: number) => lo + rand() * (hi - lo);
-  const place = (g: Grid, { c, r }: { c: number; r: number }): [number, number, number] => {
-    // Alternate columns sit a little high or low, so side-by-side names never share a line.
-    const y = g.ys[r] + (c % 2 ? g.stagger : -g.stagger) + between(-g.jy, g.jy);
-    if (c === 0) return [g.xs[c] + between(0, g.jx / 2), y, 0];
-    if (c === g.xs.length - 1) return [g.xs[c] - between(0, g.jx / 2), y, -100];
-    return [g.xs[c] + between(-g.jx, g.jx), y, -50];
+  const shuffle = <T,>(list: T[]) => {
+    const out = [...list];
+    for (let i = out.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+    return out;
+  };
+  const clampX = (x: number) => Math.min(X_MAX, Math.max(X_MIN, x));
+  const at = (x: number, y: number): [number, number, number] => {
+    const cx = clampX(x);
+    return [cx, y, -((cx - X_MIN) / (X_MAX - X_MIN)) * 100];
   };
 
-  // undefined marks an empty cell.
-  const pool: (string | null | undefined)[] = [
-    ...NAMES,
-    ...Array<null>(PUFFS).fill(null),
-    ...Array<undefined>(CELLS - NAMES.length - PUFFS).fill(undefined),
+  const wideSlots = (band: Band, order: (string | null)[]) => {
+    const lines = WIDE_LINES[band];
+    const picked: number[] = [];
+    return order.map((name, k) => {
+      let free = lines.map((_, i) => i).filter((i) => !picked.slice(-2).includes(i));
+      // A makhana is taller than the gap between lines, so it and its neighbour skip one.
+      const prev = picked[k - 1];
+      if (k > 0 && (name === null || order[k - 1] === null)) {
+        const far = free.filter((i) => Math.abs(i - prev) >= 2);
+        free = far.length ? far : [free.reduce((a, b) => (Math.abs(b - prev) > Math.abs(a - prev) ? b : a))];
+      }
+      const line = free[Math.floor(rand() * free.length)];
+      picked.push(line);
+      const x = X_MIN + (k * (X_MAX - X_MIN)) / (order.length - 1);
+      return at(x + between(-2.5, 2.5), lines[line] + between(-0.8, 0.8));
+    });
+  };
+
+  const tallSlots = (band: Band, count: number) => {
+    const slots: [number, number, number][] = [];
+    TALL_ROWS[band].forEach((y, row) => {
+      const pair = row % 2 === 0;
+      const xs = pair ? [between(6, 30), between(70, 94)] : [between(36, 64)];
+      for (const x of xs) if (slots.length < count) slots.push(at(x, y + between(-0.8, 0.8)));
+    });
+    return slots;
+  };
+
+  // Half the names and half the makhanas above the wordmark, the rest below.
+  const names = shuffle(NAMES);
+  const bands: [Band, (string | null)[]][] = [
+    ["top", [...names.slice(0, NAMES.length / 2), ...Array<null>(PUFFS / 2).fill(null)]],
+    ["bottom", [...names.slice(NAMES.length / 2), ...Array<null>(PUFFS / 2).fill(null)]],
   ];
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
+
+  const items: Hidden[] = [];
+  for (const [band, members] of bands) {
+    const wideOrder = shuffle(members);
+    const wide = wideSlots(band, wideOrder);
+    const tall = tallSlots(band, members.length);
+    const tallOrder = shuffle(members.map((_, i) => i));
+    wideOrder.forEach((name, i) => {
+      items.push({
+        key: name ?? `puff-${band}-${i}`,
+        name,
+        wide: wide[i],
+        tall: tall[tallOrder[i]],
+        rot: name ? between(-12, 12) : between(-30, 30),
+        size: name ? Math.max(1.1, Math.min(between(1.3, 2.3), 18 / name.length)) : between(2.4, 3.4),
+      });
+    });
   }
 
-  const items = pool.map((name, i) => ({
-    key: name ?? `puff-${i}`,
-    name: name ?? null,
-    empty: name === undefined,
-    color: undefined as string | undefined,
-    wide: place(WIDE, wideCell(i)),
-    tall: place(TALL, tallCell(i)),
-    rot: name ? between(-14, 14) : between(-35, 35),
-    size: name ? Math.max(1.1, Math.min(between(1.3, 2.6), 20 / name.length)) : between(3.4, 6),
-  }));
-
-  // Backtracking colouring: each state tries the accents in a random order and backs up
-  // whenever it has boxed a later state in, so no neighbours in either layout match. Some
-  // shuffles can't keep names two cells apart distinct; those settle for adjacent ones.
+  // Colouring by real distance on a typical laptop and phone. Backtracking tries each
+  // accent in a random order; if it can't keep every nearby pair apart within a small
+  // budget of tries, the radius shrinks and it starts again.
   const accents = FLAVOURS.map((f) => f.accent);
-  const states = items.map((it, i) => (it.name ? i : -1)).filter((i) => i >= 0);
-  const orders = states.map(() => [...accents].sort(() => rand() - 0.5));
-  const paint = (k: number, reach: number): boolean => {
+  const states = items.filter((it) => it.name);
+  const gap = (a: Hidden, b: Hidden, r: number) =>
+    Math.hypot((a.wide[0] - b.wide[0]) * 15.5, (a.wide[1] - b.wide[1]) * 9.7) < 360 * r ||
+    Math.hypot((a.tall[0] - b.tall[0]) * 4.2, (a.tall[1] - b.tall[1]) * 9.1) < 140 * r;
+  const orders = states.map(() => shuffle(accents));
+  let budget = 0;
+  const paint = (k: number, r: number): boolean => {
     if (k === states.length) return true;
-    const i = states[k];
+    if (--budget < 0) return false;
     for (const color of orders[k]) {
-      if (states.slice(0, k).some((j) => items[j].color === color && touching(i, j, reach))) continue;
-      items[i].color = color;
-      if (paint(k + 1, reach)) return true;
+      if (states.slice(0, k).some((o) => o.color === color && gap(states[k], o, r))) continue;
+      states[k].color = color;
+      if (paint(k + 1, r)) return true;
     }
-    items[i].color = undefined;
+    states[k].color = undefined;
     return false;
   };
-  if (!paint(0, 2)) paint(0, 1);
-  return items.filter((it) => !it.empty);
+  for (let r = 1; ; r *= 0.85) {
+    budget = 2000;
+    if (paint(0, r)) break;
+  }
+  return items;
 }
 
 export const HIDDEN = build(SEED);

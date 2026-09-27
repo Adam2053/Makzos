@@ -40,7 +40,9 @@
 .secret, .puff { --u: clamp(.55rem, 1.1vw, 1rem); position: absolute; left: var(--x); top: var(--y); translate: var(--ax) -50%; opacity: 0; }
 @media (orientation: portrait) { .secret, .puff { left: var(--tx); top: var(--ty); translate: var(--tax) -50%; } }
 .secret { font-size: calc(var(--s) * var(--u)); font-weight: 800; font-variation-settings: "wdth" 118; line-height: 1; white-space: nowrap; }
-.puff { display: block; width: calc(var(--s) * var(--u)); aspect-ratio: 1; }
+/* The makhana from the logo, small. */
+.puff { display: block; width: calc(var(--s) * var(--u)); }
+.puff img { display: block; width: 100%; height: auto; }
 @media (prefers-reduced-motion: reduce) { .secret, .puff { opacity: 1; } }
 
 .ui { position: absolute; inset: auto 0 0; z-index: 4; display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; padding: clamp(1rem, 2.6vw, 2.25rem); pointer-events: none; }

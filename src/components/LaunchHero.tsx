@@ -25,19 +25,6 @@ const IDLE_MS = 2800;
 /** The searching beam is wider than a hand-held one, so it gives more away. */
 const ROAM_R = 1.4;
 
-function Puff() {
-  return (
-    <svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">
-      <path d="M50 6 Q70 5 82 18 Q97 32 94 52 Q93 74 76 87 Q58 98 38 93 Q15 87 8 66 Q2 44 14 26 Q28 7 50 6Z" fill="#f0eae0" />
-      <path d="M47 15 Q64 13 75 25 Q86 38 83 53 Q80 70 65 78 Q49 85 33 78 Q18 70 15 53 Q13 34 25 23 Q34 15 47 15Z" fill="#0f0e0c" />
-      <g fill="#f0eae0">
-        <ellipse cx="38" cy="44" rx="4" ry="6" /><ellipse cx="52" cy="42" rx="4" ry="6" />
-        <ellipse cx="37" cy="59" rx="4.5" ry="3" /><ellipse cx="50" cy="60" rx="6" ry="3" />
-      </g>
-    </svg>
-  );
-}
-
 /** Left of the makhana, the makhana itself, right of it: widths are shares of their own group. */
 const LEFT_W = LETTERS.slice(0, 4).reduce((sum, l) => sum + l.width, 0);
 const groupWidth = (i: number) => (i < 4 ? LEFT_W : 1200);
@@ -103,7 +90,7 @@ export function LaunchHero() {
             beam.x += (aim.x - beam.x) * k;
             beam.y += (aim.y - beam.y) * k;
           }
-          torch.draw(beam, time, dt);
+          torch.draw(beam);
           // The room shifts against the torch for depth; hidden words sit nearer than the name.
           const dx = (beam.x - innerWidth / 2) / innerWidth, dy = (beam.y - innerHeight / 2) / innerHeight;
           setWord.x(dx * -20);
@@ -259,7 +246,9 @@ export function LaunchHero() {
             return h.name ? (
               <span key={h.key} className={styles.secret} style={style}>{h.name}</span>
             ) : (
-              <span key={h.key} className={styles.puff} style={style}><Puff /></span>
+              <span key={h.key} className={styles.puff} style={style}>
+                <Image src="/brand/letter-light-o.png" alt="" width={246} height={296} draggable={false} />
+              </span>
             );
           })}
         </div>
