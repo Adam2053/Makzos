@@ -135,16 +135,12 @@ export function LaunchHero() {
             } else mode = "roam";
           }, [], "<");
 
-        // Once risen, the letters ripple in a slow wave; the makhana wobbles harder than the rest.
-        LETTERS.forEach((l, i) => {
-          const makhana = l.id === "o";
-          const wave = gsap.fromTo(q(`.${styles.glyph}[data-i="${i}"] img`),
-            { y: 8, rotation: makhana ? -7 : -1.2, scale: 1 },
-            { y: -8, rotation: makhana ? 7 : 1.2, scale: makhana ? 1.05 : 1, duration: makhana ? 1.2 : 1.6, ease: "sine.inOut", yoyo: true, repeat: -1, paused: true },
-          );
-          wave.totalTime(i * 0.26);
-          intro.call(() => void wave.play(), [], "lit");
-        });
+        // Once the name has landed, only the makhana keeps moving: a lazy bob and wobble.
+        const bob = gsap.fromTo(q(`.${styles.mark} img`),
+          { y: 6, rotation: -7, scale: 1 },
+          { y: -6, rotation: 7, scale: 1.05, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: -1, paused: true },
+        );
+        intro.call(() => void bob.play(), [], "lit");
 
         const br = gsap.quickTo(beam, "r", { duration: 0.8, ease: "power3.out" });
         const lens = q(`.${styles.lens}`)[0];

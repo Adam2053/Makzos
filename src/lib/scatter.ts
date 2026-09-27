@@ -1,9 +1,7 @@
-import { FLAVOURS } from "@/lib/flavours";
-
 /**
  * Lays out the things hidden in the dark: a handful of states plus a few makhanas, split
  * evenly above and below the wordmark and spread across the full width. Seeded, so server
- * and client render the same room, and coloured so nearby names never share a pack accent.
+ * and client render the same room, and coloured so nearby names never share a pack colour.
  *
  * Positions are % of the hidden layer, which overhangs the viewport by 4% on each side.
  */
@@ -12,6 +10,20 @@ const NAMES = [
   "Sikkim", "Gujarat", "Odisha", "Karnataka", "Telangana", "Himachal Pradesh", "Meghalaya", "Nagaland",
 ];
 const PUFFS = 6;
+
+/**
+ * The body colour of each printed pack, lifted only as far as it takes to read at 3:1 on
+ * the room (the darkest packs are nearly the room's own colour). Mac & Cheese's cream is
+ * left out to keep the palette deep.
+ */
+const PACK_COLOURS = [
+  "#BD582D", // sweet tamarind
+  "#C63437", // rasam
+  "#327749", // curry leaves
+  "#80654E", // chettinadu
+  "#AC4091", // sweet thai chilli
+  "#8A5F56", // tiramisu
+];
 
 /** Change this to reshuffle the whole room. */
 const SEED = 20;
@@ -125,14 +137,13 @@ function build(seed: number): Hidden[] {
   }
 
   // Colouring by real distance on a typical laptop and phone. Backtracking tries each
-  // accent in a random order; if it can't keep every nearby pair apart within a small
+  // colour in a random order; if it can't keep every nearby pair apart within a small
   // budget of tries, the radius shrinks and it starts again.
-  const accents = FLAVOURS.map((f) => f.accent);
   const states = items.filter((it) => it.name);
   const gap = (a: Hidden, b: Hidden, r: number) =>
     Math.hypot((a.wide[0] - b.wide[0]) * 15.5, (a.wide[1] - b.wide[1]) * 9.7) < 360 * r ||
     Math.hypot((a.tall[0] - b.tall[0]) * 4.2, (a.tall[1] - b.tall[1]) * 9.1) < 140 * r;
-  const orders = states.map(() => shuffle(accents));
+  const orders = states.map(() => shuffle(PACK_COLOURS));
   let budget = 0;
   const paint = (k: number, r: number): boolean => {
     if (k === states.length) return true;
