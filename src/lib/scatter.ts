@@ -12,17 +12,17 @@ const NAMES = [
 const PUFFS = 6;
 
 /**
- * The body colour of each printed pack, lifted only as far as it takes to read at 3:1 on
- * the room (the darkest packs are nearly the room's own colour). Mac & Cheese's cream is
- * left out to keep the palette deep.
+ * A single dark, muted hue in shades — not the bright pack colours — so the room reads as
+ * one mature palette instead of scattered candy. Shades still differ enough that the
+ * nearest-neighbour pass below can keep touching names apart.
  */
 const PACK_COLOURS = [
-  "#BD582D", // sweet tamarind
-  "#C63437", // rasam
-  "#327749", // curry leaves
-  "#80654E", // chettinadu
-  "#AC4091", // sweet thai chilli
-  "#8A5F56", // tiramisu
+  "#4a4136", // deepest
+  "#544a3c",
+  "#5e5342",
+  "#685c49",
+  "#736550",
+  "#7d6e57", // lightest, still dark against the room
 ];
 
 /** Change this to reshuffle the whole room. */
