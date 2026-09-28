@@ -9,7 +9,7 @@ const NAMES = [
   "Kerala", "Punjab", "Assam", "Goa", "Tamil Nadu", "Maharashtra", "Rajasthan", "West Bengal",
   "Sikkim", "Gujarat", "Odisha", "Karnataka", "Telangana", "Himachal Pradesh", "Meghalaya", "Nagaland",
 ];
-const PUFFS = 6;
+const PUFFS = 0;
 
 /**
  * Deep shades of the room's own orange, so the names read as one tone pressed into the
