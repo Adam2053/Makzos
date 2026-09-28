@@ -12,17 +12,17 @@ const NAMES = [
 const PUFFS = 6;
 
 /**
- * A single dark, muted hue in shades — not the bright pack colours — so the room reads as
- * one mature palette instead of scattered candy. Shades still differ enough that the
- * nearest-neighbour pass below can keep touching names apart.
+ * Deep shades of the room's own orange, so the names read as one tone pressed into the
+ * wall. Shades still differ enough that the nearest-neighbour pass below can keep
+ * touching names apart.
  */
 const PACK_COLOURS = [
-  "#4a4136", // deepest
-  "#544a3c",
-  "#5e5342",
-  "#685c49",
-  "#736550",
-  "#7d6e57", // lightest, still dark against the room
+  "#3a130b",
+  "#44170d",
+  "#4e1a0f",
+  "#581e11",
+  "#632213",
+  "#6e2615",
 ];
 
 /** Change this to reshuffle the whole room. */

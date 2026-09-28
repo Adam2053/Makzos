@@ -7,7 +7,7 @@ export type Beam = { x: number; y: number; r: number };
 
 const NIGHT = "15 14 12";
 /** How dark the room is outside the beam: enough to hide detail, not enough to hide shapes. */
-const OUTSIDE = 0.92;
+const OUTSIDE = 0.96;
 
 export function createTorch(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("2d", { alpha: true })!;
