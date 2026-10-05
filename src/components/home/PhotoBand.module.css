@@ -1,0 +1,7 @@
+.band { position: relative; overflow: hidden; min-height: min(92svh, 820px); display: flex; align-items: flex-start; color: var(--white); font-family: var(--font-text), sans-serif; background: #111; }
+.photo { position: absolute; inset: 0; }
+.photo img { object-fit: cover; object-position: 60% 40%; }
+/* Darkened only where the words sit, the open sky at the top left. */
+.photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, rgb(0 0 0 / .62), rgb(0 0 0 / .1) 55%, transparent); }
+.copy { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 28px; padding-block: clamp(56px, 9vw, 120px); }
+.title { max-width: 11em; font-size: var(--t-h2); }

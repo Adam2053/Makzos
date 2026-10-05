@@ -1,0 +1,18 @@
+.footer { position: relative; z-index: 5; background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; padding-top: clamp(64px, 8vw, 112px); --focus: var(--black); }
+.top { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; }
+.tag { grid-column: 1 / 6; font-size: var(--t-h3); }
+.columns { grid-column: 7 / 13; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.colTitle { margin: 0 0 12px; font-size: .875rem; font-weight: 700; }
+.link { display: inline-block; padding-block: 6px; font-size: 1rem; text-decoration: none; }
+.link:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .25em; }
+.link:focus-visible { outline: 3px solid var(--black); outline-offset: 2px; }
+/* The full logo, as wide as the page allows: the last thing you see. */
+.logo { width: 100%; height: auto; margin-top: clamp(56px, 8vw, 112px); }
+.legal { padding-block: 24px 32px; font-size: .8125rem; }
+
+@media (max-width: 900px) {
+  .tag, .columns { grid-column: 1 / -1; }
+}
+@media (max-width: 520px) {
+  .columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

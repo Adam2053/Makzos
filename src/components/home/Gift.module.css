@@ -1,0 +1,29 @@
+.section { background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px); scroll-margin-top: var(--header-h); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 48px; align-items: center; }
+
+/* ---------- The sleeve ---------- */
+.preview { grid-column: 1 / 7; position: relative; justify-self: center; width: min(100%, 500px); padding-top: 26%; }
+.packs { position: absolute; left: 50%; top: 0; width: 70%; height: 46%; translate: -50% 0; }
+.packs img { position: absolute; left: 50%; bottom: 0; width: 34%; height: auto; border-radius: 6px; translate: -50% 0; transform-origin: 50% 250%; rotate: calc(var(--i) * 9deg); box-shadow: 0 10px 20px -8px rgb(0 0 0 / .5); }
+.sleeve { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12% 10% 10%; border-radius: 28px 28px 36px 36px; background: var(--paprika); color: var(--black); box-shadow: 0 30px 50px -24px rgb(0 0 0 / .45); text-align: center; }
+.sleeveLogo { width: 70%; height: auto; }
+.sleeveLine { font-weight: 600; }
+.tag { margin-top: 18px; width: 100%; padding: 18px 20px; border-radius: 18px; background: var(--white); text-align: left; rotate: -2deg; box-shadow: 0 8px 18px -10px rgb(0 0 0 / .4); }
+.tagTo { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.5rem; text-transform: uppercase; line-height: 1; overflow-wrap: anywhere; }
+.tagNote { margin-top: 8px; font-size: 1rem; line-height: 1.45; color: var(--quiet); overflow-wrap: anywhere; min-height: 2.9em; }
+
+/* ---------- The form ---------- */
+.copy { grid-column: 8 / 13; }
+.title { font-size: var(--t-h2); }
+.lede { margin-top: 20px; }
+.form { display: grid; gap: 16px; margin-top: 28px; justify-items: start; }
+.field { display: grid; gap: 6px; width: 100%; font-size: .875rem; font-weight: 700; }
+.field span { display: flex; justify-content: space-between; padding-inline: 4px; }
+.field em { font-style: normal; font-weight: 500; color: var(--quiet); }
+.field input, .field textarea { width: 100%; padding: 14px 20px; border: 2px solid var(--black); border-radius: 24px; background: var(--white); color: var(--black); font-size: 1rem; font-weight: 500; resize: vertical; }
+.field input { border-radius: 999px; }
+.field input:focus-visible, .field textarea:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
+
+@media (max-width: 960px) {
+  .preview, .copy { grid-column: 1 / -1; }
+}

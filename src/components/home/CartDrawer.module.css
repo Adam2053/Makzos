@@ -1,0 +1,38 @@
+.drawer {
+  position: fixed; inset: 0 0 0 auto; width: min(440px, 100vw); max-width: none; height: 100dvh; max-height: none; margin: 0;
+  padding: 0; border: 0; border-radius: 28px 0 0 28px; overflow: hidden;
+  background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; --focus: var(--black);
+  box-shadow: -24px 0 60px rgb(0 0 0 / .25);
+}
+.drawer::backdrop { background: rgb(0 0 0 / .45); }
+.inner { display: flex; flex-direction: column; height: 100%; }
+.head { display: flex; align-items: center; justify-content: space-between; padding: 24px 24px 12px 28px; }
+.title { font-size: 2.5rem; }
+.close { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--mist); transition: background-color .2s; }
+.close:hover { background: #e2e2e2; }
+.close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
+.close:focus-visible { outline: 3px solid var(--black); outline-offset: 2px; }
+
+.empty { display: grid; gap: 20px; justify-items: start; padding: 24px 28px; font-size: 1.0625rem; line-height: 1.5; }
+.emptySeed { width: 96px; height: auto; }
+
+.lines { flex: 1; overflow-y: auto; padding: 4px 20px; display: grid; align-content: start; gap: 10px; }
+.line { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; grid-template-areas: "thumb what what" "thumb qty price"; gap: 8px 14px; padding: 12px; border-radius: 20px; background: var(--mist); }
+.thumb { grid-area: thumb; width: 56px; height: 56px; border-radius: 50%; overflow: hidden; align-self: center; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 8%; }
+.what { grid-area: what; display: grid; gap: 2px; font-size: .9375rem; line-height: 1.35; }
+.what span { color: var(--quiet); font-size: .875rem; }
+.qty { grid-area: qty; display: inline-flex; align-items: center; justify-self: start; border-radius: 999px; background: var(--white); }
+.qty button { width: 36px; height: 36px; border: 0; border-radius: 50%; background: none; font-size: 1.125rem; font-weight: 600; }
+.qty button:hover { background: var(--black); color: var(--white); }
+.qty button:focus-visible { outline: 3px solid var(--black); outline-offset: -3px; }
+.qty output { min-width: 24px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+.linePrice { grid-area: price; align-self: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.foot { padding: 20px 28px 28px; }
+.saving { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: .9375rem; font-weight: 600; color: var(--quiet); }
+.subtotal { display: flex; justify-content: space-between; font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.75rem; text-transform: uppercase; line-height: 1; }
+.note { margin: 8px 0 16px; font-size: .875rem; color: var(--quiet); }
+.checkout { width: 100%; }
+
+@media (max-width: 480px) { .drawer { border-radius: 0; } }

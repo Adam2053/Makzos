@@ -1,0 +1,62 @@
+/*
+ * White counter, black type, and one big Paprika seed you can crunch. The dish on the first
+ * line changes; the other two lines never do.
+ */
+.hero { position: relative; overflow: clip; background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; min-height: calc(100svh - var(--header-h) - 40px); padding-block: clamp(32px, 6vh, 72px); }
+
+.copy { grid-column: 1 / 7; container-type: inline-size; }
+.title { font-size: min(var(--t-hero), 16cqi); }
+.line { display: block; overflow: hidden; padding-bottom: .05em; margin-bottom: -.05em; }
+.line > span { display: block; }
+/*
+ * The dish line is a fixed slot one headline-line tall; only the word inside it resizes to
+ * fit its name. So switching dishes never changes the height of anything on the page.
+ */
+.dishLine { height: calc(.95em + .05em); display: flex; align-items: flex-end; color: var(--paprika); white-space: nowrap; }
+.dishWord { font-size: min(1em, 100cqi / (var(--len) * .47)); }
+/* Always two lines tall, whichever description is showing, so the buttons below never move. */
+.sub { margin-top: 20px; max-width: 30em; min-height: 3em; color: var(--quiet); }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+
+/* ---------- Stories ---------- */
+.stories { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; }
+.story { display: grid; place-items: center; width: 60px; height: 60px; padding: 0; border: 0; border-radius: 50%; background: conic-gradient(var(--line) 0 0); transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+.story > span { display: block; width: 52px; height: 52px; border-radius: 50%; overflow: hidden; border: 3px solid var(--white); background: var(--field); }
+/* Zoomed onto the flavour name printed at the top left of each pack. */
+.story img { width: 100%; height: 100%; object-fit: cover; object-position: 0 0; scale: 2.3; transform-origin: 6% 8%; }
+.story:hover { transform: translateY(-3px); }
+/* The ring that says "this one's on the counter". */
+.story[aria-pressed="true"] { background: conic-gradient(var(--paprika) 0 0); transform: scale(1.12); }
+.story:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
+
+/* ---------- The counter ---------- */
+.stage { grid-column: 7 / 13; position: relative; justify-self: center; width: min(100%, (100svh - var(--header-h) - 120px) * .95); aspect-ratio: 1; }
+.markBtn { position: absolute; left: 0; top: 2%; width: 78%; padding: 0; border: 0; background: none; border-radius: 50%; cursor: pointer; }
+.markBtn:focus-visible { outline: 3px solid var(--black); outline-offset: 8px; }
+.mark { display: block; width: 100%; height: auto; overflow: visible; }
+/* Each part turns about its own centre, not the drawing's corner. */
+.part { transform-box: fill-box; transform-origin: 50% 50%; }
+.main { transform-origin: 50% 100%; }
+.piece { transform-origin: 0% 100%; }
+.burst path { transform-box: fill-box; transform-origin: 50% 100%; }
+.spray { position: absolute; left: 39%; top: 42%; width: 0; height: 0; pointer-events: none; z-index: 3; }
+.crumb { position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50% 40% 55% 45%; background: var(--paprika); }
+
+.packs { position: absolute; right: 0; bottom: 0; z-index: 2; display: grid; width: 42%; filter: drop-shadow(0 26px 24px rgb(0 0 0 / .28)); pointer-events: none; }
+.pack { grid-area: 1 / 1; }
+.pack:not(:first-child) { visibility: hidden; opacity: 0; }
+.pack img { width: 100%; height: auto; border-radius: 10px; rotate: 6deg; }
+.hint { position: absolute; left: 6%; bottom: 4%; font-size: .875rem; font-weight: 600; color: var(--quiet); }
+.hint::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--paprika); vertical-align: middle; animation: ping 1.6s ease-out infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 rgb(234 75 43 / .6); } 100% { box-shadow: 0 0 0 10px rgb(234 75 43 / 0); } }
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: minmax(0, 1fr); row-gap: 32px; min-height: 0; }
+  .copy, .stage { grid-column: 1; }
+  .stage { width: min(100%, 440px); }
+  /* One button per row, so a longer flavour name can't re-wrap the pair. */
+  .ctas > * { flex: 1 1 100%; }
+  .sub { min-height: 4.5em; }
+}
+@media (prefers-reduced-motion: reduce) { .hint::before { animation: none; } }
