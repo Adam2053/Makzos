@@ -1,0 +1,27 @@
+.section { position: relative; z-index: 4; margin-top: -40px; border-radius: 40px 40px 0 0; overflow: hidden; background: var(--paprika); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 136px); scroll-margin-top: var(--header-h); }
+.grid { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 32px; align-items: end; }
+.title { grid-column: 1 / 7; font-size: var(--t-h2); }
+.side { grid-column: 8 / 13; }
+.form { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 12px; margin-top: 28px; }
+.form > button { grid-column: 1 / -1; justify-self: start; }
+.field { display: grid; gap: 6px; font-size: .875rem; font-weight: 600; }
+.field > span { padding-left: 20px; }
+.field input, .field select {
+  min-height: 54px; padding: 0 20px; border: 2px solid var(--black); border-radius: 999px; background: var(--white); color: var(--black);
+  font-size: 1rem; font-weight: 500;
+}
+.field input::placeholder { color: #6b6b6b; }
+.field input:focus-visible, .field select:focus-visible { outline: 3px solid var(--black); outline-offset: 2px; }
+.done { margin-top: 28px; padding: 20px 24px; border-radius: 24px; background: var(--black); color: var(--white); font-size: 1.0625rem; font-weight: 600; line-height: 1.45; }
+
+/* A scatter of seeds behind the headline: paprika-filled ones read as holes in the field. */
+.seeds { position: absolute; inset: 0; pointer-events: none; }
+.seeds svg { position: absolute; height: auto; }
+
+@media (max-width: 900px) {
+  .title, .side { grid-column: 1 / -1; }
+  .section { border-radius: 28px 28px 0 0; margin-top: -28px; }
+}
+@media (max-width: 480px) {
+  .form { grid-template-columns: minmax(0, 1fr); }
+}

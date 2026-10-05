@@ -1,0 +1,13 @@
+/* A ribbon laid across the page at a slight angle, rather than a box between two sections. */
+.band { position: relative; z-index: 1; overflow: hidden; padding-block: clamp(56px, 7vw, 88px) clamp(40px, 5vw, 64px); background: var(--white); }
+.ribbon { width: 110%; margin-left: -5%; rotate: -2.5deg; background: var(--black); color: var(--white); }
+.track { display: flex; width: max-content; will-change: transform; }
+.run { display: flex; }
+.item {
+  display: inline-flex; align-items: center; gap: 28px; padding-right: 28px; padding-block: 16px; white-space: nowrap;
+  font-family: var(--font-display), sans-serif; font-weight: 700; text-transform: uppercase;
+  font-size: clamp(2rem, 1.3rem + 2.6vw, 3.75rem); line-height: 1;
+}
+/* The complete mark is the repeat unit; 40 px is its digital minimum (guide p.13). */
+.mark { width: clamp(44px, 4vw, 64px); height: auto; flex: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

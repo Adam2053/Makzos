@@ -1,0 +1,23 @@
+/* A dark sheet with round shoulders, laid over the white above it. */
+.section {
+  position: relative; z-index: 2; margin-top: -40px; border-radius: 40px 40px 0 0;
+  background: var(--black); color: var(--white); font-family: var(--font-text), sans-serif; --focus: var(--white);
+  padding-block: clamp(80px, 11vw, 144px); scroll-margin-top: var(--header-h);
+}
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 48px; align-items: start; }
+.copy { grid-column: 1 / 6; }
+.title { font-size: var(--t-h2); }
+.lede { margin-top: 24px; color: #d6d6d6; }
+.big { display: block; width: clamp(120px, 16vw, 240px); height: auto; margin-top: 48px; }
+
+.facts { grid-column: 7 / 13; }
+.claims { display: grid; gap: clamp(20px, 2.4vw, 32px); }
+.claim { display: grid; grid-template-columns: clamp(44px, 4.4vw, 64px) 1fr; align-items: center; gap: 20px; font-size: clamp(2rem, 1.5rem + 1.8vw, 3.25rem); }
+.bullet { width: 100%; height: auto; }
+.allergens { margin-top: 48px; max-width: 34em; font-size: 1rem; line-height: 1.6; color: #d6d6d6; }
+.allergens strong { color: var(--white); }
+
+@media (max-width: 900px) {
+  .copy, .facts { grid-column: 1 / -1; }
+  .section { border-radius: 28px 28px 0 0; margin-top: -28px; }
+}

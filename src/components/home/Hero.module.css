@@ -1,0 +1,95 @@
+/*
+ * Brand first: one paprika field, black type, and the pack resting on a round plate of the
+ * dish it comes from. No boxes: the plate is round, the edges are puffed, the seeds roll loose.
+ */
+.hero { position: relative; z-index: 2; background: var(--paprika); color: var(--black); font-family: var(--font-text), sans-serif; overflow-x: clip; scroll-margin-top: var(--header-h); }
+/* A puffed lower edge, like a row of makhanas, hanging over whatever comes next. */
+.hero::after {
+  content: ""; position: absolute; left: 0; right: 0; top: calc(100% - 1px); height: 22px; pointer-events: none;
+  background: radial-gradient(circle at 50% 0, var(--paprika) 0 21px, transparent 22px) 0 0 / 44px 22px repeat-x;
+}
+
+.grid {
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center;
+  min-height: calc(100svh - var(--header-h) - 40px);
+  padding-block: clamp(32px, 6vh, 72px) clamp(56px, 8vh, 96px);
+}
+.copy { grid-column: 1 / 7; container-type: inline-size; }
+/* Each line is about 5em wide, so it is capped by its column as well as by the screen and never re-breaks. */
+.title { font-size: min(var(--t-hero), 19cqi); white-space: nowrap; }
+/* Each line rises out of its own slot. */
+.line { display: block; overflow: hidden; padding-bottom: .05em; margin-bottom: -.05em; }
+.line > span { display: block; }
+.sub { margin-top: 20px; max-width: 26em; }
+
+/*
+ * The flavour picker: a tray in a darker shade of the field, each option a real mini pack
+ * and its name. The white pill is one element that slides (and re-wraps) between them.
+ */
+.picker {
+  position: relative; display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 4px;
+  width: fit-content; max-width: 100%; margin-top: 36px; padding: 6px; border-radius: 999px; background: rgb(0 0 0 / .14);
+}
+.pill { position: absolute; left: 0; top: 0; border-radius: 999px; background: var(--white); box-shadow: 0 6px 16px -6px rgb(0 0 0 / .35); pointer-events: none; }
+.option {
+  position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 18px 6px 8px;
+  border: 0; border-radius: 999px; background: none; color: var(--black); font-size: .9375rem; font-weight: 600; white-space: nowrap;
+}
+.option:focus-visible { outline: 3px solid var(--black); outline-offset: 2px; }
+.optPack { display: block; flex: none; width: 28px; filter: drop-shadow(0 3px 4px rgb(0 0 0 / .3)); rotate: -8deg; transition: rotate .3s; }
+.optPack img { display: block; width: 100%; height: auto; border-radius: 3px; }
+.option:hover .optPack { rotate: 0deg; }
+/* Until the script has measured the pill, the chosen option carries its own white. */
+.picker:not([data-ready]) .pill { display: none; }
+.picker:not([data-ready]) .option[aria-pressed="true"] { background: var(--white); }
+@container (max-width: 600px) {
+  .picker { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; border-radius: 30px; }
+}
+
+.ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin-top: 28px; }
+
+/* ---------- The stage ---------- */
+.stage { grid-column: 7 / 13; position: relative; justify-self: center; width: min(100%, (100svh - var(--header-h) - 140px) * .95); aspect-ratio: 1; }
+.plate { position: absolute; inset: 0 0 auto auto; width: 86%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: var(--black); box-shadow: 0 0 0 10px rgb(0 0 0 / .08); }
+.dish { position: absolute; inset: 0; }
+/* Closer in on the food than the pack is, so the plate and the bag never show the same picture. */
+.dish img { object-fit: cover; transform: scale(1.6); }
+.dish:not(:first-child), .pack:not(:first-child) { visibility: hidden; opacity: 0; }
+
+.packs { position: absolute; left: 2%; bottom: -2%; z-index: 3; display: grid; width: 42%; filter: drop-shadow(0 26px 24px rgb(0 0 0 / .3)); will-change: transform; }
+.pack { grid-area: 1 / 1; }
+.pack img { width: 100%; height: auto; border-radius: 10px; rotate: -6deg; }
+
+.loose { position: absolute; z-index: 4; display: block; pointer-events: none; }
+.looseInner { display: block; }
+.looseInner svg { display: block; width: 100%; height: auto; }
+
+/* ---------- The intro: the launch page's wordmark, then a flight into the header ---------- */
+.intro { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; pointer-events: none; visibility: hidden; }
+.fly { width: min(86vw, 72rem); transform-origin: 0 0; will-change: transform; }
+.word { display: flex; align-items: flex-start; will-change: transform; }
+.left, .right { display: block; overflow: hidden; }
+.left { width: 61.83%; }
+.right { width: 17.67%; }
+.slide { display: flex; align-items: flex-start; will-change: transform; }
+.glyph { display: block; }
+.glyph img { display: block; width: 100%; height: auto; }
+.mark { position: relative; z-index: 1; }
+
+:global(html[data-intro="full"]) .intro { visibility: visible; }
+:global(html[data-intro="full"]) :global(#nav-logo) { opacity: 0; }
+:global(html[data-intro]) .line > span { transform: translateY(105%); }
+:global(html[data-intro]) .sub,
+:global(html[data-intro]) .picker,
+:global(html[data-intro]) .ctas,
+:global(html[data-intro]) .packs,
+:global(html[data-intro]) .plate { opacity: 0; }
+:global(html[data-intro]) .loose { transform: scale(0); }
+
+/* ---------- Smaller screens: copy, then the stage ---------- */
+@media (max-width: 900px) {
+  .grid { grid-template-columns: minmax(0, 1fr); min-height: 0; row-gap: 40px; padding-top: 32px; }
+  .copy, .stage { grid-column: 1; }
+  .stage { width: min(100%, 520px); }
+  .ctas > button { flex: 1 1 100%; }
+}
