@@ -1,0 +1,49 @@
+/*
+ * A dark room, centred: the line in Paprika, the hand of packs under it, the sale under that.
+ * Everything sits on one vertical axis, so the eye only travels down.
+ */
+.hero { position: relative; overflow: clip; background: var(--black); color: var(--white); font-family: var(--font-text), sans-serif; text-align: center; }
+/* A low Paprika glow behind the hand, like a lamp over the counter. */
+.hero::before { content: ""; position: absolute; left: 50%; bottom: -30%; width: min(1100px, 140vw); aspect-ratio: 1; translate: -50% 0; border-radius: 50%; background: radial-gradient(closest-side, rgb(234 75 43 / .32), rgb(234 75 43 / .08) 60%, transparent); pointer-events: none; }
+
+.inner { position: relative; display: flex; flex-direction: column; align-items: center; min-height: calc(100svh - var(--header-h) - 40px); padding-block: clamp(28px, 5vh, 72px) clamp(32px, 5vh, 64px); }
+/* Sized by height as well as width, so the hand and the buttons fit on the first screen. */
+.title { color: var(--paprika); font-size: min(clamp(3rem, 1.4rem + 6.6vw, 8.5rem), 11.5svh); }
+.line { display: block; overflow: hidden; padding-bottom: .05em; margin-bottom: -.05em; }
+.line > span { display: block; }
+.sub { margin-top: 20px; max-width: 34em; color: var(--quiet); }
+
+/* ---------- The hand ---------- */
+.hand { --card: min(clamp(92px, 12.5vw, 190px), 19svh); --k: 1; position: relative; width: 100%; height: calc(var(--card) * 1.42); margin-top: clamp(20px, 4vh, 48px); }
+.card {
+  position: absolute; left: 50%; bottom: 0; width: var(--card); padding: 0; border: 0; background: none; border-radius: 10px;
+  translate: -50% 0; transform: rotate(calc(var(--a) * var(--k))); transform-origin: 50% 320%;
+}
+.lift { display: block; transition: translate .45s cubic-bezier(.3, 1.5, .5, 1); }
+.lift img { display: block; width: 100%; height: auto; border-radius: 10px; box-shadow: 0 18px 30px -12px rgb(0 0 0 / .8); transition: filter .3s; }
+.card:not([aria-pressed="true"]) .lift img { filter: brightness(.62) saturate(.8); }
+.card:hover .lift { translate: 0 -7%; }
+.card:hover .lift img { filter: none; }
+.card[aria-pressed="true"] .lift { translate: 0 -20%; }
+.card:focus-visible { outline: 3px solid var(--paprika); outline-offset: 4px; }
+
+/* ---------- The sale ---------- */
+.buy { position: relative; z-index: 30; display: flex; flex-direction: column; align-items: center; gap: 16px; margin-top: clamp(16px, 3vh, 32px); }
+.picked { display: grid; gap: 6px; }
+.pickedName { font-size: var(--t-h3); }
+.pickedLine { color: var(--quiet); font-size: 1rem; }
+.ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+
+.seed { position: absolute; z-index: 1; height: auto; pointer-events: none; }
+.seedA { left: 6%; top: 14%; width: clamp(56px, 7vw, 110px); rotate: -16deg; }
+.seedB { right: 8%; top: 26%; width: clamp(44px, 5vw, 80px); rotate: 22deg; }
+.seedC { right: 14%; bottom: 14%; width: clamp(64px, 8vw, 120px); rotate: -6deg; }
+
+@media (max-width: 700px) {
+  .hand { --k: .62; --card: 30vw; }
+  /* Small screens keep one seed, up in the corner, clear of the headline. */
+  .seedA, .seedC { display: none; }
+  .seedB { top: 1.5%; right: 4%; width: 40px; }
+  .ctas > * { flex: 1 1 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .lift { transition: none; } }

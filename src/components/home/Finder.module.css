@@ -1,0 +1,48 @@
+/* A raised, rounded room inside the dark one: the quiz is the page's conversation. */
+.section { position: relative; padding: clamp(24px, 4vw, 48px) var(--gutter); background: var(--black); color: var(--white); font-family: var(--font-text), sans-serif; scroll-margin-top: var(--header-h); }
+.inner { position: relative; display: flex; flex-direction: column; align-items: center; padding: clamp(56px, 8vw, 104px) clamp(20px, 4vw, 64px); border-radius: clamp(28px, 4vw, 56px); background: var(--soot); text-align: center; overflow: hidden; }
+.mark { width: clamp(64px, 6vw, 88px); height: auto; margin-bottom: 20px; }
+.title { font-size: var(--t-h2); max-width: 12em; }
+
+/* Three steps, numbered because they genuinely are a sequence. */
+.steps { display: flex; gap: clamp(12px, 3vw, 32px); margin-top: 32px; font-size: .875rem; font-weight: 600; color: var(--quiet); }
+.stepDot { display: inline-flex; align-items: center; gap: 8px; }
+.stepDot span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 2px solid currentColor; font-size: .8125rem; }
+.stepDot[data-on] { color: var(--white); }
+.stepDot[data-on] span { border-color: var(--paprika); background: var(--paprika); color: var(--black); }
+
+.stage { width: 100%; min-height: 340px; margin-top: clamp(32px, 4vw, 48px); }
+.question { font-size: var(--t-sub); font-weight: 600; }
+.options { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
+.option {
+  display: inline-flex; align-items: center; gap: 14px; min-height: 68px; padding: 8px 26px 8px 10px;
+  border: 2px solid var(--line); border-radius: 999px; background: var(--black); color: var(--white);
+  font-size: 1.0625rem; font-weight: 600; transition: border-color .2s, background-color .2s, color .2s, translate .25s;
+}
+.option:hover { border-color: var(--paprika); translate: 0 -3px; }
+.option:focus-visible { outline: 3px solid var(--paprika); outline-offset: 3px; }
+.optionWide { padding: 10px 32px 10px 14px; font-size: 1.25rem; }
+.optionPacks { display: flex; }
+.optionPacks img { width: 34px; height: auto; border-radius: 3px; box-shadow: 0 4px 8px rgb(0 0 0 / .5); }
+.optionPacks img + img { margin-left: -12px; rotate: 10deg; }
+.optionPacks img:first-child { rotate: -8deg; }
+.optionSeed { width: 40px; height: auto; }
+.back { display: inline-block; margin-top: 24px; padding: 0; border: 0; background: none; color: var(--white); font-size: .9375rem; }
+
+/* ---------- The answer ---------- */
+.result { display: grid; grid-template-columns: auto minmax(0, 30rem); justify-content: center; align-items: center; gap: clamp(24px, 5vw, 64px); text-align: left; }
+.resultPack { width: clamp(150px, 18vw, 240px); rotate: -6deg; filter: drop-shadow(0 24px 24px rgb(0 0 0 / .6)); }
+.resultPack img { width: 100%; height: auto; border-radius: 10px; }
+.resultFan { position: relative; width: clamp(220px, 26vw, 340px); aspect-ratio: 1.15; }
+.resultFan img { position: absolute; left: 50%; bottom: 0; width: 46%; height: auto; border-radius: 8px; translate: -50% 0; transform-origin: 50% 240%; rotate: calc((var(--i) - 1.5) * 12deg); box-shadow: 0 14px 24px -8px rgb(0 0 0 / .7); }
+.resultKicker { color: var(--paprika); font-weight: 700; }
+.resultName { margin-top: 6px; font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.75rem); }
+.resultLine { margin-top: 12px; color: var(--quiet); line-height: 1.5; }
+.resultCtas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+
+@media (max-width: 760px) {
+  .result { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+  .resultCtas { justify-content: center; }
+  .option { width: 100%; justify-content: flex-start; }
+  .steps { font-size: .8125rem; }
+}

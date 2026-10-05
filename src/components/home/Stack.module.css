@@ -1,0 +1,36 @@
+.section { position: relative; background: var(--black); color: var(--white); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px) clamp(48px, 6vw, 80px); scroll-margin-top: var(--header-h); }
+.head { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: clamp(32px, 5vw, 64px); }
+.title { font-size: var(--t-h2); max-width: 11em; color: var(--paprika); }
+.lede { margin-top: 20px; color: var(--quiet); }
+
+.list { padding-inline: var(--gutter); }
+/* Each card sticks a touch lower than the last, so the edges of the stack show. */
+.card { position: sticky; top: calc(var(--header-h) + 20px + var(--i) * 10px); height: calc(100svh - var(--header-h) - 60px); min-height: 520px; max-height: 820px; margin-inline: auto; max-width: var(--max); }
+.card + .card { margin-top: 12vh; }
+.face {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: center; gap: 4vw;
+  height: 100%; padding: clamp(32px, 4.5vw, 72px); border-radius: clamp(28px, 3.6vw, 52px); overflow: hidden;
+  background: var(--field); color: var(--ink); --focus: var(--ink); transform-origin: 50% 0;
+  box-shadow: 0 -20px 50px -20px rgb(0 0 0 / .7);
+}
+
+.count { font-size: .9375rem; font-weight: 700; opacity: .8; }
+.name { margin-top: 12px; font-size: clamp(3rem, 1.6rem + 5vw, 7.5rem); line-height: .9; }
+.inspired { margin-top: 20px; font-size: var(--t-lede); font-weight: 600; line-height: 1.4; }
+.line { margin-top: 8px; line-height: 1.5; opacity: .85; }
+.buy { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 32px; }
+.weight { font-weight: 600; }
+
+.art { position: relative; justify-self: center; width: min(100%, 60svh); aspect-ratio: 1; }
+.plate { position: absolute; top: 0; right: 0; width: 80%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #000; box-shadow: 0 0 0 12px rgb(0 0 0 / .14); }
+.plate img { object-fit: cover; transform: scale(1.5); }
+.pack { position: absolute; left: 2%; bottom: 0; z-index: 2; width: 44%; filter: drop-shadow(0 24px 22px rgb(0 0 0 / .4)); }
+.pack img { width: 100%; height: auto; border-radius: 10px; }
+.seed { position: absolute; right: -2%; bottom: 6%; z-index: 3; width: 20%; height: auto; rotate: 16deg; }
+
+@media (max-width: 760px) {
+  .card { position: relative; top: auto; height: auto; min-height: 0; max-height: none; }
+  .card + .card { margin-top: 16px; }
+  .face { grid-template-columns: minmax(0, 1fr); padding: 28px 22px 32px; }
+  .art { order: -1; width: min(100%, 360px); }
+}

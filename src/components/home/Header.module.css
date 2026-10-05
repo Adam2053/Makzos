@@ -1,0 +1,31 @@
+.notice {
+  padding: 10px var(--gutter); background: var(--paprika); color: var(--black); --focus: var(--black);
+  font-family: var(--font-text), sans-serif; font-size: var(--t-small); font-weight: 600; line-height: 1.4; text-align: center;
+}
+
+/* Black, and slightly see-through once the page scrolls under it. */
+.header { position: sticky; top: 0; z-index: 40; background: rgb(0 0 0 / .86); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--white); font-family: var(--font-text), sans-serif; }
+.inner { display: flex; align-items: center; gap: 2rem; height: var(--header-h); }
+.brand { display: block; flex: none; border-radius: 4px; }
+/* 160 px is the digital minimum for the full logo (guide p.13). */
+.logo { width: clamp(160px, 14vw, 188px); height: auto; }
+.nav { display: flex; gap: clamp(1rem, 2.4vw, 2rem); margin-left: auto; }
+.navLink { font-size: .9375rem; font-weight: 600; text-decoration: none; padding-block: .5rem; background: linear-gradient(var(--paprika) 0 0) left bottom / 0 2px no-repeat; transition: background-size .25s, color .25s; }
+.navLink:hover { background-size: 100% 2px; color: var(--paprika); }
+
+/* The bag is a bag: an icon with its count riding on its shoulder. */
+.bag { position: relative; display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--white); transition: background-color .2s; }
+.bag:hover { background: rgb(255 255 255 / .1); }
+.bagIcon { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.count {
+  position: absolute; top: 4px; right: 2px; display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px;
+  border-radius: 999px; background: var(--paprika); color: var(--black); font-size: .6875rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  transform: scale(0); transition: transform .3s cubic-bezier(.3, 1.6, .5, 1);
+}
+.count[data-on] { transform: scale(1); }
+.brand:focus-visible, .navLink:focus-visible, .bag:focus-visible { outline: 3px solid var(--paprika); outline-offset: 3px; }
+
+@media (max-width: 860px) {
+  .nav { display: none; }
+  .bag { margin-left: auto; }
+}

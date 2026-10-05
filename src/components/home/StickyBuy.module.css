@@ -1,0 +1,5 @@
+.bar { display: none; }
+@media (max-width: 720px) {
+  .bar { position: fixed; inset: auto 0 0; z-index: 35; display: block; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: transparent; font-family: var(--font-text), sans-serif; }
+  .cta { width: 100%; }
+}
