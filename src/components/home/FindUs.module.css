@@ -1,0 +1,26 @@
+.section { background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px) 0; scroll-margin-top: var(--header-h); }
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(32px, 4vw, 56px); }
+.title { font-size: var(--t-h2); max-width: 11em; }
+.lede { max-width: 24em; color: var(--quiet); }
+
+/* One tile a store, each in that store's own colour, the way a flavour's card takes the flavour's. */
+.stores { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 24px); }
+.store { display: flex; flex-direction: column; gap: 4px; min-height: clamp(260px, 24vw, 340px); padding: clamp(20px, 2.2vw, 32px); border-radius: 32px; background: var(--field); color: var(--ink); text-decoration: none; transition: transform .35s cubic-bezier(.3, 1.6, .5, 1), box-shadow .25s; }
+.store:hover { transform: translateY(-6px) rotate(-1deg); box-shadow: 0 24px 32px -18px rgb(0 0 0 / .45); }
+.store:focus-visible { outline: 3px solid var(--black); outline-offset: 4px; }
+/* The store's own icon, whole, on a white keyline so it holds its edge on a tile of its own colour. */
+.icon { width: clamp(72px, 7.5vw, 112px); height: auto; margin-bottom: 20px; border-radius: 22%; box-shadow: 0 0 0 3px var(--white), 0 14px 22px -10px rgb(0 0 0 / .5); }
+.kind { font-size: var(--t-small); font-weight: 600; }
+.name { font-size: clamp(1.75rem, 1.2rem + 1.8vw, 3rem); }
+.go { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; font-size: .9375rem; font-weight: 700; }
+.go svg { flex: none; width: 44px; height: 44px; padding: 11px; border-radius: 50%; background: var(--ink); fill: none; stroke: var(--field); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; transition: rotate .3s cubic-bezier(.3, 1.6, .5, 1); }
+.store:hover .go svg { rotate: 45deg; }
+
+@media (max-width: 1000px) { .stores { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) {
+  .store { min-height: 200px; border-radius: 24px; padding: 16px; }
+  .icon { margin-bottom: 12px; }
+  .go { font-size: 0; }
+  .go svg { margin-left: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .store, .go svg { transition: none; } }

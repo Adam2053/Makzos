@@ -1,0 +1,53 @@
+/*
+ * White counter, black type, one Paprika seed. The banner is laid out like the wordmark:
+ * letters either side, the broken makhana in the middle.
+ */
+.banner { position: relative; overflow: clip; background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; }
+.inner { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100svh - var(--header-h) - 40px); padding-block: clamp(32px, 5vh, 64px); text-align: center; }
+
+/* Sized from the screen's shorter side, so the whole lockup and the buttons fit above the fold. */
+.lockup { --type: min(17vw, 14.5svh, 13rem); --mark: calc(var(--type) * 1.9); position: relative; }
+.title { display: flex; flex-direction: column; align-items: center; gap: calc(var(--mark) * 1.02); font-size: var(--type); }
+.line { display: block; overflow: hidden; padding-bottom: .05em; margin-bottom: -.05em; white-space: nowrap; }
+.line > span { display: block; }
+.accent { color: var(--paprika); }
+
+/* The seed fills the gap between the lines; clear of the first, its foot just resting on the second. */
+.markBtn { position: absolute; left: 50%; top: 50%; height: var(--mark); aspect-ratio: 125 / 144.36; translate: -50% -50%; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; }
+.markBtn:focus-visible { outline: 3px solid var(--black); outline-offset: 8px; }
+.mark { display: block; width: 100%; height: 100%; overflow: visible; }
+/* Each part turns about its own centre, not the drawing's corner. */
+.part { transform-box: fill-box; transform-origin: 50% 50%; }
+.main { transform-origin: 50% 100%; }
+.piece { transform-origin: 0% 100%; }
+.burst path { transform-box: fill-box; transform-origin: 50% 100%; }
+.spray { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; z-index: 3; }
+.crumb { position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50% 40% 55% 45%; background: var(--paprika); }
+
+.sub { margin-top: clamp(16px, 3vh, 28px); max-width: 32em; color: var(--quiet); }
+.ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 24px; }
+/* Clean ingredients support the story; they never lead it (guide p.3). */
+.claims { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 20px; margin-top: 24px; font-size: var(--t-small); font-weight: 600; }
+.claims li { display: flex; align-items: center; gap: 8px; }
+.claims li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--paprika); }
+
+/* ---------- The dishes either side ---------- */
+/* Only where there's room beside the lockup; on narrower screens the words have the stage. */
+.dishes { display: none; }
+@media (min-width: 1200px) {
+  .dishes { display: block; position: absolute; inset: 0; pointer-events: none; }
+  .inner { position: relative; z-index: 1; }
+  .dish { position: absolute; width: var(--d); margin: 0; }
+  .plate { position: relative; display: block; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: var(--mist); box-shadow: 0 0 0 6px var(--white), 0 0 0 9px var(--field), 0 30px 40px -20px rgb(0 0 0 / .4); }
+  .plate img { object-fit: cover; transform: scale(1.2); }
+  .dish figcaption { position: absolute; left: 50%; bottom: -6px; translate: -50% 0; padding: 7px 16px; border-radius: 999px; background: var(--field); color: var(--ink); font-size: var(--t-small); font-weight: 700; line-height: 1.1; white-space: nowrap; }
+  .leftTop { --d: clamp(180px, 17vw, 320px); left: 4vw; top: 9%; rotate: -5deg; }
+  .leftBottom { --d: clamp(130px, 11.5vw, 220px); left: 13vw; bottom: 9%; rotate: 4deg; }
+  .rightTop { --d: clamp(130px, 11.5vw, 220px); right: 13vw; top: 8%; rotate: 5deg; }
+  .rightBottom { --d: clamp(180px, 17vw, 320px); right: 4vw; bottom: 10%; rotate: -4deg; }
+}
+
+@media (max-width: 600px) {
+  .ctas { width: 100%; }
+  .ctas > * { flex: 1 1 auto; }
+}

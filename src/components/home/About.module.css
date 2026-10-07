@@ -1,0 +1,17 @@
+.section { background: var(--black); color: var(--white); font-family: var(--font-text), sans-serif; --focus: var(--paprika); padding-block: clamp(72px, 10vw, 128px); scroll-margin-top: var(--header-h); border-radius: clamp(28px, 4vw, 56px); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; align-items: center; }
+
+.photo { grid-column: 1 / 7; position: relative; aspect-ratio: 5 / 4; border-radius: 32px; overflow: hidden; background: #111; }
+/* Cropped so the pot and the bowl, the only colour in the frame, are never cut (guide p.26). */
+.photo img { object-fit: cover; object-position: 55% 70%; }
+
+.copy { grid-column: 8 / 13; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+.title { font-size: var(--t-h2); }
+.title span { color: var(--paprika); }
+.claims { display: grid; gap: 10px; font-weight: 600; }
+.claims li { display: flex; align-items: center; gap: 12px; }
+.claims li::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--paprika); }
+
+@media (max-width: 960px) {
+  .photo, .copy { grid-column: 1 / -1; }
+}

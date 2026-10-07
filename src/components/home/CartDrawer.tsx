@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { BOX_SIZE, PACK_H, PACK_W, byId, inr } from "@/lib/products";
 import { linePrice, useCart, type Line } from "@/lib/cart";
@@ -50,7 +51,7 @@ export function CartDrawer() {
           <div className={styles.empty}>
             <Makhana variant="outline" className={styles.emptySeed} />
             <p>Your bag is empty. Start with a dish you already know.</p>
-            <a href="#shop" className={ui.btn} onClick={() => setOpen(false)}>Shop the flavours</a>
+            <Link href="/shop" className={ui.btn} onClick={() => setOpen(false)}>Shop the flavours</Link>
           </div>
         ) : (
           <>

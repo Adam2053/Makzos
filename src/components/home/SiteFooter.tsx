@@ -1,11 +1,12 @@
 import Image from "next/image";
+import Link from "next/link";
 import ui from "./ui.module.css";
 import styles from "./SiteFooter.module.css";
 
 const COLUMNS = [
-  { title: "Shop", links: [["Make a mix", "#mix"], ["Flavour map", "#map"], ["Gift a box", "#gift"]] },
-  { title: "Help", links: [["Delivery", "#deliver"], ["Contact us", "mailto:hello@makzos.com"]] },
-  { title: "Follow", links: [["Instagram", "https://instagram.com/"]] },
+  { title: "Shop", links: [["Shop all", "/shop"], ["Build a box", "/#box"], ["Find your flavour", "/#map"], ["Where to buy", "/#find"]] },
+  { title: "Makzo's", links: [["Our story", "/about"], ["FAQ", "/#faq"], ["Contact us", "mailto:hello@makzos.com"]] },
+  { title: "Follow", links: [["Join the list", "/#community"], ["Instagram", "https://instagram.com/"]] },
 ];
 
 export function SiteFooter() {
@@ -18,7 +19,9 @@ export function SiteFooter() {
             <nav key={c.title} aria-label={c.title}>
               <h2 className={styles.colTitle}>{c.title}</h2>
               <ul>
-                {c.links.map(([label, href]) => <li key={label}><a href={href} className={styles.link}>{label}</a></li>)}
+                {c.links.map(([label, href]) => <li key={label}>
+                  {href.startsWith("/") ? <Link href={href} className={styles.link}>{label}</Link> : <a href={href} className={styles.link}>{label}</a>}
+                </li>)}
               </ul>
             </nav>
           ))}

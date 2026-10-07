@@ -1,0 +1,68 @@
+.section { background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px); scroll-margin-top: var(--header-h); }
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(32px, 4vw, 56px); }
+.title { font-size: var(--t-h2); }
+.lede { max-width: 26em; color: var(--quiet); }
+
+.side { flex: 1 1 100%; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.arrows { display: flex; gap: 8px; flex: none; }
+.arrows button { display: grid; place-items: center; width: 54px; height: 54px; padding: 0; border: 2px solid var(--black); border-radius: 50%; background: var(--white); color: var(--black); transition: background-color .2s, color .2s; }
+.arrows button:hover { background: var(--black); color: var(--white); }
+.arrows button:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
+.arrows svg { display: block; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Videos, each with its pack ---------- */
+/* One row that snaps clip by clip, starting on the page's left edge and running off the right. */
+.bleed { --edge: max(var(--gutter), (100% - var(--max)) / 2); }
+.clips { display: grid; grid-auto-flow: column; grid-auto-columns: clamp(240px, 22vw, 320px); gap: clamp(12px, 1.6vw, 24px); overflow-x: auto; padding: 4px var(--edge) 12px; scroll-padding-inline: var(--edge); scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; overflow-anchor: none; }
+.clips::-webkit-scrollbar { display: none; }
+.clips:focus-visible { outline: 3px solid var(--paprika); outline-offset: -3px; }
+.clip { scroll-snap-align: start; }
+.clip { display: grid; gap: 10px; }
+.frame { position: relative; aspect-ratio: 9 / 16; border-radius: 28px; overflow: hidden; background: #111; }
+.frame img, .frame video { width: 100%; height: 100%; object-fit: cover; }
+.film { position: absolute; inset: 0; display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: pointer; }
+.film:focus-visible { outline: 3px solid var(--paprika); outline-offset: -3px; border-radius: 28px; }
+.play { position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--white); color: var(--black); box-shadow: 0 6px 16px rgb(0 0 0 / .35); transition: transform .25s cubic-bezier(.3, 1.6, .5, 1), background-color .2s; }
+.film:hover .play { transform: scale(1.1); background: var(--paprika); }
+.play svg { width: 22px; height: 22px; fill: currentColor; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.play[data-on] svg { fill: none; stroke-width: 3; }
+.tag, .by { position: absolute; left: 12px; padding: 6px 12px; border-radius: 999px; font-size: .8125rem; font-weight: 700; }
+.tag { top: 12px; background: var(--white); color: var(--black); pointer-events: none; }
+.by { bottom: 12px; background: rgb(0 0 0 / .7); color: var(--white); pointer-events: none; }
+
+.product { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 999px; background: var(--mist); }
+.thumb { flex: none; width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: var(--field); }
+.thumb img { width: 100%; height: 100%; object-fit: cover; object-position: 0 0; scale: 2.3; transform-origin: 6% 8%; }
+.what { display: grid; min-width: 0; font-size: .9375rem; line-height: 1.25; }
+.what strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.what span { color: var(--quiet); font-size: var(--t-small); }
+.add { flex: none; margin-left: auto; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: var(--black); color: var(--white); font-size: 1.375rem; font-weight: 600; line-height: 1; transition: background-color .2s, color .2s; }
+.add:hover { background: var(--paprika); color: var(--black); }
+.add:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
+
+/* ---------- Reviews ---------- */
+.reviews { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 24px); margin-top: clamp(32px, 4vw, 56px); }
+.review { display: flex; flex-direction: column; gap: 20px; padding: clamp(20px, 2.4vw, 32px); border-radius: 28px; background: var(--mist); }
+.review blockquote { margin: 0; font-size: var(--t-lede); line-height: 1.45; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.stars { display: flex; gap: 2px; }
+.stars svg { width: 20px; height: 20px; fill: rgb(0 0 0 / .14); }
+.stars svg[data-on] { fill: var(--paprika); }
+/* Says on the card that we wrote it, so a sample can't pass for a customer. */
+.sample { padding: 4px 10px; border: 1.5px dashed var(--quiet); border-radius: 999px; color: var(--quiet); font-size: .75rem; font-weight: 700; white-space: nowrap; }
+.who { display: flex; align-items: center; gap: 12px; margin-top: auto; font-size: .9375rem; line-height: 1.3; }
+.who span span { display: block; color: var(--quiet); font-size: var(--t-small); }
+/* An empty slot looks empty: a dashed outline, never a stand-in quote. */
+.blank { background: transparent; border: 2px dashed var(--line); color: var(--quiet); font-size: 1rem; line-height: 1.5; }
+.blankSeed { width: 48px; height: auto; }
+
+@media (max-width: 1000px) {
+  .reviews { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .reviews { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  .clips { grid-auto-columns: min(62vw, 260px); }
+  .arrows { display: none; }
+}

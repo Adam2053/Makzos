@@ -24,7 +24,7 @@ export function PhotoBand() {
       </figure>
       <div className={`${ui.shell} ${styles.copy}`}>
         <h2 id="band-title" className={`${ui.display} ${styles.title}`}>On every pack, only the dish is in colour.</h2>
-        <a href="#map" className={ui.btnPaprika}>Find yours on the map</a>
+        <a href="#map" className={ui.btnPaprika}>Find your flavour</a>
       </div>
     </section>
   );

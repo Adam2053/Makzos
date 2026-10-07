@@ -1,0 +1,43 @@
+.section { background: var(--mist); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px); scroll-margin-top: var(--header-h); border-radius: clamp(28px, 4vw, 56px); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; align-items: center; }
+
+.copy { grid-column: 1 / 6; }
+.title { font-size: var(--t-h2); }
+.lede { margin-top: 20px; }
+.presets { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.preset { min-height: 46px; padding: 0 20px; border: 2px solid var(--black); border-radius: 999px; background: transparent; color: var(--black); font-size: .9375rem; font-weight: 600; transition: background-color .2s, color .2s; }
+.preset:hover { background: var(--black); color: var(--white); }
+.preset:focus-visible, .chip:focus-visible, .remove:focus-visible { outline: 3px solid var(--paprika); outline-offset: 3px; }
+
+/* ---------- The box ---------- */
+.builder { grid-column: 7 / 13; }
+/* The tray is the box seen from above: black card, four wells. */
+.tray { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(8px, 1.2vw, 16px); padding: clamp(12px, 1.6vw, 24px); border-radius: 32px; background: var(--black); }
+.slot { position: relative; aspect-ratio: 960 / 1279; border-radius: 14px; border: 2px dashed rgb(255 255 255 / .35); }
+.slot[data-full] { border-color: transparent; }
+.empty { position: absolute; inset: 0; display: grid; place-items: center; color: rgb(255 255 255 / .6); font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.75rem, 3vw, 2.75rem); }
+.remove { position: absolute; inset: 0; padding: 0; border: 0; border-radius: 12px; background: var(--field); overflow: visible; animation: drop .35s cubic-bezier(.3, 1.6, .5, 1); }
+.remove img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.remove span { position: absolute; right: -8px; top: -8px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--white); color: var(--black); font-size: 1.125rem; font-weight: 700; line-height: 1; box-shadow: 0 2px 6px rgb(0 0 0 / .35); }
+.remove:hover span { background: var(--paprika); }
+@keyframes drop { from { transform: translateY(-18px) scale(.9); opacity: 0; } }
+
+/* ---------- The flavours ---------- */
+.picker { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.chip { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 4px 18px 4px 4px; border: 0; border-radius: 999px; background: var(--white); color: var(--black); font-size: .9375rem; font-weight: 600; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1), box-shadow .2s; }
+.chip:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 16px -8px rgb(0 0 0 / .35); }
+.chip:disabled { cursor: not-allowed; opacity: .5; }
+.face { display: block; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--field); }
+/* Zoomed onto the flavour name printed at the top left of each pack. */
+.face img { width: 100%; height: 100%; object-fit: cover; object-position: 0 0; scale: 2.3; transform-origin: 6% 8%; }
+
+.foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-top: 28px; }
+.status { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.75rem; line-height: 1; text-transform: uppercase; }
+
+@media (max-width: 960px) {
+  .copy, .builder { grid-column: 1 / -1; }
+}
+@media (max-width: 520px) {
+  .foot > button { flex: 1 1 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .remove { animation: none; } }

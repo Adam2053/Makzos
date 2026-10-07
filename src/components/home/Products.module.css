@@ -1,9 +1,26 @@
 .section { position: relative; background: var(--mist); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px) clamp(40px, 5vw, 64px); scroll-margin-top: var(--header-h); border-radius: clamp(28px, 4vw, 56px) clamp(28px, 4vw, 56px) 0 0; }
 .head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(32px, 4vw, 56px); }
 .title { font-size: var(--t-h2); }
+.side { display: flex; align-items: flex-end; gap: 24px; }
+/* With arrows, the line takes its own row: words on the left, arrows on the right edge. */
+.side:has(.arrows) { flex: 1 1 100%; justify-content: space-between; }
 .lede { max-width: 26em; }
+.arrows { display: flex; gap: 8px; flex: none; }
+.arrows button { display: grid; place-items: center; width: 54px; height: 54px; padding: 0; border: 2px solid var(--black); border-radius: 50%; background: var(--white); color: var(--black); transition: background-color .2s, color .2s; }
+.arrows button:hover { background: var(--black); color: var(--white); }
+.arrows button:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
+.arrows svg { display: block; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(28px, 3vw, 44px) clamp(16px, 2vw, 28px); }
+/*
+ * The sideways approach: one row that snaps card by card. It starts on the page's left edge
+ * and runs off the right of the screen.
+ */
+.bleed { --edge: max(var(--gutter), (100% - var(--max)) / 2); }
+.rail { display: grid; grid-auto-flow: column; grid-auto-columns: clamp(220px, 21vw, 290px); gap: clamp(16px, 2vw, 28px); overflow-x: auto; padding: 8px var(--edge) 16px; scroll-padding-inline: var(--edge); scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+.rail::-webkit-scrollbar { display: none; }
+.rail > li { scroll-snap-align: start; }
+.rail:focus-visible { outline: 3px solid var(--paprika); outline-offset: -3px; }
 .item { display: flex; flex-direction: column; }
 /* The pack stands on a disc of its own colour. No card, no frame. */
 .shot { position: relative; display: grid; place-items: center; aspect-ratio: 1; }
@@ -29,6 +46,7 @@
 
 .note { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 16px; padding: 8%; }
 .noteSeed { width: 72px; height: auto; }
+.note a { font-size: 1rem; }
 .note p { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.5rem, 1.2rem + .8vw, 2rem); line-height: 1.05; text-transform: uppercase; }
 
 /* The running order follows you down the section. */
@@ -46,8 +64,10 @@
 @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 700px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .addBtn, .stepper { min-width: 0; width: 100%; }
-  .row { flex-direction: column; align-items: stretch; gap: 8px; }
+  .rail { grid-auto-columns: 62vw; }
+  .arrows { display: none; }
+  .grid .addBtn, .grid .stepper { min-width: 0; width: 100%; }
+  .grid .row { flex-direction: column; align-items: stretch; gap: 8px; }
   .bar { border-radius: 28px; padding: 12px 12px 12px 20px; flex-wrap: wrap; }
   .bar > button { flex: 1 1 100%; }
 }
