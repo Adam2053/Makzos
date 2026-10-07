@@ -162,7 +162,7 @@ export function Reviews() {
       </div>
 
       <div className={ui.shell}>
-        <ul className={styles.reviews}>
+        <ul className={styles.reviews} tabIndex={0} aria-label="Reviews">
           {REVIEWS.length > 0
             ? REVIEWS.map((r) => (
               <li key={r.id} className={styles.review}>

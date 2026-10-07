@@ -45,20 +45,25 @@
 @media (max-width: 960px) {
   .head, .table { grid-column: 1 / -1; }
 }
-/* Phones: each row's label sits above its two answers, so nothing is squeezed into thirds. */
+/* Phones: each row is its label, then the two answers as a pair of cards. Nothing is squeezed into thirds. */
 @media (max-width: 600px) {
+  .table { margin-top: 56px; }
   .table, .table thead, .table tbody { display: block; }
-  .table tr { display: grid; grid-template-columns: 1.15fr 1fr; }
+  .table tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .table thead td { display: none; }
-  .table thead th { display: flex; flex-direction: column; justify-content: flex-end; padding: 0 14px 16px; }
-  .table tbody th { grid-column: 1 / -1; padding: 14px 14px 6px; background: linear-gradient(90deg, var(--paprika) 53.5%, var(--mist) 0); color: var(--black); }
-  .table tbody tr > td { border-top: 0; }
-  .table th, .table td { width: auto; font-size: .9375rem; }
-  .table tbody td { padding: 0 14px 14px; }
-  .table tbody tr:last-child > td { padding-bottom: 20px; }
+  .table th, .table td { width: auto; font-size: .875rem; line-height: 1.35; }
+  .table thead th { display: flex; flex-direction: column; justify-content: flex-end; padding: 0 14px 14px; }
+  .table tbody th { grid-column: 1 / -1; padding: 16px 2px 0; border: 0; font-size: .8125rem; }
+  .table tbody tr > td { border: 0; }
+  .table tbody td, .table tbody tr:last-child > td { padding: 12px; }
+  .table thead .us, .table thead .them, .table tbody .us, .table tbody .them,
+  .table tbody tr:last-child .us, .table tbody tr:last-child .them { border-radius: 18px; }
+  .pack, .bag { width: 64px; margin: -40px 0 12px; }
+  .others { font-size: 1.5rem; }
+  .othersSub { font-size: .75rem; }
   .cell { gap: 8px; }
-  .mark, .cross { width: 18px; height: 18px; }
+  .mark, .cross { width: 16px; height: 16px; margin-top: .12em; }
   /* Up beside the bags, clear of the logo and the label. */
-  .vs { width: 40px; height: 40px; font-size: 1rem; bottom: auto; top: 12px; }
+  .vs { width: 36px; height: 36px; font-size: .9375rem; bottom: auto; top: 10px; left: -4px; }
   .logo { width: 100%; }
 }

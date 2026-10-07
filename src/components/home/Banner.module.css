@@ -48,6 +48,11 @@
 }
 
 @media (max-width: 600px) {
+  .lockup { --type: min(13.5vw, 14.5svh); }
+  .inner { min-height: 0; padding-block: 40px 48px; }
+  /* The flavour list is left to the range below, so the line under the lockup stays two lines long. */
+  .more { display: none; }
+  .sub { max-width: 19em; font-size: 1rem; }
   .ctas { width: 100%; }
   .ctas > * { flex: 1 1 auto; }
 }

@@ -100,7 +100,7 @@ export function Banner() {
         </div>
 
         <p className={`${ui.lede} ${styles.sub}`}>
-          Roasted makhana inspired by dishes you know. {FEATURED.map((f) => f.name).join(", ")} and more, {WEIGHT} a bag.
+          Roasted makhana inspired by dishes you know.<span className={styles.more}> {FEATURED.map((f) => f.name).join(", ")} and more, {WEIGHT} a bag.</span>
         </p>
         <div className={styles.ctas}>
           <a href="#shop" className={ui.btnPaprika}>Explore flavours</a>

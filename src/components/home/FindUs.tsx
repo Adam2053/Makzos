@@ -12,7 +12,7 @@ const STORES: { id: string; name: string; kind: string; href: string; field: str
   { id: "blinkit", name: "Blinkit", kind: "Quick delivery", href: "https://blinkit.com/", field: "#F8CB46", ink: "#000000" },
   { id: "instamart", name: "Instamart", kind: "Quick delivery", href: "https://www.swiggy.com/instamart", field: "#0050FF", ink: "#ffffff" },
   { id: "zepto", name: "Zepto", kind: "Quick delivery", href: "https://www.zeptonow.com/", field: "#3C0A6B", ink: "#ffffff" },
-  { id: "amazon", name: "Amazon", kind: "Delivered to your door", href: "https://www.amazon.in/", field: "#131921", ink: "#ffffff" },
+  { id: "amazon", name: "Amazon", kind: "Home delivery", href: "https://www.amazon.in/", field: "#131921", ink: "#ffffff" },
 ];
 
 export function FindUs() {

@@ -5,3 +5,9 @@
 .photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, rgb(0 0 0 / .62), rgb(0 0 0 / .1) 55%, transparent); }
 .copy { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 28px; padding-block: clamp(56px, 9vw, 120px); }
 .title { max-width: 11em; font-size: var(--t-h2); }
+
+/* Phones: a landscape-ish frame, so the picture is a pause in the scroll and not a screen of its own. */
+@media (max-width: 700px) {
+  .band { min-height: min(62svh, 440px); }
+  .copy { gap: 20px; padding-block: 40px; }
+}
