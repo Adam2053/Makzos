@@ -1,0 +1,4 @@
+.body { display: grid; grid-template-columns: minmax(0, 560px) minmax(0, 320px); justify-content: space-between; gap: 32px; padding-bottom: clamp(64px, 8vw, 112px); font-family: var(--font-text), sans-serif; }
+.form { padding: clamp(22px, 3vw, 36px); border-radius: 32px; background: var(--mist); }
+.aside { display: grid; gap: 8px; align-content: start; justify-items: start; padding: 24px; border-radius: 28px; border: 2px solid var(--line); font-size: .9375rem; line-height: 1.5; }
+@media (max-width: 800px) { .body { grid-template-columns: minmax(0, 1fr); } }

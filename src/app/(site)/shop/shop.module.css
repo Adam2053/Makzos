@@ -1,0 +1,5 @@
+.bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; font-family: var(--font-text), sans-serif; }
+.n { margin-left: 4px; opacity: .6; font-variant-numeric: tabular-nums; }
+.sort { display: flex; align-items: center; gap: 10px; font-size: .9375rem; font-weight: 700; }
+.sort select { min-height: 44px; width: auto; border-radius: 999px; font-size: .9375rem; }
+.count { margin: 16px 0 clamp(24px, 3vw, 40px); font-size: .875rem; font-weight: 600; color: var(--quiet); }

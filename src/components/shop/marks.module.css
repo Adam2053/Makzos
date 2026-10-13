@@ -1,0 +1,7 @@
+.veg { flex: none; vertical-align: -3px; }
+.veg rect { fill: none; stroke: #1b8a3a; stroke-width: 1.6; }
+.veg circle { fill: #1b8a3a; }
+.heat { display: inline-flex; align-items: center; gap: 2px; font-size: .8125rem; font-weight: 700; }
+.heat svg { width: 20px; height: 20px; fill: rgb(0 0 0 / .1); stroke: rgb(0 0 0 / .35); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.heat svg[data-on] { fill: var(--paprika); stroke: var(--paprika-ink); }
+.heat span { margin-left: 6px; }

@@ -1,0 +1,57 @@
+.section { scroll-margin-top: var(--header-h); background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 36px; align-items: start; }
+.head { grid-column: 1 / 6; }
+.title { font-size: var(--t-h2); }
+.lede { margin-top: 16px; color: var(--quiet); }
+
+/* The recipe names, as a short index. The open one gets a Paprika seed beside it. */
+.list { margin-top: clamp(28px, 3vw, 44px); border-top: 1px solid var(--line); }
+.list li { border-bottom: 1px solid var(--line); }
+.pick { position: relative; display: grid; gap: 6px; width: 100%; padding: 20px 0 20px 32px; border: 0; background: none; color: var(--black); text-align: left; }
+.pick::before { content: ""; position: absolute; left: 4px; top: 28px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--black); transition: background-color .2s, border-color .2s, transform .25s cubic-bezier(.3, 1.6, .5, 1); }
+.pick[aria-pressed="true"]::before { background: var(--paprika); border-color: var(--paprika); transform: scale(1.25); }
+.pick strong { font-size: clamp(1.5rem, 1.2rem + .9vw, 2.125rem); }
+.pick span { font-size: .9375rem; line-height: 1.45; color: var(--quiet); }
+.pick:not([aria-pressed="true"]) strong { color: #6b6b6b; transition: color .2s; }
+.pick:hover strong { color: var(--black); }
+.pick:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; border-radius: 8px; }
+
+/* ---------- The open recipe ---------- */
+.card { grid-column: 7 / 13; padding: clamp(24px, 3vw, 40px); border-radius: 32px; background: var(--mist); animation: in .35s ease-out; }
+@keyframes in { from { opacity: 0; translate: 0 8px; } }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.meta span { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px 6px 10px; border-radius: 999px; background: var(--white); font-size: .8125rem; font-weight: 700; }
+.meta svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cardTitle { margin-top: 16px; font-size: var(--t-h3); }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(24px, 3vw, 40px); margin-top: 24px; }
+.h4 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 0 0 14px; font-size: .875rem; font-weight: 800; }
+.h4 span { font-weight: 600; color: var(--quiet); font-variant-numeric: tabular-nums; }
+.ingredients { display: grid; gap: 12px; }
+.ingredients label { align-items: flex-start; font-weight: 500; line-height: 1.4; }
+.ingredients [data-done] { color: var(--quiet); text-decoration: line-through; text-decoration-color: var(--paprika); text-decoration-thickness: 2px; }
+/* The steps are a real sequence, so they're numbered. */
+.steps { display: grid; gap: 14px; counter-reset: step; }
+.steps li { position: relative; padding-left: 40px; font-size: .9375rem; line-height: 1.55; counter-increment: step; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: -1px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--black); color: var(--white); font-size: .8125rem; font-weight: 800; }
+
+/* ---------- Pairings ---------- */
+.pairs { margin-top: clamp(56px, 7vw, 96px); }
+.pairsHead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 20px; margin-bottom: 20px; font-size: .9375rem; }
+.pairsTitle { margin: 0; font-size: .9375rem; font-weight: 800; }
+.pairList { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 2px solid var(--black); }
+.pairList li { display: grid; gap: 8px; align-content: start; padding: 24px clamp(16px, 2vw, 32px) 8px 0; }
+.pairList li + li { padding-left: clamp(16px, 2vw, 32px); border-left: 1px solid var(--line); }
+.pairList strong { font-size: clamp(1.5rem, 1.2rem + 1vw, 2.25rem); }
+.pairList strong::after { content: ""; display: inline-block; width: .22em; height: .22em; margin-left: .12em; border-radius: 50%; background: var(--field); vertical-align: baseline; }
+.pairList span { font-size: .9375rem; line-height: 1.5; color: var(--quiet); max-width: 22em; }
+
+@media (max-width: 960px) {
+  .head, .card { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .cols { grid-template-columns: minmax(0, 1fr); }
+  .pairList { grid-template-columns: minmax(0, 1fr); }
+  .pairList li, .pairList li + li { padding: 20px 0; border-left: 0; }
+  .pairList li + li { border-top: 1px solid var(--line); }
+}
+@media (prefers-reduced-motion: reduce) { .card { animation: none; } .pick::before { transition: none; } }

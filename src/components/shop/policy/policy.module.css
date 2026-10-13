@@ -1,0 +1,16 @@
+.draft { margin-top: 16px; }
+.body { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); align-items: start; padding-bottom: clamp(64px, 8vw, 112px); font-family: var(--font-text), sans-serif; }
+.nav { position: sticky; top: calc(var(--header-h) + 24px); display: grid; gap: 4px; }
+.nav a { padding: 10px 16px; border-radius: 999px; font-weight: 600; text-decoration: none; }
+.nav a:hover { background: var(--mist); }
+.nav a[aria-current="page"] { background: var(--black); color: var(--white); }
+.nav a:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
+.text { display: grid; gap: 36px; max-width: 40em; }
+.text h2 { margin-bottom: 10px; font-size: 1.25rem; font-weight: 800; }
+.text p { font-size: 1.0625rem; line-height: 1.65; }
+.ask { color: var(--quiet); }
+@media (max-width: 760px) {
+  .body { grid-template-columns: minmax(0, 1fr); }
+  .nav { position: static; display: flex; flex-wrap: wrap; }
+  .nav a { border: 2px solid var(--line); }
+}

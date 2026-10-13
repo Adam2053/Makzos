@@ -1,0 +1,157 @@
+/*
+ * Checkout: quiet and exact. One column of steps divided by hairlines, a receipt-grey panel
+ * beside it, 1px fields, black for the one thing to press. The display face stays out of it;
+ * Manrope at small, firm weights does the work.
+ */
+.page {
+  --hair: #e7e7e7;
+  --field: #d6d6d6;
+  --soft: #f6f6f6;
+  --r: 12px;
+  display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); min-height: calc(100svh - var(--header-h));
+  color: var(--black); font-family: var(--font-text), sans-serif; font-size: .9375rem;
+}
+.muted { color: #6b6b6b; }
+.hint { font-size: .8125rem; color: #7a7a7a; }
+.loading { display: flex; align-items: center; gap: 12px; padding-block: 120px; font-family: var(--font-text), sans-serif; font-weight: 600; color: var(--quiet); }
+
+/* ---------- The column ---------- */
+.flow { justify-self: end; width: 100%; max-width: 640px; padding: 32px clamp(24px, 4vw, 56px) 80px var(--gutter); }
+
+.trail ol { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: .8125rem; color: #8a8a8a; }
+.trail li { display: flex; align-items: center; gap: 10px; }
+.trail li + li::before { content: ""; width: 5px; height: 5px; border-top: 1.5px solid #b5b5b5; border-right: 1.5px solid #b5b5b5; rotate: 45deg; }
+.trail a, .trail button { padding: 0; border: 0; background: none; color: var(--black); font-size: inherit; text-decoration: none; cursor: pointer; }
+.trail a:hover, .trail button:hover { text-decoration: underline; text-underline-offset: .2em; }
+.trail [data-state="now"] { color: var(--black); font-weight: 700; }
+.trail a:focus-visible, .trail button:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; border-radius: 4px; }
+
+.steps { margin-top: 28px; border-top: 1px solid var(--hair); }
+
+/* A finished step: one line, label, answer, Change. */
+.row { display: grid; grid-template-columns: 84px minmax(0, 1fr) auto; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--hair); line-height: 1.45; }
+.rowLabel { color: #7a7a7a; font-size: .875rem; }
+.rowValue { min-width: 0; }
+.change { padding: 0; border: 0; background: none; color: var(--black); font-size: .8125rem; font-weight: 600; text-decoration: underline; text-underline-offset: .2em; cursor: pointer; }
+.change:hover { color: var(--paprika-ink); }
+.change:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; border-radius: 4px; }
+
+/* An open or upcoming step. */
+.step { padding: 22px 0; border-bottom: 1px solid var(--hair); }
+.step[data-open] { padding: 28px 0 36px; }
+.stepTitle { font-size: 1rem; font-weight: 700; letter-spacing: -.005em; }
+.step[data-open] .stepTitle { font-size: 1.375rem; letter-spacing: -.015em; }
+.step:not([data-open]) .stepTitle { color: #a3a3a3; font-weight: 600; }
+.stepBody { display: grid; gap: 18px; margin-top: 18px; }
+.stack { display: grid; gap: 16px; }
+.signin { display: grid; gap: 14px; max-width: 420px; }
+
+/* Sign in or guest: a segmented control, not two pills. */
+.toggle { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 12px; background: #f0f0f0; }
+.toggle button { min-height: 40px; border: 0; border-radius: 9px; background: none; color: #555; font-size: .875rem; font-weight: 600; transition: background-color .2s, color .2s, box-shadow .2s; }
+.toggle button[aria-selected="true"] { background: var(--white); color: var(--black); box-shadow: 0 1px 2px rgb(0 0 0 / .08), 0 2px 8px -2px rgb(0 0 0 / .1); }
+.toggle button:focus-visible { outline: 2px solid var(--black); outline-offset: 1px; }
+
+/* ---------- Option lists: one bordered group, hairlines between ---------- */
+.group { border: 1px solid var(--field); border-radius: 14px; overflow: hidden; background: var(--white); }
+.option { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; cursor: pointer; transition: background-color .15s; }
+.group > .option + .option, .group > .option + .addRow, .payRow + .payRow { border-top: 1px solid var(--hair); }
+.option:hover { background: #fbfbfb; }
+.option:has(input:checked) { background: var(--soft); }
+.option input { appearance: none; flex: none; width: 18px; height: 18px; margin: 2px 0 0; border: 1.5px solid #9a9a9a; border-radius: 50%; display: grid; place-items: center; background: var(--white); transition: border-color .15s; }
+.option input:checked { border-color: var(--black); border-width: 5.5px; }
+.option input:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; }
+.optionBody { display: grid; gap: 2px; flex: 1; min-width: 0; line-height: 1.45; }
+.optionBody .muted { font-size: .8125rem; }
+.optionTitle { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.optionSide { font-weight: 600; font-variant-numeric: tabular-nums; }
+.tag { padding: 2px 8px; border-radius: 6px; background: #ececec; color: #555; font-size: .6875rem; font-weight: 700; }
+.addRow { display: flex; align-items: center; gap: 12px; width: 100%; padding: 15px 18px; border: 0; background: none; color: var(--black); font-size: .9375rem; font-weight: 600; text-align: left; cursor: pointer; }
+.addRow:hover { background: #fbfbfb; }
+.addRow span { display: grid; place-items: center; width: 18px; height: 18px; font-size: 1.25rem; font-weight: 400; line-height: 1; }
+.addRow:focus-visible { outline: 2px solid var(--black); outline-offset: -2px; }
+
+/* ---------- Payment ---------- */
+.payRow[data-on] { background: var(--soft); }
+.payRow[data-on] > .option { background: transparent; }
+.marks { display: flex; gap: 4px; flex: none; margin-top: 1px; }
+.marks span { padding: 3px 6px; border: 1px solid var(--field); border-radius: 5px; background: var(--white); color: #4a4a4a; font-size: .625rem; font-weight: 800; letter-spacing: .02em; }
+.payBody { display: grid; gap: 12px; padding: 2px 18px 20px 50px; }
+.apps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.app { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 6px 10px; border: 1px solid var(--field); border-radius: 10px; background: var(--white); color: var(--black); font-size: .75rem; font-weight: 600; transition: border-color .15s, box-shadow .15s; }
+.app:hover { border-color: #9a9a9a; }
+.app[aria-pressed="true"] { border-color: var(--black); box-shadow: inset 0 0 0 1px var(--black); }
+.app:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; }
+.appMark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: #f0f0f0; font-weight: 800; font-size: .8125rem; }
+.app[aria-pressed="true"] .appMark { background: var(--black); color: var(--white); }
+.or { display: flex; align-items: center; gap: 12px; color: #8a8a8a; font-size: .75rem; }
+.or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--hair); }
+
+/* The card: one field split into three, like the front of the card. */
+.card { border: 1px solid var(--field); border-radius: var(--r); background: var(--white); overflow: hidden; }
+.card input { width: 100%; min-height: 48px; padding: 0 16px; border: 0; background: none; font-size: .9375rem; font-variant-numeric: tabular-nums; }
+.card input:focus-visible { outline: none; background: #fcfcfc; box-shadow: inset 0 0 0 2px var(--black); }
+.card input[aria-invalid="true"] { box-shadow: inset 0 0 0 1.5px var(--paprika-ink); }
+.card .cardNum { border-bottom: 1px solid var(--hair); letter-spacing: .04em; }
+.cardSplit { display: grid; grid-template-columns: 1fr 1fr; }
+.cardSplit input + label + input { border-left: 1px solid var(--hair); }
+
+.failed { display: grid; gap: 2px; padding: 14px 16px; border-radius: var(--r); background: #fdf0ed; color: #7a2412; font-size: .875rem; line-height: 1.45; box-shadow: inset 3px 0 0 var(--paprika-ink); }
+
+/* The one thing to press. */
+.primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 52px; padding: 0 24px;
+  border: 0; border-radius: var(--r, 12px); background: var(--black); color: var(--white); font-family: var(--font-text), sans-serif; font-size: .9375rem; font-weight: 700;
+  text-decoration: none; cursor: pointer; transition: background-color .2s, transform .1s;
+}
+.primary:hover { background: #262626; }
+.primary:active { transform: translateY(1px); }
+.primary:disabled { background: #bdbdbd; cursor: not-allowed; }
+.primary:focus-visible { outline: 2px solid var(--black); outline-offset: 3px; }
+.pay { min-height: 56px; font-size: 1rem; }
+.lock { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.terms { font-size: .75rem; color: #8a8a8a; text-align: center; }
+.terms a { color: inherit; text-underline-offset: .2em; }
+
+/* ---------- The summary: a receipt beside the column ---------- */
+.side { background: #f5f5f4; border-left: 1px solid var(--hair); }
+.sideInner { position: sticky; top: var(--header-h); display: grid; gap: 18px; max-width: 460px; padding: 40px var(--gutter) 48px clamp(24px, 4vw, 48px); }
+.sideTitle { display: flex; justify-content: space-between; align-items: baseline; font-size: 1rem; font-weight: 700; }
+.edit { font-size: .8125rem; font-weight: 600; color: #555; text-underline-offset: .2em; }
+.code { padding-block: 16px; border-block: 1px solid #e3e3e2; }
+.mobileSummary { display: none; }
+
+/* ---------- Waiting for payment ---------- */
+.waiting { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px; background: rgb(255 255 255 / .7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); animation: fade .2s ease-out; }
+.waitingCard { display: grid; justify-items: center; gap: 10px; width: min(380px, 100%); padding: 36px 28px; border: 1px solid var(--hair); border-radius: 20px; background: var(--white); text-align: center; box-shadow: 0 30px 60px -30px rgb(0 0 0 / .3); }
+.waitingTitle { font-size: 1.125rem; font-weight: 700; }
+.ring { width: 36px; height: 36px; margin-bottom: 6px; border: 3px solid #ececec; border-top-color: var(--black); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { rotate: 360deg; } }
+@keyframes fade { from { opacity: 0; } }
+
+.empty { display: flex; flex-direction: column; align-items: center; gap: 14px; padding-block: clamp(64px, 10vw, 128px); font-family: var(--font-text), sans-serif; text-align: center; }
+.empty .primary { width: auto; }
+.emptySeed { width: 72px; height: auto; }
+.emptyTitle { font-size: 1.5rem; font-weight: 700; }
+
+@media (max-width: 960px) {
+  .page { grid-template-columns: minmax(0, 1fr); }
+  .flow { justify-self: center; max-width: 640px; padding: 20px var(--gutter) 64px; }
+  .side { display: none; }
+  .mobileSummary { display: block; margin-top: 18px; border: 1px solid var(--hair); border-radius: 14px; background: #f7f7f6; }
+  .mobileSummary summary { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; font-weight: 600; cursor: pointer; list-style: none; border-radius: 14px; }
+  .mobileSummary summary::-webkit-details-marker { display: none; }
+  .mobileSummary summary span { display: flex; align-items: center; gap: 8px; }
+  .mobileSummary summary span::after { content: ""; width: 6px; height: 6px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; rotate: 45deg; translate: 0 -2px; transition: rotate .2s; }
+  .mobileSummary[open] summary span::after { rotate: -135deg; translate: 0 2px; }
+  .mobileSummary summary:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; }
+  .mobileSummaryBody { display: grid; gap: 16px; padding: 4px 16px 18px; }
+}
+@media (max-width: 520px) {
+  .row { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; }
+  .rowLabel { grid-column: 1 / -1; font-size: .75rem; }
+  .payBody { padding: 2px 16px 18px; }
+  .apps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .marks { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .ring { animation-duration: 2s; } .waiting { animation: none; } }

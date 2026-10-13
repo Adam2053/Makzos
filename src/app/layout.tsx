@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Barlow_Condensed, Manrope } from "next/font/google";
+import { Providers } from "@/components/Providers";
 import "./globals.css";
 
 /* The brand's two faces: Barlow Condensed 700 for display, Manrope for everything people read. */
@@ -18,7 +19,9 @@ export const viewport: Viewport = { themeColor: "#ffffff" };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${display.variable} ${text.variable} ${archivo.variable}`}>{children}</body>
+      <body className={`${display.variable} ${text.variable} ${archivo.variable}`}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

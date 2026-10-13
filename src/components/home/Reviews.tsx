@@ -1,59 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { BAG_PRICE, PACK_H, PACK_W, byId, inr } from "@/lib/products";
-import { CLIPS, REVIEWS, REVIEW_SLOTS, type Clip } from "@/lib/ugc";
+import Link from "next/link";
+import { useEffect, useRef } from "react";
+import { BAG_PRICE, byId, inr, productHref } from "@/lib/products";
+import { CLIPS, REVIEWS, REVIEW_SLOTS } from "@/lib/ugc";
 import { useCart } from "@/lib/cart";
-import { MOTION_OK } from "@/lib/motion";
+import { Film } from "./Film";
+import { PackThumb } from "@/components/shop/Pack";
 import { Makhana } from "./Makhana";
 import ui from "./ui.module.css";
 import styles from "./Reviews.module.css";
 
 /** The clips are laid out three times over; the reader always sits in the middle run. */
 const RUNS = [0, 1, 2];
-
-/**
- * One video tile. It plays by itself, muted and looping, while at least half of it is on
- * screen, and stops when it leaves, so only the few clips being looked at are ever streaming.
- * A tap pauses it, and it then stays paused until tapped again. People who've asked for
- * reduced motion get the still and the play button instead.
- */
-function Film({ clip, label, echo }: { clip: Clip; label: string; echo: boolean }) {
-  const [playing, setPlaying] = useState(false);
-  const video = useRef<HTMLVideoElement>(null);
-  const held = useRef(false);
-
-  useEffect(() => {
-    const v = video.current;
-    if (!v || !window.matchMedia(MOTION_OK).matches) return;
-    const io = new IntersectionObserver((entries) => {
-      // Several changes can arrive at once (off screen, then back, when the row loops): only the last is true now.
-      if (entries[entries.length - 1].isIntersecting && !held.current) v.play().catch(() => {});
-      else v.pause();
-    }, { threshold: 0.5 });
-    io.observe(v);
-    return () => io.disconnect();
-  }, []);
-
-  const toggle = () => {
-    const v = video.current!;
-    held.current = !v.paused;
-    if (v.paused) v.play().catch(() => {});
-    else v.pause();
-  };
-
-  return (
-    <button type="button" className={styles.film} onClick={toggle} tabIndex={echo ? -1 : undefined}
-      aria-label={`${playing ? "Pause" : "Play"} ${label}`} aria-pressed={playing}>
-      <video ref={video} src={clip.src} poster={clip.poster} muted loop playsInline preload="none"
-        onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />
-      <span className={styles.play} data-on={playing || undefined} aria-hidden="true">
-        <svg viewBox="0 0 24 24">{playing ? <path d="M8 6v12M16 6v12" /> : <path d="M9 6.5v11l9-5.5Z" />}</svg>
-      </span>
-    </button>
-  );
-}
 
 /**
  * People eating it, with the pack they're eating one tap away, then what buyers wrote.
@@ -150,8 +110,8 @@ export function Reviews() {
                 </div>
                 {/* The product link: the pack in the video, and a way to add it. */}
                 <div className={styles.product} style={{ "--field": f.field } as React.CSSProperties}>
-                  <span className={styles.thumb}><Image src={f.pack} alt="" width={PACK_W} height={PACK_H} sizes="44px" loading="eager" decoding="sync" /></span>
-                  <span className={styles.what}><strong>{f.name}</strong><span>{inr(BAG_PRICE)}</span></span>
+                  <PackThumb id={f.id} size={32} />
+                  <span className={styles.what}><Link href={productHref(f.id)} tabIndex={echo ? -1 : undefined}><strong>{f.name}</strong></Link><span>{inr(BAG_PRICE)}</span></span>
                   <button type="button" className={styles.add} aria-label={`Add ${f.name} to bag`} tabIndex={echo ? -1 : undefined}
                     onClick={(e) => addBag(f.id, e.currentTarget.parentElement?.querySelector("img"))}>+</button>
                 </div>
@@ -176,7 +136,7 @@ export function Reviews() {
                 </div>
                 <blockquote>&ldquo;{r.quote}&rdquo;</blockquote>
                 <p className={styles.who} style={{ "--field": byId(r.flavour).field } as React.CSSProperties}>
-                  <span className={styles.thumb}><Image src={byId(r.flavour).pack} alt="" width={PACK_W} height={PACK_H} sizes="44px" /></span>
+                  <PackThumb id={r.flavour} size={32} />
                   <span><strong>{r.name}</strong>{r.city && `, ${r.city}`}<span>Bought {byId(r.flavour).name}</span></span>
                 </p>
               </li>

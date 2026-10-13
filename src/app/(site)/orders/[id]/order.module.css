@@ -1,0 +1,73 @@
+.loading { display: flex; align-items: center; gap: 12px; padding-block: 120px; font-family: var(--font-text), sans-serif; font-weight: 600; color: var(--quiet); }
+.missing { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; padding-block: clamp(64px, 10vw, 128px); font-family: var(--font-text), sans-serif; }
+.missingSeed { width: 88px; height: auto; }
+.missingTitle { font-size: var(--t-h2); max-width: 12em; }
+
+/* The thank-you: the one Paprika field on the page. */
+.thanks { background: var(--paprika); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(40px, 6vw, 80px); border-radius: 0 0 clamp(28px, 4vw, 56px) clamp(28px, 4vw, 56px); --focus: var(--black); }
+.thanksInner { display: flex; align-items: center; gap: clamp(20px, 4vw, 48px); }
+.thanksSeed { flex: none; width: clamp(80px, 10vw, 140px); height: auto; rotate: -8deg; animation: pop .6s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes pop { from { scale: 0; rotate: -40deg; } }
+.thanksTitle { font-size: var(--t-h2); max-width: 14em; }
+.thanksText { margin-top: 16px; max-width: 40em; font-size: var(--t-lede); line-height: 1.5; }
+
+.page { padding-block: clamp(32px, 5vw, 64px) clamp(64px, 8vw, 112px); color: var(--black); font-family: var(--font-text), sans-serif; }
+.head { display: grid; gap: 14px; }
+.title { font-size: var(--t-h3); }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--quiet); font-size: .9375rem; }
+
+/* ---------- Tracking ---------- */
+.track { margin-top: 28px; padding: clamp(22px, 3vw, 36px); border-radius: 32px; background: var(--black); color: var(--white); }
+.now { display: grid; gap: 6px; }
+.now > span:first-child { font-size: var(--t-h3); }
+.now > span:last-child { color: #c9c9c9; font-size: .9375rem; }
+.steps { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 32px; }
+.steps li { position: relative; display: grid; gap: 4px; align-content: start; padding-top: 32px; font-size: .8125rem; line-height: 1.35; }
+.steps li strong { font-size: .9375rem; }
+.steps li > span:last-child { color: #a8a8a8; }
+/* The road: a line through every dot, filled in Paprika as far as the order has got. */
+.steps li::before { content: ""; position: absolute; left: 0; right: -12px; top: 9px; height: 4px; border-radius: 999px; background: rgb(255 255 255 / .2); }
+.steps li:last-child::before { right: 0; }
+.steps li[data-state="done"]::before { background: var(--paprika); }
+.dot { position: absolute; left: 0; top: 0; z-index: 1; width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--black); background: #5a5a5a; }
+.steps [data-state="done"] .dot, .steps [data-state="now"] .dot { background: var(--paprika); }
+.steps [data-state="now"] .dot { box-shadow: 0 0 0 4px rgb(234 75 43 / .35); }
+.steps [data-state="next"] strong { color: #a8a8a8; }
+.cancelled { display: grid; gap: 6px; }
+.cancelled strong { font-size: var(--t-h3); color: var(--paprika); }
+.cancelled span { color: #c9c9c9; }
+
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 24px; margin-top: 24px; align-items: start; }
+.items { grid-column: 1 / 8; display: grid; gap: 14px; padding: clamp(20px, 2.4vw, 28px); border-radius: 32px; background: var(--mist); }
+.totals { padding-top: 8px; }
+.info { grid-column: 8 / 13; display: grid; gap: 12px; }
+.card { display: grid; gap: 4px; padding: 22px 24px; border-radius: 28px; border: 2px solid var(--line); font-size: .9375rem; line-height: 1.5; }
+.h3 { margin: 0 0 6px; font-size: .875rem; font-weight: 800; }
+.quiet { color: var(--quiet); }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 8px; }
+.actions > button { flex: 1 1 auto; }
+.reordered { flex: 1 1 100%; padding: 14px 18px; border-radius: 18px; background: #e6f2ea; color: var(--ok); font-weight: 700; }
+.reordered button { color: var(--black); font-size: inherit; }
+.demo { display: grid; gap: 10px; justify-items: start; margin-top: 12px; padding: 18px 20px; border: 2px dashed var(--quiet); border-radius: 24px; font-size: .875rem; color: var(--quiet); }
+.demo > span { font-weight: 800; color: var(--black); }
+.demo button { min-height: 44px; padding: 0 18px; font-size: .875rem; }
+
+.dialog { width: min(520px, calc(100vw - 32px)); padding: clamp(24px, 4vw, 36px); border: 0; border-radius: 32px; background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; box-shadow: 0 40px 80px -20px rgb(0 0 0 / .4); }
+.dialog::backdrop { background: rgb(0 0 0 / .5); }
+.dialogTitle { font-size: var(--t-h3); }
+
+@media (max-width: 960px) {
+  .items, .info { grid-column: 1 / -1; }
+}
+@media (max-width: 700px) {
+  .thanksInner { flex-direction: column; align-items: flex-start; }
+  .steps { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .steps li { padding: 0 0 22px 40px; }
+  .steps li::before { left: 9px; right: auto; top: 0; bottom: 0; width: 4px; height: auto; }
+  .steps li:last-child::before { display: none; }
+  .steps li:last-child { padding-bottom: 0; }
+}
+@media print {
+  .actions, .demo, .track { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .thanksSeed { animation: none; } }

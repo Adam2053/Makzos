@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { BAG_PRICE, BOX_PRICE, BOX_SIZE, FLAVOURS, PACK_H, PACK_W, WEIGHT, byId, inr } from "@/lib/products";
-import { useCart } from "@/lib/cart";
+import { BAG_PRICE, BOX_PRICE, BOX_SIZE, FLAVOURS, byId, inr, productHref } from "@/lib/products";
+import { bagKey, useCart } from "@/lib/cart";
 import { Makhana } from "./Makhana";
+import { Pack } from "@/components/shop/Pack";
 import ui from "./ui.module.css";
 import styles from "./Products.module.css";
 
@@ -17,6 +17,8 @@ type Props = {
   title?: string;
   /** Rendered as the page's h1 on the shop page, an h2 everywhere else. */
   as?: "h1" | "h2";
+  /** Anything that belongs between the heading and the products: the shop's filters. */
+  children?: React.ReactNode;
 };
 
 /**
@@ -24,13 +26,13 @@ type Props = {
  * button becomes a stepper for that flavour's count in the bag. The bar below shows what
  * the bag holds and takes you to it. Nothing flies or bounces; the stepper is the feedback.
  */
-export function Products({ layout = "grid", ids, title = "Meet the flavours.", as: Heading = "h2" }: Props) {
-  const { lines, bags, subtotal, addBag, setQty, setOpen } = useCart();
+export function Products({ layout = "grid", ids, title = "Meet the flavours.", as: Heading = "h2", children }: Props) {
+  const { lines, bags, count, subtotal, addBag, setQty, setOpen } = useCart();
   const list = useRef<HTMLUListElement>(null);
   const flavours = ids ? ids.map(byId) : FLAVOURS;
   const rail = layout === "rail";
 
-  const inBag = (id: string) => lines.find((l) => l.kind === "bag" && l.id === id)?.qty ?? 0;
+  const inBag = (id: string) => lines.find((l) => l.key === bagKey(id))?.qty ?? 0;
   const loose = bags % BOX_SIZE;
   const toBox = loose === 0 ? 0 : BOX_SIZE - loose;
 
@@ -39,6 +41,17 @@ export function Products({ layout = "grid", ids, title = "Meet the flavours.", a
     if (n === 0 && d > 0) addBag(id, null, { quiet: true });
     else setQty(`bag-${id}`, n + d);
   };
+
+  /** A nudge, not a product: first in the rail, where it's seen; last in the grid, after the range. */
+  const note = (
+    <li className={styles.note} data-first={rail || undefined}>
+      <Makhana variant="outline" className={styles.noteSeed} />
+      <p>Can&rsquo;t choose? Pick four different ones and find your favourite.</p>
+      {rail
+        ? <Link href="/shop" className={ui.btnPaprika}>Shop all</Link>
+        : <Link href="/build-a-box" className={ui.btnPaprika}>Build a box</Link>}
+    </li>
+  );
 
   /** The arrows move the rail by most of what's on screen; scroll-snap settles it on a card. */
   const slide = (dir: 1 | -1) => {
@@ -69,21 +82,25 @@ export function Products({ layout = "grid", ids, title = "Meet the flavours.", a
             )}
           </div>
         </header>
+        {children}
       </div>
 
       {/* The rail runs to the screen's edge, so the next card is always peeking in. */}
       <div className={rail ? styles.bleed : ui.shell}>
         <ul ref={list} className={rail ? styles.rail : styles.grid} tabIndex={rail ? 0 : undefined} aria-label={rail ? "Flavours, scroll sideways for more" : undefined}>
+          {rail && note}
           {flavours.map((f) => {
             const n = inBag(f.id);
             return (
-              <li key={f.id} className={styles.item} data-in={n > 0 || undefined} style={{ "--field": f.field } as React.CSSProperties}>
-                <div className={styles.shot}>
-                  <span className={styles.disc} />
-                  <Image src={f.pack} alt={`Makzo's ${f.name}, ${WEIGHT}`} width={PACK_W} height={PACK_H} sizes="(max-width: 700px) 36vw, 200px" />
-                  {n > 0 && <span className={styles.badge} aria-hidden="true">{n}</span>}
-                </div>
-                <h3 className={`${ui.display} ${styles.name}`}>{f.name}</h3>
+              <li key={f.id} className={styles.item} data-in={n > 0 || undefined}>
+                {/* The picture links too, but only the name is announced and tabbed to. */}
+                <Link href={productHref(f.id)} className={styles.shot} tabIndex={-1} aria-hidden="true">
+                  <Pack id={f.id} sizes="(max-width: 700px) 34vw, 180px" className={styles.pack} alt="" />
+                  <span className={styles.floor} />
+                  {f.heat >= 2 && <span className={styles.tag}>{f.heat === 3 ? "Hot" : "Spicy"}</span>}
+                  {n > 0 && <span className={styles.badge}>{n} in bag</span>}
+                </Link>
+                <h3 className={`${ui.display} ${styles.name}`}><Link href={productHref(f.id)}>{f.name}</Link></h3>
                 <p className={styles.inspired}>{f.inspired}</p>
                 <div className={styles.row}>
                   <span className={styles.price}>{inr(BAG_PRICE)}</span>
@@ -102,21 +119,14 @@ export function Products({ layout = "grid", ids, title = "Meet the flavours.", a
               </li>
             );
           })}
-          {/* The last cell: a nudge, not a product. */}
-          <li className={styles.note}>
-            <Makhana variant="outline" className={styles.noteSeed} />
-            <p>Can&rsquo;t choose? Pick four different ones and find your favourite.</p>
-            {rail
-              ? <Link href="/shop" className={ui.link}>Shop all {FLAVOURS.length}</Link>
-              : <Link href="/#box" className={ui.link}>Build a box</Link>}
-          </li>
+          {!rail && note}
         </ul>
       </div>
 
       <div className={ui.shell}>
-        <div className={styles.bar} data-on={bags > 0 || undefined} aria-live="polite">
+        <div className={styles.bar} data-on={count > 0 || undefined} aria-live="polite">
           <div className={styles.barText}>
-            <strong>{bags} {bags === 1 ? "bag" : "bags"} in your bag, {inr(subtotal)}</strong>
+            <strong>{count} {count === 1 ? "item" : "items"} in your bag, {inr(subtotal)}</strong>
             <span>{toBox > 0 ? `Add ${toBox} more and ${bags > BOX_SIZE ? "the next four are" : "they're"} priced as a box.` : "Every four priced as a box."}</span>
           </div>
           <button type="button" className={ui.btnPaprika} onClick={() => setOpen(true)}>

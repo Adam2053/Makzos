@@ -1,9 +1,23 @@
 .section { background: var(--mist); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px); scroll-margin-top: var(--header-h); border-radius: clamp(28px, 4vw, 56px); }
-.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; align-items: center; }
+.section[data-full] { padding-top: clamp(40px, 6vw, 80px); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; align-items: start; }
 
 .copy { grid-column: 1 / 6; }
 .title { font-size: var(--t-h2); }
 .lede { margin-top: 20px; }
+
+/* The ladder: four steps, each a price; the one you're on goes black. */
+.ladder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 28px; }
+.ladder li { display: grid; gap: 2px; padding: 12px 12px 10px; border-radius: 18px; background: var(--white); transition: background-color .2s, color .2s; }
+.ladder li:nth-child(2) { margin-top: -6px; }
+.ladder li:nth-child(3) { margin-top: -12px; }
+.ladder li:nth-child(4) { margin-top: -18px; }
+.ladder strong { font-size: .8125rem; }
+.ladder span { font-size: 1.75rem; line-height: 1; }
+.ladder small { font-size: .75rem; font-weight: 700; color: var(--paprika-ink); }
+.ladder li[aria-current] { background: var(--black); color: var(--white); }
+.ladder li[aria-current] small { color: var(--paprika); }
+
 .presets { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
 .preset { min-height: 46px; padding: 0 20px; border: 2px solid var(--black); border-radius: 999px; background: transparent; color: var(--black); font-size: .9375rem; font-weight: 600; transition: background-color .2s, color .2s; }
 .preset:hover { background: var(--black); color: var(--white); }
@@ -11,33 +25,49 @@
 
 /* ---------- The box ---------- */
 .builder { grid-column: 7 / 13; }
-/* The tray is the box seen from above: black card, four wells. */
-.tray { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(8px, 1.2vw, 16px); padding: clamp(12px, 1.6vw, 24px); border-radius: 32px; background: var(--black); }
-.slot { position: relative; aspect-ratio: 960 / 1279; border-radius: 14px; border: 2px dashed rgb(255 255 255 / .35); }
+/* The tray is the box seen from above: a black card, seven wells; the last three lighter. */
+.tray { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: clamp(6px, .8vw, 10px); padding: clamp(10px, 1.4vw, 18px); border-radius: 28px; background: var(--black); }
+.slot { position: relative; aspect-ratio: 960 / 1279; border-radius: 10px; border: 2px dashed rgb(255 255 255 / .4); }
+.slot[data-extra] { border-color: rgb(255 255 255 / .18); }
 .slot[data-full] { border-color: transparent; }
-.empty { position: absolute; inset: 0; display: grid; place-items: center; color: rgb(255 255 255 / .6); font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.75rem, 3vw, 2.75rem); }
-.remove { position: absolute; inset: 0; padding: 0; border: 0; border-radius: 12px; background: var(--field); overflow: visible; animation: drop .35s cubic-bezier(.3, 1.6, .5, 1); }
-.remove img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-.remove span { position: absolute; right: -8px; top: -8px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--white); color: var(--black); font-size: 1.125rem; font-weight: 700; line-height: 1; box-shadow: 0 2px 6px rgb(0 0 0 / .35); }
+.empty { position: absolute; inset: 0; display: grid; place-items: center; color: rgb(255 255 255 / .6); font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.25rem, 2vw, 1.75rem); }
+.slot[data-extra] .empty { color: rgb(255 255 255 / .3); }
+.remove { position: absolute; inset: 0; padding: 0; border: 0; border-radius: 8px; background: none; overflow: visible; animation: drop .35s cubic-bezier(.3, 1.6, .5, 1); }
+.remove img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+.remove span { position: absolute; right: -7px; top: -7px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--white); color: var(--black); font-size: .9375rem; font-weight: 700; line-height: 1; box-shadow: 0 2px 6px rgb(0 0 0 / .35); }
 .remove:hover span { background: var(--paprika); }
-@keyframes drop { from { transform: translateY(-18px) scale(.9); opacity: 0; } }
+@keyframes drop { from { transform: translateY(-14px) scale(.9); opacity: 0; } }
+.trayNote { margin-top: 10px; font-size: .8125rem; color: var(--quiet); }
 
 /* ---------- The flavours ---------- */
-.picker { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-.chip { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 4px 18px 4px 4px; border: 0; border-radius: 999px; background: var(--white); color: var(--black); font-size: .9375rem; font-weight: 600; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1), box-shadow .2s; }
+.picker { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.chip { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 4px 16px 4px 10px; border: 0; border-radius: 16px; background: var(--white); color: var(--black); font-size: .9375rem; font-weight: 600; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1), box-shadow .2s; }
 .chip:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 16px -8px rgb(0 0 0 / .35); }
 .chip:disabled { cursor: not-allowed; opacity: .5; }
-.face { display: block; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--field); }
-/* Zoomed onto the flavour name printed at the top left of each pack. */
-.face img { width: 100%; height: 100%; object-fit: cover; object-position: 0 0; scale: 2.3; transform-origin: 6% 8%; }
+.chipCount { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--paprika); font-size: .75rem; font-weight: 800; }
 
-.foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-top: 28px; }
-.status { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.75rem; line-height: 1; text-transform: uppercase; }
+.options { display: grid; gap: 18px; margin-top: 24px; padding: 20px; border-radius: 24px; background: var(--white); }
+.option { margin: 0; padding: 0; border: 0; display: grid; gap: 10px; min-width: 0; }
+
+.foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-top: 24px; }
+.status { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 1.05; text-transform: uppercase; max-width: 14em; }
+.footRight { display: flex; align-items: center; gap: 16px; }
+.sum { display: grid; justify-items: end; line-height: 1; }
+.sum strong { font-size: 2rem; }
+.sum s { font-size: .875rem; color: var(--quiet); }
+.sum small { margin-top: 4px; font-size: .75rem; color: var(--quiet); font-weight: 600; }
+.added { margin-top: 10px; font-size: .9375rem; }
+.more { margin-top: 18px; font-size: .9375rem; color: var(--quiet); }
 
 @media (max-width: 960px) {
   .copy, .builder { grid-column: 1 / -1; }
 }
-@media (max-width: 520px) {
-  .foot > button { flex: 1 1 100%; }
+@media (max-width: 560px) {
+  .tray { grid-template-columns: repeat(4, minmax(0, 1fr)); border-radius: 24px; }
+  .ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ladder li:nth-child(n) { margin-top: 0; }
+  .foot, .footRight { width: 100%; }
+  .footRight { justify-content: space-between; }
+  .footRight > button { flex: 1; }
 }
 @media (prefers-reduced-motion: reduce) { .remove { animation: none; } }

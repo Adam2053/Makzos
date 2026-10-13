@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useRef } from "react";
 import { FEATURED, WEIGHT } from "@/lib/products";
 import { MOTION_OK, gsap, useGSAP } from "@/lib/motion";
@@ -8,18 +7,14 @@ import { CrunchMark } from "./CrunchMark";
 import ui from "./ui.module.css";
 import styles from "./Banner.module.css";
 
-/** Where each launch dish hangs beside the lockup: two a side, one large and one small. */
-const SPOTS = ["leftTop", "rightTop", "leftBottom", "rightBottom"] as const;
-
 /** Crumbs thrown out by each crunch. */
 const CRUMBS = 14;
 
 /**
  * The banner is about Makzo's, not one flavour, so it's built like the logo: the broken
  * makhana sits in the middle of the words, the way it sits in the middle of the wordmark.
- * The line is the guide's own (p.33). The makhana crunches on load and whenever it's tapped.
- * On wide screens the dishes behind the launch flavours hang either side, cropped round like
- * the seed, each tagged in its flavour's colour.
+ * The line is the guide's own (p.33). Kept quiet on purpose: white, type and one seed, sized
+ * so it never crowds the screen. It settles in once on load; the crunch is saved for a tap.
  */
 export function Banner() {
   const root = useRef<HTMLElement>(null);
@@ -54,38 +49,21 @@ export function Banner() {
     }
   };
 
-  // First load: the two lines part, the makhana pops between them and crunches.
+  // First load: one soft settle, then stillness. No loops, no auto-crunch.
   useGSAP(() => {
     const q = gsap.utils.selector(root);
     const mm = gsap.matchMedia();
     mm.add(MOTION_OK, () => {
-      gsap.timeline({ defaults: { ease: "expo.out" } })
-        .from(q(`.${styles.line} > span`), { yPercent: (i) => (i ? -110 : 110), duration: 1, stagger: 0.09 }, 0.1)
-        .from(q(`.${styles.mark}`), { scale: 0, rotation: -40, duration: 0.9, ease: "back.out(2)" }, 0.3)
-        .call(crunch, [], 1.05)
-        .from(q(`.${styles.sub}, .${styles.ctas}, .${styles.claims}`), { autoAlpha: 0, y: 16, duration: 0.7, stagger: 0.08 }, 0.6)
-        .from(q(`.${styles.dish}`), { scale: 0, autoAlpha: 0, duration: 0.9, stagger: 0.1, ease: "back.out(1.6)" }, 0.7);
-      // Each dish drifts on its own clock, so the four never move as one.
-      q(`.${styles.dish}`).forEach((el, i) => gsap.to(el, { y: i % 2 ? 12 : -12, duration: 3 + i * 0.6, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 1.8 }));
-      gsap.to(q(`.${styles.mark}`), { y: -10, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 2 });
+      gsap.timeline({ defaults: { ease: "power3.out" } })
+        .from(q(`.${styles.line} > span`), { yPercent: 40, autoAlpha: 0, duration: 0.9, stagger: 0.08 }, 0.05)
+        .from(q(`.${styles.mark}`), { scale: 0.85, autoAlpha: 0, duration: 0.8 }, 0.2)
+        .from(q(`.${styles.sub}, .${styles.ctas}, .${styles.claims}`), { autoAlpha: 0, y: 10, duration: 0.7, stagger: 0.06 }, 0.4);
     });
     return () => mm.revert();
   }, { scope: root });
 
   return (
     <section ref={root} className={styles.banner} aria-labelledby="banner-title">
-      <div className={styles.dishes} aria-hidden="true">
-        {FEATURED.map((f, i) => (
-          <figure key={f.id} className={`${styles.dish} ${styles[SPOTS[i]]}`} style={{ "--field": f.field, "--ink": f.ink } as React.CSSProperties}>
-            <span className={styles.plate}>
-              {/* Framed and zoomed about the food itself, so the dish is never the part cropped away (guide p.26). */}
-              <Image src={f.dish.src} alt="" fill sizes="(max-width: 1199px) 1px, 28vw"
-                style={{ objectPosition: `${f.dish.spot[0] * 100}% ${f.dish.spot[1] * 100}%`, transformOrigin: `${f.dish.spot[0] * 100}% ${f.dish.spot[1] * 100}%` }} />
-            </span>
-            <figcaption>{f.name}</figcaption>
-          </figure>
-        ))}
-      </div>
       <div className={`${ui.shell} ${styles.inner}`}>
         <div className={styles.lockup}>
           <h1 id="banner-title" className={`${ui.display} ${styles.title}`}>

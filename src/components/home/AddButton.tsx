@@ -8,7 +8,7 @@ import ui from "./ui.module.css";
 export function AddButton({ id, label, variant = "btn" }: { id: string; label: string; variant?: "btn" | "btnLine" | "btnDark" }) {
   const { addBag } = useCart();
   return (
-    <button type="button" className={ui[variant]} onClick={(e) => addBag(id, e.currentTarget.closest("li, article")?.querySelector("img"))}>
+    <button type="button" className={ui[variant]} onClick={(e) => addBag(id, e.currentTarget.closest("li, aside, article")?.querySelector("img"))}>
       {label}, {inr(BAG_PRICE)}
     </button>
   );

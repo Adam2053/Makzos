@@ -31,7 +31,19 @@ const QUESTIONS: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: "Can I choose what goes in my box?",
-    a: <>Yes. Pick any {BOX_SIZE}, doubles included. <Link href="/#box" className={ui.link}>Build a box</Link></>,
+    a: <>Yes. Pick any {BOX_SIZE}, doubles included. <Link href="/build-a-box" className={ui.link}>Build a box</Link></>,
+  },
+  {
+    q: "How do I track my order?",
+    a: <>Every order has its own page with live tracking. Find it in <Link href="/account/orders" className={ui.link}>your orders</Link>, or <Link href="/track" className={ui.link}>track it</Link> with the order number and your phone.</>,
+  },
+  {
+    q: "Can I cancel an order?",
+    a: "Yes, until it's packed and shipped. Open the order and choose Cancel order. Online payments are refunded in 5 to 7 working days.",
+  },
+  {
+    q: "How do I pay?",
+    a: "UPI, debit and credit cards, net banking, or cash on delivery for smaller orders.",
   },
   {
     q: "Where do you deliver?",
@@ -40,14 +52,14 @@ const QUESTIONS: { q: string; a: React.ReactNode }[] = [
 ];
 
 /** Native disclosure widgets: they open with a tap, Enter or Space, and need no script. */
-export function Faq() {
+export function Faq({ as: Heading = "h2" }: { as?: "h1" | "h2" }) {
   return (
     <section id="faq" className={styles.section} aria-labelledby="faq-title">
       <div className={`${ui.shell} ${styles.grid}`}>
         <header className={styles.head}>
-          <h2 id="faq-title" className={`${ui.display} ${styles.title}`}>Good questions.</h2>
+          <Heading id="faq-title" className={`${ui.display} ${styles.title}`}>Good questions.</Heading>
           <p className={`${ui.lede} ${styles.lede}`}>
-            Something else? <a href="mailto:hello@makzos.com" className={ui.link}>Write to us</a>
+            Something else? <Link href="/contact" className={ui.link}>Write to us</Link>
           </p>
         </header>
         <div className={styles.list}>

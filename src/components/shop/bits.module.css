@@ -1,0 +1,23 @@
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-family: var(--font-text), sans-serif; font-size: var(--t-small); font-weight: 600; color: var(--quiet); }
+.crumbs a { text-decoration: none; border-radius: 4px; }
+.crumbs a:hover { color: var(--black); text-decoration: underline; text-underline-offset: .2em; }
+.crumbs a:focus-visible { outline: 3px solid var(--black); outline-offset: 2px; }
+.crumbs li { display: flex; align-items: center; gap: 6px; }
+.crumbs li + li::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--paprika); }
+.crumbs [aria-current] { color: var(--black); }
+
+.stars { display: inline-flex; gap: 2px; vertical-align: middle; }
+.stars svg { width: var(--s, 18px); height: var(--s, 18px); fill: rgb(0 0 0 / .14); }
+.stars svg[data-on] { fill: var(--paprika); }
+
+/* Says on its face that it's made up, so it can't pass for the real thing. */
+.sample { display: inline-flex; align-items: center; padding: 3px 10px; border: 1.5px dashed var(--quiet); border-radius: 999px; color: var(--quiet); font-family: var(--font-text), sans-serif; font-size: .75rem; font-weight: 700; white-space: nowrap; }
+
+.pageHead { padding-block: clamp(40px, 6vw, 88px) clamp(24px, 3vw, 40px); font-family: var(--font-text), sans-serif; }
+.pageHead h1 { font-size: var(--t-h2); }
+.pageHead p { margin-top: 16px; color: var(--quiet); }
+.pageHead nav { margin-bottom: 20px; }
+
+.spinner { display: inline-block; width: 1.1em; height: 1.1em; border: 2.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { rotate: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } }

@@ -12,6 +12,7 @@ const COLOURS: Record<MakhanaVariant, [ink: string, body: string]> = {
   outline: ["#ea4b2b", "transparent"],
   ink: ["#000000", "#ffffff"],
   reverse: ["#ffffff", "#000000"],
+  tint: ["currentColor", "transparent"],
 };
 
 export type CrunchPart = keyof typeof PARTS;

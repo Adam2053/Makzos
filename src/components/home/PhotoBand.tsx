@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRef } from "react";
 import { MOTION_OK, gsap, useGSAP } from "@/lib/motion";
 import ui from "./ui.module.css";
@@ -24,7 +25,7 @@ export function PhotoBand() {
       </figure>
       <div className={`${ui.shell} ${styles.copy}`}>
         <h2 id="band-title" className={`${ui.display} ${styles.title}`}>On every pack, only the dish is in colour.</h2>
-        <a href="#map" className={ui.btnPaprika}>Find your flavour</a>
+        <Link href="/shop" className={ui.btnPaprika}>Find your flavour</Link>
       </div>
     </section>
   );

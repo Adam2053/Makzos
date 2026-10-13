@@ -1,0 +1,60 @@
+.section { background: var(--mist); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(64px, 9vw, 120px); border-radius: clamp(28px, 4vw, 56px); scroll-margin-top: var(--header-h); }
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(28px, 4vw, 48px); }
+.title { font-size: var(--t-h2); }
+.lede { max-width: 26em; color: var(--quiet); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.card { display: grid; gap: 14px; align-content: start; padding: clamp(20px, 2.6vw, 32px); border-radius: 32px; background: var(--white); }
+.nutrition { grid-column: 1 / 6; grid-row: span 2; }
+.card:nth-child(2) { grid-column: 6 / 13; }
+.card:nth-child(3) { grid-column: 6 / 10; }
+.lab { grid-column: 10 / 13; background: var(--black); color: var(--white); --focus: var(--paprika); }
+.cardHead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.h3 { font-size: 2rem; }
+.h4 { margin-top: 6px; font-size: .875rem; font-weight: 800; }
+.body { font-size: 1rem; line-height: 1.55; }
+.small { font-size: .875rem; line-height: 1.5; color: var(--quiet); }
+
+/* The panel: a label you can read, black rules like the real thing. */
+.table { width: 100%; border-collapse: collapse; font-size: .9375rem; border-top: 6px solid var(--black); }
+.table thead th { padding: 10px 0; font-size: .8125rem; font-weight: 800; text-align: left; border-bottom: 2px solid var(--black); }
+.table thead th:last-child, .table td { text-align: right; }
+.table tbody th, .table td { padding: 11px 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.table tbody th { font-weight: 700; text-align: left; }
+.table td { font-weight: 700; }
+.table tr[data-sub] th { padding-left: 18px; font-weight: 500; color: #3a3a3a; }
+.table tr[data-sub] td { font-weight: 500; }
+.table tbody tr:last-child > * { border-bottom: 4px solid var(--black); }
+.star { color: var(--paprika-ink); font-weight: 800; margin-left: 2px; }
+.foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: .8125rem; line-height: 1.5; color: var(--quiet); }
+
+.allergens, .free { display: flex; flex-wrap: wrap; gap: 6px; }
+.allergens li { padding: 6px 14px; border-radius: 999px; background: var(--black); color: var(--white); font-size: .8125rem; font-weight: 800; }
+.free li { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px 6px 10px; border-radius: 999px; background: var(--mist); font-size: .8125rem; font-weight: 700; }
+.free li::before { content: ""; width: 12px; height: 2px; background: var(--paprika); rotate: -45deg; box-shadow: 0 0 0 0 transparent; }
+
+.spec { display: grid; margin: 0; }
+.spec > div { display: grid; grid-template-columns: minmax(0, 9em) minmax(0, 1fr); gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: .875rem; line-height: 1.45; }
+.spec > div:last-child { border-bottom: 0; }
+.spec dt { color: var(--quiet); font-weight: 600; }
+.spec dd { margin: 0; font-weight: 600; }
+.vegRow { display: inline-flex; align-items: center; gap: 6px; }
+
+.lab .body { color: #d9d9d9; font-size: .9375rem; }
+.tests { display: grid; gap: 8px; font-size: .875rem; font-weight: 600; }
+.tests li { display: flex; align-items: center; gap: 10px; }
+.tests li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--paprika); }
+.labActions { display: grid; gap: 12px; justify-items: start; }
+.labActions button:last-child { color: var(--white); font-size: .875rem; }
+.lab :global(input) { min-height: 48px; }
+.soon { font-size: .8125rem; color: #a8a8a8; }
+.done { font-weight: 700; color: var(--paprika); }
+
+@media (max-width: 1100px) {
+  .nutrition { grid-column: 1 / 7; }
+  .card:nth-child(2) { grid-column: 7 / 13; }
+  .card:nth-child(3) { grid-column: 7 / 13; }
+  .lab { grid-column: 1 / -1; }
+}
+@media (max-width: 760px) {
+  .nutrition, .card:nth-child(2), .card:nth-child(3), .lab { grid-column: 1 / -1; grid-row: auto; }
+}

@@ -1,22 +1,15 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { BOX_SIZE, PACK_H, PACK_W, byId, inr } from "@/lib/products";
-import { linePrice, useCart, type Line } from "@/lib/cart";
+import { inr } from "@/lib/products";
+import { PackThumb } from "@/components/shop/Pack";
+import { describeLine, linePrice, useCart } from "@/lib/cart";
+import { FREE_FROM } from "@/lib/pricing";
 import { MOTION_OK, gsap } from "@/lib/motion";
 import { Makhana } from "./Makhana";
 import ui from "./ui.module.css";
 import styles from "./CartDrawer.module.css";
-
-function describe(l: Line) {
-  if (l.kind === "bag") return { title: byId(l.id).name, detail: "55 g bag", pack: byId(l.id).pack };
-  const counts = l.ids.reduce<Record<string, number>>((m, id) => ({ ...m, [id]: (m[id] ?? 0) + 1 }), {});
-  const detail = Object.entries(counts).map(([id, n]) => (n > 1 ? `${byId(id).name} ×${n}` : byId(id).name)).join(", ");
-  const title = l.note ? `Gift box of ${l.ids.length}` : l.ids.length === BOX_SIZE ? `Box of ${BOX_SIZE}` : `Mix of ${l.ids.length}`;
-  return { title, detail: l.note ? `${detail}. Note: “${l.note}”` : detail, pack: byId(l.ids[0]).pack };
-}
 
 /** A real modal dialog, so focus, Escape and the backdrop come from the browser. */
 export function CartDrawer() {
@@ -57,12 +50,12 @@ export function CartDrawer() {
           <>
             <ul className={styles.lines}>
               {lines.map((l) => {
-                const d = describe(l);
+                const d = describeLine(l);
                 return (
                   <li key={l.key} className={styles.line}>
-                    <span className={styles.thumb}><Image src={d.pack} alt="" width={PACK_W} height={PACK_H} sizes="64px" /></span>
+                    <span className={styles.thumb}><PackThumb id={d.packId} size={38} /></span>
                     <span className={styles.what}>
-                      <strong>{d.title}</strong>
+                      <Link href={d.href} onClick={() => setOpen(false)}><strong>{d.title}</strong></Link>
                       <span>{d.detail}</span>
                     </span>
                     <span className={styles.qty} role="group" aria-label={`Quantity of ${d.title}`}>
@@ -78,9 +71,11 @@ export function CartDrawer() {
             <div className={styles.foot}>
               {saving > 0 && <p className={styles.saving}><span>Every 4 bags at the box price</span><span>−{inr(saving)}</span></p>}
               <p className={styles.subtotal}><span>Subtotal</span><span>{inr(subtotal)}</span></p>
-              <p className={styles.note}>Delivery is worked out at checkout.</p>
-              {/* Checkout isn't connected yet. */}
-              <button type="button" className={`${ui.btn} ${styles.checkout}`}>Go to checkout</button>
+              <p className={styles.note}>
+                {subtotal >= FREE_FROM ? "Standard delivery is free on this order." : `Add ${inr(FREE_FROM - subtotal)} more for free delivery.`}
+              </p>
+              <Link href="/checkout" className={`${ui.btnPaprika} ${styles.checkout}`} onClick={() => setOpen(false)}>Go to checkout</Link>
+              <Link href="/cart" className={`${ui.link} ${styles.full}`} onClick={() => setOpen(false)}>See the full bag</Link>
             </div>
           </>
         )}

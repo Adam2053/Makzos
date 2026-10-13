@@ -9,14 +9,16 @@ import type { CSSProperties } from "react";
  * - outline: paprika ink, empty body
  * - ink:     black ink, white body (as in the wordmark)
  * - reverse: white ink, black body (for dark fields)
+ * - tint:    ink in the current text colour, empty body (for quiet backgrounds)
  */
-export type MakhanaVariant = "fill" | "outline" | "ink" | "reverse";
+export type MakhanaVariant = "fill" | "outline" | "ink" | "reverse" | "tint";
 
 const COLOURS: Record<MakhanaVariant, [ink: string, body: string]> = {
   fill: ["#000000", "#ea4b2b"],
   outline: ["#ea4b2b", "transparent"],
   ink: ["#000000", "#ffffff"],
   reverse: ["#ffffff", "#000000"],
+  tint: ["currentColor", "transparent"],
 };
 
 /* Kept as separate paths: merging them would let overlapping windings cancel out. */

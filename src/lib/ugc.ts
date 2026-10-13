@@ -63,3 +63,27 @@ export const REVIEWS: Review[] = [
 
 /** How many placeholder cards to draw while REVIEWS is empty. */
 export const REVIEW_SLOTS = 3;
+
+/**
+ * The creator row on a flavour's page: its own clip first, then four more. Handles are
+ * placeholders in the shape the real ones will take; every tile is flagged `sample`.
+ */
+export function creatorClips(flavour: string): Clip[] {
+  const i = Math.max(0, FLAVOURS.findIndex((f) => f.id === flavour));
+  return Array.from({ length: 5 }, (_, k) => {
+    const id = STOCK[(i + k * 3) % STOCK.length];
+    return { id: `creator-${flavour}-${k}`, flavour, sample: true, by: `@creator_${k + 1}`, ...mixkit(id) };
+  });
+}
+
+/**
+ * The star summary on a flavour's page. SAMPLE numbers for the layout, like the reviews:
+ * compute these from real reviews before launch.
+ */
+export function ratingFor(flavour: string) {
+  const mine = REVIEWS.filter((r) => r.flavour === flavour);
+  const bars = [0.72, 0.18, 0.06, 0.03, 0.01];
+  const count = 40 + (flavour.length * 7) % 60;
+  const average = mine.length ? (mine.reduce((n, r) => n + r.rating, 0) / mine.length + 4.6) / 2 : 4.6;
+  return { average: Math.round(average * 10) / 10, count, bars, sample: true, reviews: mine };
+}

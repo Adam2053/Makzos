@@ -1,12 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FLAVOURS, productHref } from "@/lib/products";
 import ui from "./ui.module.css";
 import styles from "./SiteFooter.module.css";
 
+/** The footer, as the sitemap lays it out: shop, company, help and legal. */
 const COLUMNS = [
-  { title: "Shop", links: [["Shop all", "/shop"], ["Build a box", "/#box"], ["Find your flavour", "/#map"], ["Where to buy", "/#find"]] },
-  { title: "Makzo's", links: [["Our story", "/about"], ["FAQ", "/#faq"], ["Contact us", "mailto:hello@makzos.com"]] },
-  { title: "Follow", links: [["Join the list", "/#community"], ["Instagram", "https://instagram.com/"]] },
+  { title: "Shop", links: [...FLAVOURS.map((f) => [f.name, productHref(f.id)]), ["Build a box", "/build-a-box"], ["Subscribe and save", "/build-a-box#subscribe"], ["Gifting and hampers", "/build-a-box#gifting"]] },
+  { title: "Company", links: [["About", "/about"], ["How we roast", "/how-we-roast"], ["Journal", "/journal"], ["Reviews", "/reviews"], ["Store locator", "/store-locator"], ["Wholesale enquiry", "/contact#wholesale"], ["Careers", "/careers"], ["Creators", "/creators"]] },
+  { title: "Help", links: [["Contact", "/contact"], ["FAQ", "/faq"], ["Track an order", "/track"], ["My account", "/account"], ["Shipping", "/shipping"], ["Returns and refunds", "/returns"], ["Terms", "/terms"], ["Privacy", "/privacy"]] },
 ];
 
 export function SiteFooter() {
@@ -29,7 +31,10 @@ export function SiteFooter() {
       </div>
       <div className={ui.shell}>
         <Image src="/brand/logo-dark.png" alt="Makzo's" width={1200} height={296} className={styles.logo} />
-        <p className={styles.legal}>© {new Date().getFullYear()} Solivra Innovations Private Limited</p>
+        <div className={styles.legal}>
+          <p>© {new Date().getFullYear()} Solivra Innovations Private Limited</p>
+          <p className={styles.legalLinks}><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></p>
+        </div>
       </div>
     </footer>
   );
