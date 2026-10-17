@@ -121,11 +121,16 @@ export function Reviews() {
         </ul>
       </div>
 
-      <div className={ui.shell}>
-        <ul className={styles.reviews} tabIndex={0} aria-label="Reviews">
-          {REVIEWS.length > 0
+      {/*
+        * The reviews: on a desktop, one row that drifts sideways by itself and stops while
+        * you're reading (hover or focus). It's laid out twice so the drift never reaches an end;
+        * the second copy is hidden from screen readers. On a phone it's a row to swipe.
+        */}
+      <div className={styles.drift} tabIndex={0}>
+        <ul className={styles.reviews} aria-label="Reviews">
+          {[false, true].flatMap((echo) => (REVIEWS.length > 0
             ? REVIEWS.map((r) => (
-              <li key={r.id} className={styles.review}>
+              <li key={`${echo}-${r.id}`} className={styles.review} aria-hidden={echo || undefined} data-echo={echo || undefined}>
                 <div className={styles.top}>
                   <span className={styles.stars} role="img" aria-label={`${r.rating} out of 5`}>
                     {Array.from({ length: 5 }, (_, i) => (
@@ -142,11 +147,11 @@ export function Reviews() {
               </li>
             ))
             : Array.from({ length: REVIEW_SLOTS }, (_, i) => (
-              <li key={i} className={`${styles.review} ${styles.blank}`}>
+              <li key={`${echo}-${i}`} className={`${styles.review} ${styles.blank}`} aria-hidden={echo || undefined} data-echo={echo || undefined}>
                 <Makhana variant="outline" className={styles.blankSeed} />
                 <p>A customer&rsquo;s review goes here, in their words, once the first orders are out.</p>
               </li>
-            ))}
+            ))))}
         </ul>
       </div>
     </section>

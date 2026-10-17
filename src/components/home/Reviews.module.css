@@ -35,7 +35,12 @@
 .add:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
 
 /* ---------- Reviews ---------- */
-.reviews { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 24px); margin-top: clamp(32px, 4vw, 56px); }
+/* Full width, soft at both edges so cards drift in and out rather than being cut. */
+.drift { --g: clamp(12px, 1.6vw, 24px); margin-top: clamp(32px, 4vw, 56px); overflow: hidden; mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent); }
+.reviews { display: grid; grid-auto-flow: column; grid-auto-columns: clamp(300px, 28vw, 400px); gap: var(--g); width: max-content; padding-block: 4px 12px; animation: drift 60s linear infinite; }
+/* Half the row plus half a gap is exactly one copy: the loop lands on the same picture. */
+@keyframes drift { to { transform: translateX(calc(-50% - var(--g) / 2)); } }
+.drift:hover .reviews, .drift:focus-within .reviews { animation-play-state: paused; }
 .review { display: flex; flex-direction: column; gap: 20px; padding: clamp(20px, 2.4vw, 32px); border-radius: 28px; background: var(--mist); }
 .review blockquote { margin: 0; font-size: var(--t-lede); line-height: 1.45; }
 .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -50,14 +55,19 @@
 .blank { background: transparent; border: 2px dashed var(--line); color: var(--quiet); font-size: 1rem; line-height: 1.5; }
 .blankSeed { width: 48px; height: auto; }
 
-@media (max-width: 1000px) {
-  .reviews { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* No drift for people who've asked for less motion: the row scrolls by hand instead. */
+@media (prefers-reduced-motion: reduce) {
+  .drift { overflow-x: auto; mask-image: none; padding-inline: max(var(--gutter), (100% - var(--max)) / 2); scrollbar-width: none; }
+  .reviews { animation: none; }
+  .review[data-echo] { display: none; }
 }
-/* Phones: the reviews turn into a row to swipe, one card and the edge of the next on screen. */
+/* Phones: a row to swipe, one card and the edge of the next on screen. */
 @media (max-width: 640px) {
-  .reviews { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 82%; overflow-x: auto; margin-inline: calc(-1 * var(--gutter)); padding: 4px var(--gutter) 12px; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
-  .reviews::-webkit-scrollbar { display: none; }
+  .drift { overflow-x: auto; mask-image: none; padding: 0; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .drift::-webkit-scrollbar { display: none; }
+  .reviews { grid-auto-columns: 82vw; padding-inline: var(--gutter); animation: none; }
   .review { scroll-snap-align: start; }
+  .review[data-echo] { display: none; }
 }
 @media (max-width: 700px) {
   .clips { grid-auto-columns: min(62vw, 260px); }
@@ -67,3 +77,4 @@
 .what a { text-decoration: none; }
 .what a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .what a:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; border-radius: 4px; }
+.drift:focus-visible { outline: 3px solid var(--paprika); outline-offset: -3px; }

@@ -1,8 +1,8 @@
 import { Banner } from "@/components/home/Banner";
 import { Products } from "@/components/home/Products";
 import { Why } from "@/components/home/Why";
+import { Chomp } from "@/components/home/Chomp";
 import { FindUs } from "@/components/home/FindUs";
-import { PhotoBand } from "@/components/home/PhotoBand";
 import { BuildBox } from "@/components/home/BuildBox";
 import { Reviews } from "@/components/home/Reviews";
 import { About } from "@/components/home/About";
@@ -19,9 +19,9 @@ export default function Home() {
     <>
       <Banner />
       {/* The product section's two approaches: layout="rail" scrolls sideways, layout="grid" stacks. */}
-      <Products layout="rail" />
+      <Products layout="rail" fade />
       <Why />
-      <PhotoBand />
+      <Chomp />
       <BuildBox />
       <Reviews />
       <About />

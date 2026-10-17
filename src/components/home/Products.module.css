@@ -1,60 +1,105 @@
 .section { position: relative; background: var(--mist); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px) clamp(40px, 5vw, 64px); scroll-margin-top: var(--header-h); border-radius: clamp(28px, 4vw, 56px) clamp(28px, 4vw, 56px) 0 0; }
+/* Grey melts into the white section below, so the range and the comparison read as one move. */
+.section[data-fade] { padding-bottom: clamp(40px, 5vw, 72px); background: linear-gradient(to bottom, var(--mist) 0, var(--mist) calc(100% - clamp(80px, 9vw, 140px)), var(--white) 100%); }
 .head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(32px, 4vw, 56px); }
 .title { font-size: var(--t-h2); }
-.side { display: flex; align-items: flex-end; gap: 24px; }
-/* With arrows, the line takes its own row: words on the left, arrows on the right edge. */
-.side:has(.arrows) { flex: 1 1 100%; justify-content: space-between; }
 .lede { max-width: 26em; }
+
+/*
+ * The sideways approach, laid out like a shelf with a sign beside it: the words hold the
+ * left column on the page's edge, the cards start next to them and run off the right of
+ * the screen, so the next one is always peeking in.
+ */
+.split {
+  --edge: max(var(--gutter), (100% - var(--max)) / 2);
+  display: grid; grid-template-columns: clamp(260px, 25vw, 360px) minmax(0, 1fr); align-items: center;
+  gap: clamp(24px, 3vw, 48px); padding-left: var(--edge);
+}
+.intro { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+.intro .title { font-size: clamp(3rem, 1.6rem + 3vw, 5.25rem); }
+.nudge { font-family: var(--font-display), sans-serif; font-size: clamp(2rem, 1.3rem + 1.6vw, 3.25rem); font-weight: 700; line-height: 1; text-transform: uppercase; text-wrap: balance; }
+.introFoot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
 .arrows { display: flex; gap: 8px; flex: none; }
 .arrows button { display: grid; place-items: center; width: 54px; height: 54px; padding: 0; border: 2px solid var(--black); border-radius: 50%; background: var(--white); color: var(--black); transition: background-color .2s, color .2s; }
 .arrows button:hover { background: var(--black); color: var(--white); }
 .arrows button:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
 .arrows svg { display: block; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(28px, 3vw, 44px) clamp(16px, 2vw, 28px); }
-/*
- * The sideways approach: one row that snaps card by card. It starts on the page's left edge
- * and runs off the right of the screen.
- */
-.bleed { --edge: max(var(--gutter), (100% - var(--max)) / 2); }
-.rail { display: grid; grid-auto-flow: column; grid-auto-columns: clamp(220px, 21vw, 290px); gap: clamp(16px, 2vw, 28px); overflow-x: auto; padding: 8px var(--edge) 16px; scroll-padding-inline: var(--edge); scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+.rail {
+  display: grid; grid-auto-flow: column; grid-auto-columns: clamp(240px, 21vw, 300px); gap: clamp(16px, 1.6vw, 24px);
+  overflow-x: auto; padding: 16px var(--edge) 28px 4px; scroll-padding-inline-start: 4px;
+  scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none;
+  /* Cards slide under a soft edge rather than being cut against the words. */
+  mask-image: linear-gradient(to right, transparent, #000 20px);
+}
 .rail::-webkit-scrollbar { display: none; }
 .rail > li { scroll-snap-align: start; }
 .rail:focus-visible { outline: 3px solid var(--paprika); outline-offset: -3px; }
-.item { display: flex; flex-direction: column; }
-/*
- * The pack stands on a plain white tile, like a shelf. No colour behind it: flavour colour
- * belongs to the product pages (requirements form), and the artwork already carries it.
- */
-.shot { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 4.6; border-radius: 28px; background: var(--white); overflow: hidden; }
-.pack { position: relative; z-index: 1; width: 52%; translate: 0 -4%; }
-.floor { position: absolute; left: 26%; right: 26%; bottom: 13%; height: 7%; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 0 0 / .22), rgb(0 0 0 / 0)); transition: transform .45s cubic-bezier(.3, 1.4, .5, 1), opacity .45s; }
-.item:hover .pack { translate: 0 -8%; rotate: -2deg; }
-.item:hover .floor { transform: scale(.85); opacity: .7; }
-.tag { position: absolute; left: 14px; top: 14px; z-index: 2; padding: 5px 11px; border-radius: 999px; background: var(--mist); font-size: .75rem; font-weight: 800; }
-.badge { position: absolute; right: 14px; top: 14px; z-index: 2; padding: 5px 11px; border-radius: 999px; background: var(--paprika); color: var(--black); font-size: .75rem; font-weight: 800; }
-.name { margin-top: 12px; font-size: clamp(1.75rem, 1.4rem + 1vw, 2.25rem); }
-.name a { text-decoration: none; border-radius: 4px; background: linear-gradient(var(--paprika) 0 0) left bottom / 0 3px no-repeat; transition: background-size .25s; }
-.item:hover .name a, .name a:hover { background-size: 100% 3px; }
-.name a:focus-visible { outline: 3px solid var(--paprika); outline-offset: 3px; }
-.inspired { margin-top: 4px; font-size: .9375rem; line-height: 1.45; color: var(--quiet); }
-.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 16px; }
-.price { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.75rem; }
 
-/* Add, then a stepper in the same footprint, as in every food-delivery app. */
-.addBtn, .stepper { display: inline-flex; align-items: center; justify-content: center; min-width: 116px; height: 46px; border-radius: 999px; font-weight: 700; }
-.addBtn { gap: 8px; padding: 0 20px; border: 2px solid var(--black); background: var(--white); color: var(--black); font-size: .9375rem; transition: background-color .2s, color .2s; }
-.addBtn:hover { background: var(--black); color: var(--white); }
-.addBtn span { font-size: 1.25rem; line-height: 1; }
-.stepper { background: var(--black); color: var(--white); }
-.stepper button { width: 42px; height: 46px; border: 0; border-radius: 50%; background: none; color: inherit; font-size: 1.25rem; font-weight: 700; }
-.stepper button:hover { color: var(--paprika); }
-.stepper output { min-width: 28px; text-align: center; font-variant-numeric: tabular-nums; }
-.addBtn:focus-visible, .stepper button:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); margin-top: clamp(32px, 4vw, 56px); }
+
+/*
+ * One white card per flavour, Bucks-style. At rest: only the pack, big. On hover the pack
+ * steps back and up, two pieces of the flavour's ingredient slide out from behind it, and
+ * the panel (name, price, calls) rises from the bottom. The card clips everything: nothing
+ * spills out of it.
+ */
+.item { position: relative; display: block; aspect-ratio: 3 / 4.25; border-radius: 28px; background: var(--white); overflow: hidden; box-shadow: 0 1px 0 rgb(0 0 0 / .04); }
+.shot { position: absolute; inset: 0; display: block; }
+/* The pack and its ingredients move together: big and centred at rest, smaller and higher on hover. */
+.stagePack { position: absolute; inset: 0; display: grid; place-items: center; transition: transform .5s cubic-bezier(.3, 1.2, .5, 1); }
+.pack { position: relative; z-index: 1; width: 68%; transition: scale .5s cubic-bezier(.3, 1.2, .5, 1), rotate .5s cubic-bezier(.3, 1.2, .5, 1); }
+.floor { position: absolute; left: 28%; right: 28%; top: 82%; height: 5%; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 0 0 / .22), rgb(0 0 0 / 0)); transition: transform .5s, opacity .5s; }
+
+.pop { position: absolute; left: 50%; top: 48%; z-index: 0; width: 34%; translate: -50% -50%; scale: .4; opacity: 0; transition: transform .6s cubic-bezier(.3, 1.4, .5, 1), scale .6s cubic-bezier(.3, 1.4, .5, 1), opacity .25s; pointer-events: none; }
+.pop svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 10px 10px rgb(0 0 0 / .22)); }
+.pop[data-at="0"] { --to: translate(-88%, 12%) rotate(-24deg); }
+.pop[data-at="1"] { --to: translate(88%, -22%) rotate(150deg) scale(.86); transition-delay: .06s; }
+
+/* The panel at the bottom: name and price, then Add to cart over Buy now. */
+.panel { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2; display: grid; gap: 10px; transition: transform .45s cubic-bezier(.3, 1.2, .5, 1), opacity .25s; }
+.meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-inline: 6px; }
+.name { font-size: clamp(1.5rem, 1.25rem + .7vw, 2rem); }
+.name a { text-decoration: none; border-radius: 4px; background: linear-gradient(var(--paprika) 0 0) left bottom / 0 3px no-repeat; transition: background-size .25s; }
+.name a:hover { background-size: 100% 3px; }
+.name a:focus-visible { outline: 3px solid var(--paprika); outline-offset: 3px; }
+.price { flex: none; font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.5rem; }
+.actions { display: grid; gap: 8px; }
+
+/* The open state: hovered, focused from the keyboard, or already in the bag. */
+.item:is(:hover, :focus-within, [data-in]) .stagePack { transform: translateY(-21%); }
+.item:is(:hover, :focus-within, [data-in]) .pack { scale: .68; }
+.item:is(:hover, :focus-within, [data-in]) .floor { transform: translateY(-24%) scale(.75); opacity: .7; }
+.item:is(:hover, :focus-within) .pop { transform: var(--to); scale: 1; opacity: 1; }
+.item:hover .pack { rotate: -3deg; }
+@media (hover: hover) {
+  .panel { transform: translateY(calc(100% + 16px)); opacity: 0; }
+  .item:is(:hover, :focus-within, [data-in]) .panel { transform: none; opacity: 1; }
+}
+/* Touch screens can't hover: the card is stacked plainly, pack on top and the panel below it. */
+@media (hover: none) {
+  .item { display: flex; flex-direction: column; aspect-ratio: auto; }
+  .shot { position: relative; aspect-ratio: 1 / .9; }
+  .item .stagePack, .item .pack, .item .floor { transform: none; scale: 1; }
+  .pack { width: 58%; }
+  .floor { top: 86%; }
+  .panel { position: static; padding: 0 12px 12px; }
+  .grid .panel { padding: 0 8px 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .stagePack, .pack, .floor, .pop, .panel { transition: none; } }
+
+.addBtn, .stepper, .nowBtn { display: flex; align-items: center; justify-content: center; width: 100%; height: 48px; border-radius: 999px; font-family: var(--font-text), sans-serif; font-size: .9375rem; font-weight: 700; }
+.addBtn { border: 2px solid var(--paprika); background: var(--paprika); color: var(--black); transition: background-color .2s, border-color .2s, color .2s; }
+.addBtn:hover { border-color: var(--black); background: var(--black); color: var(--white); }
+.stepper { justify-content: space-between; padding: 0 3px; background: var(--black); color: var(--white); }
+.stepper button { width: 42px; height: 42px; border: 0; border-radius: 50%; background: none; color: inherit; font-size: 1.25rem; font-weight: 700; transition: background-color .2s, color .2s; }
+.stepper button:hover { background: rgb(255 255 255 / .12); color: var(--paprika); }
+.stepper output { text-align: center; font-variant-numeric: tabular-nums; }
+.nowBtn { border: 2px solid var(--black); background: transparent; color: var(--black); transition: background-color .2s, color .2s; }
+.nowBtn:hover { background: var(--black); color: var(--white); }
+.addBtn:focus-visible, .nowBtn:focus-visible, .stepper button:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
 
 .note { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 18px; padding: 8%; }
-/* First in the rail: flush with the page edge, the cards follow it. */
-.note[data-first] { padding: 0 8% 0 0; }
 .noteSeed { width: 72px; height: auto; }
 .note p { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.5rem, 1.2rem + .8vw, 2rem); line-height: 1.05; text-transform: uppercase; }
 
@@ -71,12 +116,25 @@
 .barText span { color: #c9c9c9; }
 
 @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 700px) {
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .rail { grid-auto-columns: 62vw; }
+/* On a phone the left column becomes the heading, and the cards scroll underneath it. */
+@media (max-width: 860px) {
+  .split { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-left: 0; }
+  .intro { padding-inline: var(--gutter); gap: 14px; }
+  .intro .title { font-size: var(--t-h2); }
+  .intro .noteSeed { width: 56px; }
+  .nudge { font-size: clamp(1.875rem, 1.2rem + 3vw, 2.5rem); }
   .arrows { display: none; }
-  .grid .addBtn, .grid .stepper { min-width: 0; width: 100%; }
-  .grid .row { flex-direction: column; align-items: stretch; gap: 8px; }
+  .rail { grid-auto-columns: min(72vw, 300px); padding: 4px var(--gutter) 24px; scroll-padding-inline: var(--gutter); mask-image: none; }
+}
+@media (max-width: 700px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .grid .item { border-radius: 22px; }
+  .grid .panel { left: 8px; right: 8px; bottom: 8px; gap: 8px; }
+  .grid .actions { gap: 6px; }
+  .grid .name { font-size: 1.25rem; }
+  .grid .price { font-size: 1.125rem; }
+  .grid .meta { flex-direction: column; gap: 2px; }
+  .grid .addBtn, .grid .stepper, .grid .nowBtn { height: 44px; font-size: .875rem; }
   .bar { border-radius: 28px; padding: 12px 12px 12px 20px; flex-wrap: wrap; }
   .bar > button { flex: 1 1 100%; }
 }

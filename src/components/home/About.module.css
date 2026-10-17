@@ -2,8 +2,8 @@
 .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; align-items: center; }
 
 .photo { grid-column: 1 / 7; position: relative; aspect-ratio: 5 / 4; border-radius: 32px; overflow: hidden; background: #111; }
-/* Cropped so the pot and the bowl, the only colour in the frame, are never cut (guide p.26). */
-.photo img { object-fit: cover; object-position: 55% 70%; }
+.photo video { object-position: 60% 60%; }
+.tag { position: absolute; left: 14px; top: 14px; padding: 6px 12px; border-radius: 999px; background: var(--white); color: var(--black); font-size: .8125rem; font-weight: 700; pointer-events: none; }
 
 .copy { grid-column: 8 / 13; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
 .title { font-size: var(--t-h2); }

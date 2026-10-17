@@ -2,28 +2,62 @@
 .head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(28px, 4vw, 48px); }
 .title { font-size: var(--t-h2); }
 .lede { max-width: 26em; color: var(--quiet); }
-.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; align-items: start; }
-.card { display: grid; gap: 14px; align-content: start; padding: clamp(20px, 2.6vw, 32px); border-radius: 32px; background: var(--white); }
-.nutrition { grid-column: 1 / 6; grid-row: span 2; }
-.card:nth-child(2) { grid-column: 6 / 13; }
-.card:nth-child(3) { grid-column: 6 / 10; }
-.lab { grid-column: 10 / 13; background: var(--black); color: var(--white); --focus: var(--paprika); }
-.cardHead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+/* Desktop: the heading holds still on the left while the folds open and close beside it. */
+.layout { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(32px, 4vw, 64px); align-items: start; }
+.layout > .head { position: sticky; top: calc(var(--header-h) + 32px); flex-direction: column; align-items: flex-start; margin-bottom: 0; }
+.layout .title { font-size: clamp(2.75rem, 1.4rem + 3.4vw, 5rem); }
+/* Four folds, one under the other. */
+.stack { display: grid; gap: 12px; }
+.card { border-radius: 28px; background: var(--white); transition: background-color .2s; }
+.card[data-dark] { background: var(--black); color: var(--white); --focus: var(--paprika); }
+/* Shut, a fold is one line: the title, what's inside in a few words, and the toggle. */
+.cardHead { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px 20px; padding: clamp(18px, 2.2vw, 26px) clamp(20px, 2.6vw, 32px); cursor: pointer; list-style: none; border-radius: 28px; }
+.cardHead::-webkit-details-marker { display: none; }
+.cardHead:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
+.hint { color: var(--quiet); font-size: .9375rem; font-weight: 600; transition: opacity .2s; }
+.card[data-dark] .hint { color: #a8a8a8; }
+.card[open] .hint { opacity: 0; }
+.toggle { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--mist); color: var(--black); transition: background-color .2s, color .2s; }
+.card[data-dark] .toggle { background: #262626; color: var(--white); }
+.cardHead:hover .toggle { background: var(--black); color: var(--white); }
+.card[data-dark] .cardHead:hover .toggle { background: var(--paprika); color: var(--black); }
+.toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: rotate .25s; }
+.card[open] .toggle svg { rotate: 180deg; }
+.cardBody { display: grid; gap: 14px; align-content: start; padding: 0 clamp(20px, 2.6vw, 32px) clamp(22px, 2.6vw, 32px); }
+.card[open] .cardBody { animation: open .25s ease-out; }
+.cardBody > [role="group"] { justify-self: start; }
 .h3 { font-size: 2rem; }
 .h4 { margin-top: 6px; font-size: .875rem; font-weight: 800; }
 .body { font-size: 1rem; line-height: 1.55; }
 .small { font-size: .875rem; line-height: 1.5; color: var(--quiet); }
 
-/* The panel: a label you can read, black rules like the real thing. */
-.table { width: 100%; border-collapse: collapse; font-size: .9375rem; border-top: 6px solid var(--black); }
-.table thead th { padding: 10px 0; font-size: .8125rem; font-weight: 800; text-align: left; border-bottom: 2px solid var(--black); }
-.table thead th:last-child, .table td { text-align: right; }
-.table tbody th, .table td { padding: 11px 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
-.table tbody th { font-weight: 700; text-align: left; }
-.table td { font-weight: 700; }
-.table tr[data-sub] th { padding-left: 18px; font-weight: 500; color: #3a3a3a; }
-.table tr[data-sub] td { font-weight: 500; }
-.table tbody tr:last-child > * { border-bottom: 4px solid var(--black); }
+/* The panel: black rules like the real label, each part a row that opens. */
+.panel { border-top: 6px solid var(--black); border-bottom: 4px solid var(--black); font-size: .9375rem; font-variant-numeric: tabular-nums; }
+.panelHead, .part summary { display: grid; grid-template-columns: minmax(0, 1fr) auto 3.75em 22px; align-items: center; column-gap: 14px; }
+.panelHead { padding: 10px 0; border-bottom: 2px solid var(--black); font-size: .8125rem; font-weight: 800; }
+.panelHead span:nth-child(n + 2) { text-align: right; }
+.part + .part { border-top: 1px solid var(--line); }
+.part summary { row-gap: 8px; padding: 14px 0 12px; cursor: pointer; list-style: none; border-radius: 6px; }
+.part summary::-webkit-details-marker { display: none; }
+.part summary:hover .partName { text-decoration: underline; text-underline-offset: .25em; text-decoration-thickness: 2px; }
+.part summary:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
+.partName { font-weight: 800; }
+.partVal { font-weight: 800; text-align: right; }
+.partRi { color: var(--quiet); font-weight: 700; text-align: right; }
+.chev { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: rotate .25s; }
+.part[open] .chev { rotate: 180deg; }
+/* How much of the day's reference intake one pack is, drawn as a thin bar under the row. */
+.meter { grid-column: 1 / 4; height: 6px; border-radius: 999px; background: var(--mist); overflow: hidden; }
+.meter span { display: block; height: 100%; border-radius: inherit; background: var(--paprika); }
+.partBody { padding: 0 0 14px 14px; border-left: 3px solid var(--paprika); margin-bottom: 14px; }
+.part[open] .partBody { animation: open .25s ease-out; }
+@keyframes open { from { opacity: 0; translate: 0 -4px; } }
+.subTable { width: 100%; border-collapse: collapse; }
+.subTable th, .subTable td { padding: 7px 0; border-bottom: 1px solid var(--line); font-weight: 500; }
+.subTable th { text-align: left; color: #3a3a3a; }
+.subTable td { text-align: right; }
+.subTable td:last-child { width: calc(3.75em + 36px); padding-right: 36px; color: var(--quiet); }
+.partNote { margin-top: 8px; font-size: .8125rem; line-height: 1.5; color: var(--quiet); }
 .star { color: var(--paprika-ink); font-weight: 800; margin-left: 2px; }
 .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: .8125rem; line-height: 1.5; color: var(--quiet); }
 
@@ -39,22 +73,26 @@
 .spec dd { margin: 0; font-weight: 600; }
 .vegRow { display: inline-flex; align-items: center; gap: 6px; }
 
-.lab .body { color: #d9d9d9; font-size: .9375rem; }
+.card[data-dark] .body { color: #d9d9d9; font-size: .9375rem; }
 .tests { display: grid; gap: 8px; font-size: .875rem; font-weight: 600; }
 .tests li { display: flex; align-items: center; gap: 10px; }
 .tests li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--paprika); }
 .labActions { display: grid; gap: 12px; justify-items: start; }
 .labActions button:last-child { color: var(--white); font-size: .875rem; }
-.lab :global(input) { min-height: 48px; }
+.card[data-dark] :global(input) { min-height: 48px; }
 .soon { font-size: .8125rem; color: #a8a8a8; }
 .done { font-weight: 700; color: var(--paprika); }
 
-@media (max-width: 1100px) {
-  .nutrition { grid-column: 1 / 7; }
-  .card:nth-child(2) { grid-column: 7 / 13; }
-  .card:nth-child(3) { grid-column: 7 / 13; }
-  .lab { grid-column: 1 / -1; }
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .layout > .head { position: static; flex-direction: row; align-items: flex-end; margin-bottom: clamp(28px, 4vw, 48px); }
+  .layout .title { font-size: var(--t-h2); }
 }
-@media (max-width: 760px) {
-  .nutrition, .card:nth-child(2), .card:nth-child(3), .lab { grid-column: 1 / -1; grid-row: auto; }
+@media (prefers-reduced-motion: reduce) { .card[open] .cardBody, .part[open] .partBody, .toggle svg, .chev { animation: none; transition: none; } }
+/* Phones: the hint drops under the title, so neither is squeezed. */
+@media (max-width: 600px) {
+  .cardHead { grid-template-columns: minmax(0, 1fr) auto; }
+  .hint { grid-row: 2; font-size: .8125rem; }
+  .toggle { grid-row: 1 / 3; grid-column: 2; }
+  .h3 { font-size: 1.625rem; }
 }

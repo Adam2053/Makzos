@@ -37,31 +37,18 @@
 .brand:focus-visible, .navLink:focus-visible, .bag:focus-visible, .menuBtn:focus-visible, .account:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
 
 /* ---------- Shop menu ---------- */
-.mega { position: absolute; left: 0; right: 0; top: 100%; z-index: 2; background: var(--white); border-bottom: 1px solid var(--line); box-shadow: 0 30px 40px -30px rgb(0 0 0 / .35); animation: drop .25s ease-out; }
+/* The Shop menu: a small card hanging under its button, sized to the list it holds. */
+.shopWrap { position: relative; display: flex; }
+.mega { position: absolute; left: -14px; top: calc(100% + 14px); z-index: 2; width: 320px; padding: 14px 8px 8px; border: 1px solid var(--line); border-radius: 24px; background: var(--white); box-shadow: 0 24px 48px -20px rgb(0 0 0 / .35); transform-origin: 30px 0; animation: drop .2s ease-out; }
 .mega[hidden] { display: none; }
 @keyframes drop { from { opacity: 0; translate: 0 -8px; } }
-.megaInner { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 3fr) minmax(0, 3fr); gap: clamp(20px, 3vw, 48px); padding-block: 28px 32px; }
-.megaHead { margin-bottom: 12px; font-size: .8125rem; font-weight: 800; color: var(--quiet); }
-.flavours { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 16px; }
-.flavour { display: flex; align-items: center; gap: 14px; padding: 8px 10px; border-radius: 18px; text-decoration: none; transition: background-color .2s; }
-.flavour:hover { background: var(--mist); }
-.flavour > span:last-child { display: grid; font-size: .8125rem; color: var(--quiet); line-height: 1.35; }
-.flavour strong { color: var(--black); font-size: .9375rem; }
+.megaHead { margin: 0 0 6px 12px; font-size: .8125rem; font-weight: 800; color: var(--quiet); }
 .ways { display: grid; gap: 2px; }
 .way { display: grid; gap: 2px; padding: 10px 12px; border-radius: 16px; text-decoration: none; font-size: .8125rem; color: var(--quiet); transition: background-color .2s; }
 .way strong { color: var(--black); font-size: .9375rem; }
 .way:hover { background: var(--mist); }
-.flavour:focus-visible, .way:focus-visible, .promo:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
-.promo { display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; padding: 22px; border-radius: 28px; background: var(--paprika); color: var(--black); text-decoration: none; font-size: .9375rem; line-height: 1.4; }
-.promo strong { font-size: 2rem; }
-.promoPacks { display: flex; margin-bottom: auto; padding: 6px 0 18px; }
-.promoPacks > span + span { margin-left: -12px; }
-.fan0 { rotate: -10deg; }
-.fan1 { rotate: -3deg; translate: 0 -4px; }
-.fan2 { rotate: 4deg; translate: 0 -4px; }
-.fan3 { rotate: 11deg; }
-.promo:hover .promoPacks > span { translate: 0 -6px; transition: translate .3s; }
-.scrim { position: fixed; inset: 0; z-index: 39; border: 0; background: rgb(0 0 0 / .25); cursor: default; }
+/* A light veil: the card is small, so the page only needs to step back a little. */
+.scrim { position: fixed; inset: 0; z-index: 39; border: 0; background: rgb(0 0 0 / .12); cursor: default; }
 
 /* ---------- Phones ---------- */
 .sheet { display: none; }
@@ -76,15 +63,9 @@
   .sheetLink { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 14px 0; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--black); font-family: var(--font-display), sans-serif; font-size: 2rem; font-weight: 700; line-height: 1; text-transform: uppercase; text-align: left; text-decoration: none; }
   .sheetLink .caret { width: 24px; height: 24px; }
   .sheetShop { display: grid; gap: 14px; padding: 14px 0 18px; border-bottom: 1px solid var(--line); }
-  .sheetFlavours { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-  .sheetFlavours a { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 14px; background: var(--mist); font-size: .875rem; font-weight: 700; text-decoration: none; }
   .sheetWays { display: grid; gap: 2px; }
   .sheetWays a { display: block; padding: 8px 0; font-weight: 600; text-decoration: none; }
   .sheetSmall { display: flex; flex-wrap: wrap; gap: 10px 20px; padding-top: 18px; font-size: .9375rem; font-weight: 600; }
   .sheetSmall a { text-decoration: underline; text-underline-offset: .2em; }
-}
-@media (max-width: 1100px) {
-  .megaInner { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
-  .promo { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .mega { animation: none; } }

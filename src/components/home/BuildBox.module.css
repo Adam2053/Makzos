@@ -1,73 +1,142 @@
 .section { background: var(--mist); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px); scroll-margin-top: var(--header-h); border-radius: clamp(28px, 4vw, 56px); }
 .section[data-full] { padding-top: clamp(40px, 6vw, 80px); }
-.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; align-items: start; }
-
-.copy { grid-column: 1 / 6; }
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; }
 .title { font-size: var(--t-h2); }
-.lede { margin-top: 20px; }
+.lede { max-width: 26em; }
 
-/* The ladder: four steps, each a price; the one you're on goes black. */
-.ladder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 28px; }
+/* ---------- 1. The flavours: every pack on a shelf, tap to put one in ---------- */
+.flavours { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: clamp(8px, 1vw, 14px); margin-top: clamp(28px, 4vw, 48px); }
+.flavour { position: relative; display: grid; justify-items: center; gap: 10px; width: 100%; padding: 16px 10px 14px; border: 0; border-radius: 22px; background: var(--white); color: var(--black); transition: transform .25s cubic-bezier(.3, 1.6, .5, 1), box-shadow .25s; }
+.flavour:hover:not(:disabled) { transform: translateY(-4px); box-shadow: 0 16px 28px -16px rgb(0 0 0 / .4); }
+.flavour:active:not(:disabled) { transform: translateY(0) scale(.97); }
+.flavour:disabled { cursor: not-allowed; opacity: .5; }
+.flavour:focus-visible { outline: 3px solid var(--paprika); outline-offset: 3px; }
+.flavourPack { width: 62%; }
+.flavour:hover:not(:disabled) .flavourPack { rotate: -4deg; }
+.flavourName { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.125rem; line-height: 1; text-transform: uppercase; text-align: center; }
+.plus { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--black); color: var(--white); font-size: 1.125rem; font-weight: 700; line-height: 1; transition: background-color .2s, color .2s; }
+.flavour:hover:not(:disabled) .plus { background: var(--paprika); color: var(--black); }
+.badge { position: absolute; right: 8px; top: 8px; display: grid; place-items: center; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 999px; background: var(--paprika); font-size: .8125rem; font-weight: 800; }
+
+/* ---------- 2. The box ---------- */
+.packing { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 4vw, 64px); align-items: center; margin-top: clamp(40px, 5vw, 72px); }
+/*
+ * The Makzo's box, built in 3D from its faces. Sizes are container units, so it scales as one
+ * object: --w wide, --d deep, --h tall. A long perspective keeps it solid rather than
+ * stretched. Each face has an outside and an inside; the lid is a shallow box of its own.
+ */
+.stage { position: relative; width: 100%; max-width: 620px; margin-inline: auto; aspect-ratio: 1; }
+/* The box is its own size container, so the copy that flies to the bag keeps its proportions. */
+.box { position: absolute; inset: 0; container-type: inline-size; perspective: 2600px; perspective-origin: 50% 10%; }
+.ground { position: absolute; left: 12%; right: 12%; top: 87%; height: 13%; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 0 0 / .34), rgb(0 0 0 / 0)); filter: blur(5px); }
+.cube { --w: 36cqw; --d: 52cqw; --h: 21cqw; --pw: 28cqw; --ph: 37cqw; position: absolute; left: 50%; top: 73%; width: 0; height: 0; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(-34deg); }
+
+.wall, .lidFace { position: absolute; transform-style: preserve-3d; }
+.out, .in { position: absolute; inset: 0; backface-visibility: hidden; }
+.in { transform: rotateY(180deg); }
+/* Paprika board, lit from the top left, with a crisp lighter edge along the top. */
+.wall > .out { background: linear-gradient(#f2603d, #d8401f); box-shadow: inset 0 .5cqw 0 rgb(255 255 255 / .18), inset 0 0 0 1px rgb(0 0 0 / .12); }
+.wall > .in { background: linear-gradient(#262626, #0d0d0d); }
+.wRight > .out { background: linear-gradient(#c9381a, #a82c12); }
+.wFront, .wBack { left: calc(var(--w) / -2); top: calc(var(--h) / -2); width: var(--w); height: var(--h); }
+.wLeft, .wRight { left: calc(var(--d) / -2); top: calc(var(--h) / -2); width: var(--d); height: var(--h); }
+.wFront { transform: translateZ(calc(var(--d) / 2)); }
+.wBack { transform: rotateY(180deg) translateZ(calc(var(--d) / 2)); }
+.wLeft { transform: rotateY(-90deg) translateZ(calc(var(--w) / 2)); }
+.wRight { transform: rotateY(90deg) translateZ(calc(var(--w) / 2)); }
+.floor { position: absolute; left: calc(var(--w) / -2); top: calc(var(--d) / -2); width: var(--w); height: var(--d); background: radial-gradient(120% 80% at 50% 30%, #222, #070707); transform: rotateX(90deg) translateZ(calc(var(--h) / -2)); }
+
+/* The print on the front: the wordmark in black, what's inside, and the seal. */
+.wFront > .out { display: grid; place-content: end center; justify-items: center; gap: .8cqw; padding-bottom: 3cqw; }
+.print { width: 24cqw; height: auto; }
+.printLabel { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.9cqw; letter-spacing: .08em; text-transform: uppercase; color: var(--black); }
+.sticker { position: absolute; right: 2.4cqw; bottom: 2.2cqw; display: grid; place-content: center; justify-items: center; gap: .2cqw; width: 11cqw; aspect-ratio: 1; border: .4cqw solid var(--black); border-radius: 50%; background: var(--white); box-shadow: 0 .6cqw 1.2cqw rgb(0 0 0 / .3); visibility: hidden; }
+.sticker strong { font-family: var(--font-display), sans-serif; font-size: 1.9cqw; line-height: 1; text-transform: uppercase; }
+.stickerSeed { width: 4.4cqw; height: auto; }
+
+/* The packs, standing front to back like cards in a deck, each leaning back a touch. */
+.slots { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+.slot { position: absolute; left: calc(var(--pw) / -2); top: calc(var(--ph) / -2); width: var(--pw); height: var(--ph); transform-style: preserve-3d; transform: translate3d(0, calc(var(--h) / 2 - var(--ph) / 2), var(--z)) rotateX(9deg); }
+.pack { position: absolute; inset: 0; padding: 0; border: 0; background: none; transform-origin: 50% 100%; animation: drop .55s cubic-bezier(.3, 1.3, .5, 1); }
+.pack img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: .8cqw; box-shadow: 0 -.4cqw 1.6cqw rgb(0 0 0 / .45); }
+/* Hover a pack and it rises out of the deck, like a card being pulled; tap takes it out. */
+/* The button itself moves: a button clips what's drawn outside it, so lifting the image would cut it off. */
+.pack { transition: translate .4s cubic-bezier(.3, 1.4, .5, 1); }
+.pack img { transition: box-shadow .3s; }
+.pack:is(:hover, :focus-visible) { translate: 0 -42%; }
+.pack:is(:hover, :focus-visible) img { box-shadow: 0 -.4cqw 1.6cqw rgb(0 0 0 / .45), 0 3cqw 4cqw -1cqw rgb(0 0 0 / .35); }
+.pack:focus-visible { outline: 3px solid var(--white); outline-offset: 2px; border-radius: 1cqw; }
+@keyframes drop { from { translate: 0 -46cqw; opacity: 0; } 45% { opacity: 1; } }
+
+/* The lid: black, the wordmark in white on top, propped open behind the box until packing.
+   Its lower edge rests just behind the back wall, so it never cuts through the packs. */
+.lid { position: absolute; left: 0; top: 0; transform-style: preserve-3d; transform: translate3d(0, -29cqw, -52cqw) rotateX(-60deg); }
+.lidFace > .out { background: linear-gradient(135deg, #2c2c2c, #0a0a0a); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .06); }
+.lidFace > .in { background: #111; }
+.lidTop { --lw: calc(var(--w) + 1.2cqw); --ld: calc(var(--d) + 1.2cqw); left: calc(var(--lw) / -2); top: calc(var(--ld) / -2); width: var(--lw); height: var(--ld); transform: rotateX(90deg) translateZ(calc(var(--h) / 2 + .3cqw)); }
+.lidTop > .out { display: grid; place-items: center; }
+.lidLogo { width: 70%; height: auto; rotate: -90deg; }
+.rim { --rh: 4.5cqw; top: calc(var(--h) / -2 - .3cqw); height: var(--rh); }
+.lidFront, .lidBack { left: calc(var(--w) / -2 - .6cqw); width: calc(var(--w) + 1.2cqw); }
+.lidLeft, .lidRight { left: calc(var(--d) / -2 - .6cqw); width: calc(var(--d) + 1.2cqw); }
+.lidFront { transform: translateZ(calc(var(--d) / 2 + .6cqw)); }
+.lidBack { transform: rotateY(180deg) translateZ(calc(var(--d) / 2 + .6cqw)); }
+.lidLeft { transform: rotateY(-90deg) translateZ(calc(var(--w) / 2 + .6cqw)); }
+.lidRight { transform: rotateY(90deg) translateZ(calc(var(--w) / 2 + .6cqw)); }
+.lidRight > .out { background: linear-gradient(135deg, #1c1c1c, #050505); }
+
+/* ---------- Price and the pack button ---------- */
+.controls { display: grid; gap: 20px; align-content: center; }
+.ladder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
 .ladder li { display: grid; gap: 2px; padding: 12px 12px 10px; border-radius: 18px; background: var(--white); transition: background-color .2s, color .2s; }
-.ladder li:nth-child(2) { margin-top: -6px; }
-.ladder li:nth-child(3) { margin-top: -12px; }
-.ladder li:nth-child(4) { margin-top: -18px; }
 .ladder strong { font-size: .8125rem; }
 .ladder span { font-size: 1.75rem; line-height: 1; }
 .ladder small { font-size: .75rem; font-weight: 700; color: var(--paprika-ink); }
 .ladder li[aria-current] { background: var(--black); color: var(--white); }
 .ladder li[aria-current] small { color: var(--paprika); }
-
-.presets { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
-.preset { min-height: 46px; padding: 0 20px; border: 2px solid var(--black); border-radius: 999px; background: transparent; color: var(--black); font-size: .9375rem; font-weight: 600; transition: background-color .2s, color .2s; }
-.preset:hover { background: var(--black); color: var(--white); }
-.preset:focus-visible, .chip:focus-visible, .remove:focus-visible { outline: 3px solid var(--paprika); outline-offset: 3px; }
-
-/* ---------- The box ---------- */
-.builder { grid-column: 7 / 13; }
-/* The tray is the box seen from above: a black card, seven wells; the last three lighter. */
-.tray { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: clamp(6px, .8vw, 10px); padding: clamp(10px, 1.4vw, 18px); border-radius: 28px; background: var(--black); }
-.slot { position: relative; aspect-ratio: 960 / 1279; border-radius: 10px; border: 2px dashed rgb(255 255 255 / .4); }
-.slot[data-extra] { border-color: rgb(255 255 255 / .18); }
-.slot[data-full] { border-color: transparent; }
-.empty { position: absolute; inset: 0; display: grid; place-items: center; color: rgb(255 255 255 / .6); font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.25rem, 2vw, 1.75rem); }
-.slot[data-extra] .empty { color: rgb(255 255 255 / .3); }
-.remove { position: absolute; inset: 0; padding: 0; border: 0; border-radius: 8px; background: none; overflow: visible; animation: drop .35s cubic-bezier(.3, 1.6, .5, 1); }
-.remove img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
-.remove span { position: absolute; right: -7px; top: -7px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--white); color: var(--black); font-size: .9375rem; font-weight: 700; line-height: 1; box-shadow: 0 2px 6px rgb(0 0 0 / .35); }
-.remove:hover span { background: var(--paprika); }
-@keyframes drop { from { transform: translateY(-14px) scale(.9); opacity: 0; } }
-.trayNote { margin-top: 10px; font-size: .8125rem; color: var(--quiet); }
-
-/* ---------- The flavours ---------- */
-.picker { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
-.chip { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 4px 16px 4px 10px; border: 0; border-radius: 16px; background: var(--white); color: var(--black); font-size: .9375rem; font-weight: 600; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1), box-shadow .2s; }
-.chip:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 16px -8px rgb(0 0 0 / .35); }
-.chip:disabled { cursor: not-allowed; opacity: .5; }
-.chipCount { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--paprika); font-size: .75rem; font-weight: 800; }
-
-.options { display: grid; gap: 18px; margin-top: 24px; padding: 20px; border-radius: 24px; background: var(--white); }
+.options { display: grid; gap: 18px; padding: 20px; border-radius: 24px; background: var(--white); }
 .option { margin: 0; padding: 0; border: 0; display: grid; gap: 10px; min-width: 0; }
-
-.foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-top: 24px; }
-.status { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 1.05; text-transform: uppercase; max-width: 14em; }
-.footRight { display: flex; align-items: center; gap: 16px; }
-.sum { display: grid; justify-items: end; line-height: 1; }
-.sum strong { font-size: 2rem; }
+.status { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.5rem, 1.2rem + .8vw, 2rem); line-height: 1.05; text-transform: uppercase; }
+.foot { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.sum { display: grid; line-height: 1; }
+.sum strong { font-size: 2.25rem; }
 .sum s { font-size: .875rem; color: var(--quiet); }
 .sum small { margin-top: 4px; font-size: .75rem; color: var(--quiet); font-weight: 600; }
-.added { margin-top: 10px; font-size: .9375rem; }
-.more { margin-top: 18px; font-size: .9375rem; color: var(--quiet); }
+.packBtn { flex: 1; min-width: 220px; }
+.added { font-size: .9375rem; }
+.more { font-size: .9375rem; color: var(--quiet); }
 
-@media (max-width: 960px) {
-  .copy, .builder { grid-column: 1 / -1; }
+/* ---------- 3. Combos ---------- */
+.combosHead { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-top: clamp(56px, 7vw, 96px); padding-top: clamp(28px, 3vw, 40px); border-top: 2px solid var(--black); }
+.combosTitle { font-size: var(--t-h3); }
+.combosLede { color: var(--quiet); }
+.combos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 20px); margin-top: 24px; }
+.combo { display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: 28px; background: var(--white); }
+.fan { display: flex; justify-content: center; align-items: flex-end; height: 120px; margin-bottom: 8px; }
+.fanPack { width: 62px; margin-inline: -9px; }
+.combo:hover .fanPack { translate: 0 -6px; }
+.mystery { display: grid; place-items: center; width: 62px; aspect-ratio: 960 / 1279; margin-inline: -9px; border-radius: 7px; background: var(--black); color: var(--paprika); font-family: var(--font-display), sans-serif; font-size: 2rem; font-weight: 700; box-shadow: 0 14px 18px -12px rgb(0 0 0 / .5); }
+.comboName { font-size: 1.75rem; }
+.comboDek { font-size: .9375rem; line-height: 1.45; color: var(--quiet); }
+.comboPrice { display: flex; align-items: baseline; gap: 8px; margin-top: auto; padding-top: 8px; }
+.comboPrice strong { font-size: 1.75rem; }
+.comboPrice s { color: var(--quiet); font-size: .875rem; }
+.comboPrice span { margin-left: auto; font-size: .8125rem; font-weight: 700; color: var(--quiet); }
+.comboActions { display: grid; gap: 8px; justify-items: center; }
+.comboActions > button:first-child { width: 100%; min-height: 48px; }
+
+@media (max-width: 1000px) {
+  .packing { grid-template-columns: minmax(0, 1fr); }
+  .combos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 560px) {
-  .tray { grid-template-columns: repeat(4, minmax(0, 1fr)); border-radius: 24px; }
+/* Phones: the flavours become a row to swipe; the box takes the full width. */
+@media (max-width: 700px) {
+  .flavours { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 112px; overflow-x: auto; margin-inline: calc(-1 * var(--gutter)); padding: 4px var(--gutter) 12px; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .flavours::-webkit-scrollbar { display: none; }
+  .flavours > li { scroll-snap-align: start; }
+  .flavourName { font-size: 1rem; }
   .ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ladder li:nth-child(n) { margin-top: 0; }
-  .foot, .footRight { width: 100%; }
-  .footRight { justify-content: space-between; }
-  .footRight > button { flex: 1; }
+  .packBtn { min-width: 0; width: 100%; }
+  .combos { grid-template-columns: minmax(0, 1fr); }
 }
-@media (prefers-reduced-motion: reduce) { .remove { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .pack, .pack img, .flavour { animation: none; transition: none; } }

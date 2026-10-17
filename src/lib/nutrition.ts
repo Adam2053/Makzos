@@ -56,3 +56,31 @@ export const LAB_TESTS = [
   "Microbial safety",
   "Allergen declaration",
 ];
+
+/**
+ * Reference intakes for an average adult on 2000 kcal a day, the basis most Indian and EU
+ * labels use for "% RI". Shown next to each figure so a number has something to be read against.
+ */
+const RI: Record<string, number> = {
+  "Energy kcal": 2000, "Energy kJ": 8400, Fat: 70, "of which saturates": 20, Carbohydrate: 260,
+  "of which sugars": 90, "Dietary fibre": 30, Protein: 50, Salt: 6,
+};
+
+export const riFor = (r: NutrientRow) => RI[r.label === "Energy" ? `Energy ${r.unit}` : r.label];
+
+export type NutrientGroup = { key: string; main: NutrientRow; parts: NutrientRow[]; note: string };
+
+/**
+ * The panel as parts you can open: each headline figure, with what it's made of inside.
+ * Sodium isn't printed; it's worked out from salt (1 g salt is 400 mg sodium).
+ */
+export function nutritionGroups(id: string): NutrientGroup[] {
+  const [kcal, kj, fat, sat, carb, sugar, fibre, protein, salt] = nutritionFor(id);
+  return [
+    { key: "energy", main: kcal, parts: [kj], note: "The same energy in kilojoules, the metric unit some labels use." },
+    { key: "fat", main: fat, parts: [sat], note: "Saturates are counted inside the fat total, not on top of it." },
+    { key: "carb", main: carb, parts: [sugar, fibre], note: "Sugars and fibre are counted inside the carbohydrate total." },
+    { key: "protein", main: protein, parts: [], note: "For the makhana as sold, seasoning included." },
+    { key: "salt", main: salt, parts: [{ label: "Sodium", perPack: Math.round(salt.perPack * 400), unit: "mg", sub: true }], note: "Sodium is worked out from salt: salt ÷ 2.5." },
+  ];
+}

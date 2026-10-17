@@ -2,12 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { BOX_MAX, BOX_SIZE, FLAVOURS, SUB_OFF, boxPrice, inr, productHref } from "@/lib/products";
+import { BOX_MAX, BOX_SIZE, SUB_OFF, boxPrice, inr } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { useStore } from "@/lib/store";
-import { PackThumb } from "@/components/shop/Pack";
 import ui from "./ui.module.css";
 import styles from "./Header.module.css";
 
@@ -44,9 +43,19 @@ export function Header() {
   const account = user ? { href: "/account", label: `Your account, ${user.name.split(" ")[0]}` } : { href: "/login", label: "Sign in" };
   const close = () => { setShopAt(null); setSheetAt(null); };
 
+  // The notice's height, as --notice-h, so a full-screen banner can end exactly at the screen's foot.
+  const notice = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    const el = notice.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => document.documentElement.style.setProperty("--notice-h", `${el.offsetHeight}px`));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
     <>
-      <p className={styles.notice}>
+      <p ref={notice} className={styles.notice}>
         Launching first in Hyderabad, then Bengaluru. <Link href="/#community" className={ui.link}>Join the list</Link>
       </p>
       <header className={styles.header} onKeyDown={(e) => { if (e.key === "Escape") close(); }}>
@@ -56,10 +65,21 @@ export function Header() {
           </Link>
 
           <nav aria-label="Primary" className={styles.nav}>
-            <button type="button" className={styles.navLink} aria-expanded={shop} aria-controls="shop-menu" onClick={() => setShopAt(shop ? null : path)}>
-              Shop
-              <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.caret}><path d="M6 9l6 6 6-6" /></svg>
-            </button>
+            {/* The Shop menu: a small card under its button, with the ways to buy. */}
+            <div className={styles.shopWrap}>
+              <button type="button" className={styles.navLink} aria-expanded={shop} aria-controls="shop-menu" onClick={() => setShopAt(shop ? null : path)}>
+                Shop
+                <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.caret}><path d="M6 9l6 6 6-6" /></svg>
+              </button>
+              <div id="shop-menu" className={styles.mega} hidden={!shop}>
+                <p className={styles.megaHead}>Ways to buy</p>
+                <ul className={styles.ways}>
+                  {WAYS.map((w) => (
+                    <li key={w.href}><Link href={w.href} className={styles.way} onClick={close}><strong>{w.label}</strong><span>{w.note}</span></Link></li>
+                  ))}
+                </ul>
+              </div>
+            </div>
             {LINKS.map((l) => (
               <Link key={l.href} href={l.href} className={styles.navLink} aria-current={path === l.href ? "page" : undefined}>{l.label}</Link>
             ))}
@@ -91,40 +111,6 @@ export function Header() {
           </button>
         </div>
 
-        {/* ---------- The Shop menu: every flavour, and every way to buy ---------- */}
-        <div id="shop-menu" className={styles.mega} hidden={!shop}>
-          <div className={`${ui.shell} ${styles.megaInner}`}>
-            <div>
-              <p className={styles.megaHead}>Flavours</p>
-              <ul className={styles.flavours}>
-                {FLAVOURS.map((f) => (
-                  <li key={f.id}>
-                    <Link href={productHref(f.id)} className={styles.flavour} onClick={close}>
-                      <PackThumb id={f.id} size={36} />
-                      <span><strong>{f.name}</strong><span>{f.inspired.replace("Inspired by ", "Like ").replace(/\.$/, "")}</span></span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className={styles.megaHead}>Ways to buy</p>
-              <ul className={styles.ways}>
-                {WAYS.map((w) => (
-                  <li key={w.href}><Link href={w.href} className={styles.way} onClick={close}><strong>{w.label}</strong><span>{w.note}</span></Link></li>
-                ))}
-              </ul>
-            </div>
-            <Link href="/build-a-box#gifting" className={styles.promo} onClick={close}>
-              <span className={styles.promoPacks} aria-hidden="true">
-                {FLAVOURS.slice(0, 4).map((f, i) => <PackThumb key={f.id} id={f.id} size={44} className={styles[`fan${i}`]} />)}
-              </span>
-              <strong className={ui.display}>The taster box</strong>
-              <span>One of every flavour, {inr(boxPrice(7))}. The best first order.</span>
-            </Link>
-          </div>
-        </div>
-
         {/* ---------- Phones: one sheet with everything ---------- */}
         <div id="mobile-menu" className={styles.sheet} hidden={!sheet}>
           <button type="button" className={styles.sheetLink} aria-expanded={sheetShop} onClick={() => setSheetShop((x) => !x)}>
@@ -132,11 +118,6 @@ export function Header() {
           </button>
           {sheetShop && (
             <div className={styles.sheetShop}>
-              <ul className={styles.sheetFlavours}>
-                {FLAVOURS.map((f) => (
-                  <li key={f.id}><Link href={productHref(f.id)} onClick={close}><PackThumb id={f.id} size={30} />{f.name}</Link></li>
-                ))}
-              </ul>
               <ul className={styles.sheetWays}>
                 {WAYS.map((w) => <li key={w.href}><Link href={w.href} onClick={close}>{w.label}</Link></li>)}
               </ul>

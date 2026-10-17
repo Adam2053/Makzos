@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { GRAMS, WEIGHT, byId } from "@/lib/products";
-import { LAB_TESTS, fmtNutrient, nutritionFor, per100 } from "@/lib/nutrition";
+import { HEADLINE, LAB_TESTS, type NutrientRow, fmtNutrient, nutritionFor, nutritionGroups, per100, riFor } from "@/lib/nutrition";
 import ui from "@/components/home/ui.module.css";
 import forms from "./forms.module.css";
 import { SampleTag } from "./bits";
@@ -20,7 +20,12 @@ export function ProductSpecs({ id }: { id: string }) {
   const [notify, setNotify] = useState<"idle" | "form" | "done">("idle");
   const [email, setEmail] = useState("");
   const rows = nutritionFor(id);
+  const groups = nutritionGroups(id);
   const anyPending = rows.some((r) => r.pending);
+  const amount = (r: NutrientRow) => (basis === "pack" ? r.perPack : per100(r.perPack));
+  /** Share of an adult's daily reference intake, or nothing where there isn't one (sodium). */
+  const ri = (r: NutrientRow) => { const of = riFor(r); return of ? Math.round((amount(r) / of) * 100) : null; };
+  const star = (r: NutrientRow) => r.pending && <span className={styles.star} aria-label=", pending lab report">*</span>;
 
   const SPEC: [string, React.ReactNode][] = [
     ["Product", `${f.name} roasted makhana (fox nut)`],
@@ -37,43 +42,73 @@ export function ProductSpecs({ id }: { id: string }) {
 
   return (
     <section id="specs" className={styles.section} aria-labelledby="specs-title">
-      <div className={ui.shell}>
+      <div className={`${ui.shell} ${styles.layout}`}>
         <header className={styles.head}>
           <h2 id="specs-title" className={`${ui.display} ${styles.title}`}>What&rsquo;s in the bag.</h2>
           <p className={`${ui.lede} ${styles.lede}`}>Read the back of the pack before you buy it. Here it is, at a size you can read.</p>
         </header>
 
-        <div className={styles.grid}>
+        {/* The back of the pack in four parts, one under the other. All start shut; each opens on a tap. */}
+        <div className={styles.stack}>
           {/* ---------- Nutrition ---------- */}
-          <article className={`${styles.card} ${styles.nutrition}`} aria-labelledby="nutri-title">
-            <div className={styles.cardHead}>
-              <h3 id="nutri-title" className={`${ui.display} ${styles.h3}`}>Nutrition</h3>
-              <div className={forms.segments} role="group" aria-label="Show values">
-                <button type="button" className={forms.segment} aria-pressed={basis === "pack"} onClick={() => setBasis("pack")}>Per {WEIGHT} pack</button>
-                <button type="button" className={forms.segment} aria-pressed={basis === "100"} onClick={() => setBasis("100")}>Per 100 g</button>
-              </div>
+          <Fold id="nutri-title" title="Nutrition" hint={`${HEADLINE[0].value} a pack`}>
+            <div className={forms.segments} role="group" aria-label="Show values">
+              <button type="button" className={forms.segment} aria-pressed={basis === "pack"} onClick={() => setBasis("pack")}>Per {WEIGHT} pack</button>
+              <button type="button" className={forms.segment} aria-pressed={basis === "100"} onClick={() => setBasis("100")}>Per 100 g</button>
             </div>
-            <table className={styles.table}>
-              <caption className={ui.sr}>Nutrition per {basis === "pack" ? `${WEIGHT} pack` : "100 g"}</caption>
-              <thead><tr><th scope="col">Typical values</th><th scope="col">{basis === "pack" ? `Per pack (${GRAMS} g)` : "Per 100 g"}</th></tr></thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={`${r.label}-${r.unit}`} data-sub={r.sub || undefined}>
-                    <th scope="row">{r.label}{r.pending && <span className={styles.star} aria-label=", pending lab report">*</span>}</th>
-                    <td>{fmtNutrient(basis === "pack" ? r.perPack : per100(r.perPack), r.unit)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {/*
+              * The panel, one part per row. Each opens to show what it's made of, so the
+              * headline figures stay scannable and the detail is one tap away.
+              */}
+            <div className={styles.panel}>
+              <p className={styles.panelHead} aria-hidden="true">
+                <span>Typical values</span>
+                <span>{basis === "pack" ? `Per pack (${GRAMS} g)` : "Per 100 g"}</span>
+                <span>% RI</span>
+              </p>
+              {groups.map((g) => {
+                const pct = ri(g.main);
+                return (
+                  <details key={g.key} className={styles.part}>
+                    <summary>
+                      <span className={styles.partName}>{g.main.label}{star(g.main)}</span>
+                      <span className={styles.partVal}>{fmtNutrient(amount(g.main), g.main.unit)}</span>
+                      <span className={styles.partRi}>{pct !== null && <><span className={ui.sr}>, </span>{pct}%<span className={ui.sr}> of reference intake</span></>}</span>
+                      <svg className={styles.chev} viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                      {pct !== null && <span className={styles.meter} aria-hidden="true"><span style={{ width: `${Math.min(100, pct)}%` }} /></span>}
+                    </summary>
+                    <div className={styles.partBody}>
+                      {g.parts.length > 0 && (
+                        <table className={styles.subTable}>
+                          <caption className={ui.sr}>{g.main.label}, in detail</caption>
+                          <tbody>
+                            {g.parts.map((r) => {
+                              const p = ri(r);
+                              return (
+                                <tr key={`${r.label}-${r.unit}`}>
+                                  <th scope="row">{r.label}{star(r)}</th>
+                                  <td>{fmtNutrient(amount(r), r.unit)}</td>
+                                  <td>{p !== null ? `${p}%` : "–"}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      )}
+                      <p className={styles.partNote}>{g.note}</p>
+                    </div>
+                  </details>
+                );
+              })}
+            </div>
             <p className={styles.foot}>
-              Energy, fat, saturates, sugars and salt are as printed on the pack.
+              Energy, fat, saturates, sugars and salt are as printed on the pack. % RI is the share of an average adult&rsquo;s daily reference intake (2000 kcal).
               {anyPending && <> <span className={styles.star}>*</span> Awaiting the lab report; shown for layout. <SampleTag>Pending</SampleTag></>}
             </p>
-          </article>
+          </Fold>
 
           {/* ---------- Ingredients and allergens ---------- */}
-          <article className={styles.card} aria-labelledby="ingr-title">
-            <h3 id="ingr-title" className={`${ui.display} ${styles.h3}`}>Ingredients</h3>
+          <Fold id="ingr-title" title="Ingredients" hint="Allergens: milk, groundnut, soya">
             <p className={styles.body}>Roasted makhana (fox nut) and the {f.name} seasoning. Nothing artificial, and nothing we wouldn&rsquo;t explain.</p>
             <p className={styles.small}>The full ingredient list, in order of weight, is printed on the back of every pack.</p>
             <h4 className={styles.h4}>Allergens</h4>
@@ -85,19 +120,17 @@ export function ProductSpecs({ id }: { id: string }) {
             <ul className={styles.free}>
               {["Preservatives", "Artificial colours", "Artificial flavours", "INS-coded additives"].map((a) => <li key={a}>{a}</li>)}
             </ul>
-          </article>
+          </Fold>
 
           {/* ---------- Specification ---------- */}
-          <article className={styles.card} aria-labelledby="spec-title">
-            <h3 id="spec-title" className={`${ui.display} ${styles.h3}`}>Specification</h3>
+          <Fold id="spec-title" title="Specification" hint={`${WEIGHT}, vegetarian, made in India`}>
             <dl className={styles.spec}>
               {SPEC.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
             </dl>
-          </article>
+          </Fold>
 
           {/* ---------- Lab report ---------- */}
-          <article className={`${styles.card} ${styles.lab}`} aria-labelledby="lab-title">
-            <h3 id="lab-title" className={`${ui.display} ${styles.h3}`}>Lab report</h3>
+          <Fold id="lab-title" title="Lab report" hint="Coming with the first batch" dark>
             <p className={styles.body}>Every batch goes to an independent lab. The report for {f.name} will be published here, in full.</p>
             <ul className={styles.tests}>{LAB_TESTS.map((t) => <li key={t}>{t}</li>)}</ul>
             {notify === "done" ? (
@@ -115,9 +148,26 @@ export function ProductSpecs({ id }: { id: string }) {
               </div>
             )}
             <p id="lab-soon" className={styles.soon}>Coming with the first batch.</p>
-          </article>
+          </Fold>
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * One part of the panel, folded: the title and a one-line summary show while it's shut, so the
+ * stack reads like a contents page. Native <details>, so it opens from the keyboard and with find-in-page.
+ */
+function Fold({ id, title, hint, open, dark, children }: { id: string; title: string; hint: string; open?: boolean; dark?: boolean; children: React.ReactNode }) {
+  return (
+    <details className={styles.card} data-dark={dark || undefined} open={open}>
+      <summary className={styles.cardHead}>
+        <h3 id={id} className={`${ui.display} ${styles.h3}`}>{title}</h3>
+        <span className={styles.hint}>{hint}</span>
+        <span className={styles.toggle} aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg></span>
+      </summary>
+      <div className={styles.cardBody}>{children}</div>
+    </details>
   );
 }

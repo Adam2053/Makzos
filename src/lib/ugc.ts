@@ -46,6 +46,12 @@ const STOCK = [42323, 36423, 34487, 26099, 42325, 34469, 42319];
 
 export const CLIPS: Clip[] = FLAVOURS.map((f, i) => ({ id: `clip-${f.id}`, flavour: f.id, sample: true, ...mixkit(STOCK[i % STOCK.length]) }));
 
+/**
+ * The film beside the brand story on the homepage. SAMPLE: Mixkit stock (chilli falling into
+ * red powder), standing in until our own kitchen footage is shot. Landscape, cropped to the frame.
+ */
+export const STORY_CLIP: Clip = { id: "story", flavour: "rasam", sample: true, ...mixkit(28392) };
+
 export const REVIEWS: Review[] = [
   { id: "sample-1", flavour: "rasam", rating: 5, sample: true, name: "Ananya", city: "Hyderabad",
     quote: "It actually tastes like rasam. Pepper first, then the tang. The bag was gone before my tea was." },

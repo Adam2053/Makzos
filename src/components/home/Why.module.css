@@ -1,6 +1,7 @@
-.section { background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px); scroll-margin-top: var(--header-h); }
+.section { background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(32px, 4vw, 56px) clamp(72px, 10vw, 128px); scroll-margin-top: var(--header-h); }
 .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; align-items: start; }
-.head { grid-column: 1 / 6; }
+/* The words hold still on the left while the comparison scrolls past them. */
+.head { grid-column: 1 / 6; position: sticky; top: calc(var(--header-h) + 40px); }
 .title { font-size: var(--t-h2); }
 .title span { display: block; color: var(--paprika); }
 .lede { margin-top: 20px; color: var(--quiet); }
@@ -45,25 +46,30 @@
 @media (max-width: 960px) {
   .head, .table { grid-column: 1 / -1; }
 }
-/* Phones: each row is its label, then the two answers as a pair of cards. Nothing is squeezed into thirds. */
+@media (max-width: 960px) {
+  .head { position: static; }
+}
+/*
+ * Phones: still a table, three columns across. The row label takes the narrow first column,
+ * both answers stack their icon over the words so nothing is squeezed sideways.
+ */
 @media (max-width: 600px) {
-  .table { margin-top: 56px; }
-  .table, .table thead, .table tbody { display: block; }
-  .table tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .table thead td { display: none; }
-  .table th, .table td { width: auto; font-size: .875rem; line-height: 1.35; }
-  .table thead th { display: flex; flex-direction: column; justify-content: flex-end; padding: 0 14px 14px; }
-  .table tbody th { grid-column: 1 / -1; padding: 16px 2px 0; border: 0; font-size: .8125rem; }
-  .table tbody tr > td { border: 0; }
-  .table tbody td, .table tbody tr:last-child > td { padding: 12px; }
-  .table thead .us, .table thead .them, .table tbody .us, .table tbody .them,
-  .table tbody tr:last-child .us, .table tbody tr:last-child .them { border-radius: 18px; }
-  .pack, .bag { width: 64px; margin: -40px 0 12px; }
-  .others { font-size: 1.5rem; }
-  .othersSub { font-size: .75rem; }
-  .cell { gap: 8px; }
-  .mark, .cross { width: 16px; height: 16px; margin-top: .12em; }
-  /* Up beside the bags, clear of the logo and the label. */
-  .vs { width: 36px; height: 36px; font-size: .9375rem; bottom: auto; top: 10px; left: -4px; }
-  .logo { width: 100%; }
+  .table { margin-top: 64px; }
+  .table thead td { width: 25%; }
+  .us { width: 38%; }
+  .table th, .table td { padding: 18px 12px; font-size: .8125rem; line-height: 1.45; }
+  .table thead th { padding: 0 12px 20px; }
+  .table tbody th { padding: 18px 10px 18px 0; font-size: .75rem; line-height: 1.35; }
+  .table tbody tr:last-child > td { padding-bottom: 24px; }
+  .table thead .us, .table thead .them { border-radius: 22px 22px 0 0; }
+  .table tbody tr:last-child .us, .table tbody tr:last-child .them { border-radius: 0 0 22px 22px; }
+  .pack, .bag { width: 48px; margin: -38px 0 14px; }
+  /* Room either side of the seam for the badge. */
+  .logo { width: calc(100% - 12px); }
+  .table thead .them { padding-left: 24px; }
+  .others { font-size: 1.25rem; }
+  .othersSub { margin-top: 6px; font-size: .6875rem; line-height: 1.35; }
+  .cell { flex-direction: column; gap: 8px; }
+  .mark, .cross { width: 18px; height: 18px; margin-top: 0; }
+  .vs { width: 32px; height: 32px; border-width: 2px; bottom: 20px; font-size: .8125rem; }
 }

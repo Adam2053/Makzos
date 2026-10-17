@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FLAVOURS, bySlug } from "@/lib/products";
+import { PromoStrip } from "@/components/shop/PromoStrip";
 import { ProductHero } from "@/components/shop/ProductHero";
 import { ProductStory } from "@/components/shop/ProductStory";
 import { ProductSpecs } from "@/components/shop/ProductSpecs";
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: PageProps<"/products/[slug]">
 }
 
 /**
- * One template, seven flavours (sitemap: Flavour product pages). In order: buy it, read its
+ * One template, seven flavours (sitemap: Flavour product pages). In order: the offers, buy it, read its
  * story, see exactly what's in it, add what goes with it, watch creators eat it, cook with it,
  * read reviews, get answers, then the rest of the range.
  */
@@ -30,6 +31,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   if (!f) notFound();
   return (
     <>
+      <PromoStrip />
       <ProductHero id={f.id} />
       <ProductStory id={f.id} />
       <ProductSpecs id={f.id} />

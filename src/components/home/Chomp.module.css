@@ -1,0 +1,43 @@
+/*
+ * The section break: a black band lit by blurred Paprika light, the eaten words in white,
+ * then the brand's answer in white and a Paprika outline. Both lines share one grid cell, so the new one rises exactly where the
+ * old one was eaten.
+ */
+.section { position: relative; overflow: clip; background: var(--black); color: var(--white); font-family: var(--font-text), sans-serif; padding-block: clamp(88px, 13vw, 176px); text-align: center; }
+.glow {
+  position: absolute; inset: -15%; pointer-events: none;
+  background:
+    radial-gradient(38% 46% at 18% 28%, rgb(234 75 43 / .75), transparent 70%),
+    radial-gradient(42% 50% at 84% 78%, rgb(234 75 43 / .65), transparent 70%),
+    radial-gradient(30% 34% at 62% 12%, rgb(255 138 76 / .45), transparent 70%),
+    radial-gradient(26% 30% at 30% 92%, rgb(184 53 26 / .55), transparent 70%);
+  filter: blur(60px);
+}
+.stage { position: relative; display: grid; place-items: center; font-size: clamp(4rem, 1rem + 8.4vw, 9.5rem); }
+.fake, .real { grid-area: 1 / 1; margin: 0; font-size: 1em; line-height: .9; }
+
+/* Hidden until the script takes over, so without it the page shows the end state. */
+.fake { visibility: hidden; display: flex; flex-wrap: wrap; justify-content: center; column-gap: .25em; }
+.fakeWord { display: inline-flex; white-space: nowrap; }
+.fakeWord > span { display: inline-block; color: var(--white); }
+
+.real { position: relative; display: flex; flex-direction: column; align-items: center; }
+.line { display: block; }
+.outline { position: relative; color: transparent; -webkit-text-stroke: max(2px, .016em) var(--paprika); }
+/* The makhana that stays, perched on the full stop. */
+.seat { position: absolute; right: -.34em; top: -.22em; width: .46em; height: auto; rotate: 12deg; }
+
+.muncher { position: absolute; left: 0; top: 0; z-index: 2; width: 1.15em; height: auto; overflow: visible; pointer-events: none; visibility: hidden; }
+.part { transform-box: fill-box; transform-origin: 50% 50%; }
+.piece { transform-origin: 0% 100%; }
+.burst path { transform-box: fill-box; transform-origin: 50% 100%; }
+.crumb { position: absolute; z-index: 1; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50% 40% 55% 45%; pointer-events: none; }
+
+.after { position: relative; max-width: 30em; margin: clamp(28px, 4vw, 48px) auto 0; font-size: var(--t-lede); line-height: 1.5; color: #bdbdbd; text-wrap: balance; }
+
+@media (max-width: 600px) {
+  .section { padding-block: 72px 80px; }
+  .outline { -webkit-text-stroke-width: 1.5px; }
+  .seat { right: -.26em; top: -.28em; width: .4em; }
+  .after { font-size: 1rem; }
+}

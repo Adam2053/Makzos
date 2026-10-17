@@ -1,0 +1,19 @@
+/* A black band of offers, Paprika seeds between them. */
+.strip { overflow: hidden; background: var(--black); color: var(--white); font-family: var(--font-text), sans-serif; }
+.track { display: flex; width: max-content; animation: run 40s linear infinite; }
+.strip:hover .track { animation-play-state: paused; }
+/* Each copy carries its own trailing gap, so sliding by half the track is exactly one copy. */
+@keyframes run { to { transform: translateX(-50%); } }
+.run { display: flex; flex: none; }
+.run li { display: flex; align-items: center; gap: 28px; padding: 11px 28px 11px 0; font-size: .875rem; font-weight: 700; white-space: nowrap; }
+.run li::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--paprika); }
+
+@media (prefers-reduced-motion: reduce) {
+  .strip { overflow-x: auto; scrollbar-width: none; }
+  .track { animation: none; padding-left: var(--gutter); }
+  .run[aria-hidden] { display: none; }
+}
+@media (max-width: 600px) {
+  .run li { gap: 20px; padding: 9px 20px 9px 0; font-size: .8125rem; }
+  .track { animation-duration: 30s; }
+}
