@@ -7,7 +7,7 @@ import styles from "./SiteFooter.module.css";
 /** The footer, as the sitemap lays it out: shop, company, help and legal. */
 const COLUMNS = [
   { title: "Shop", links: [...FLAVOURS.map((f) => [f.name, productHref(f.id)]), ["Build a box", "/build-a-box"], ["Subscribe and save", "/build-a-box#subscribe"], ["Gifting and hampers", "/build-a-box#gifting"]] },
-  { title: "Company", links: [["About", "/about"], ["How we roast", "/how-we-roast"], ["Journal", "/journal"], ["Reviews", "/reviews"], ["Store locator", "/store-locator"], ["Wholesale enquiry", "/contact#wholesale"], ["Careers", "/careers"], ["Creators", "/creators"]] },
+  { title: "Company", links: [["Our story", "/about"], ["How we roast", "/about#how-we-roast"], ["Journal", "/journal"], ["Reviews", "/reviews"], ["Store locator", "/store-locator"], ["Wholesale enquiry", "/contact#wholesale"], ["Careers", "/careers"], ["Creators", "/creators"]] },
   { title: "Help", links: [["Contact", "/contact"], ["FAQ", "/faq"], ["Track an order", "/track"], ["My account", "/account"], ["Shipping", "/shipping"], ["Returns and refunds", "/returns"], ["Terms", "/terms"], ["Privacy", "/privacy"]] },
 ];
 

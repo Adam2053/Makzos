@@ -9,7 +9,7 @@
 .hello { display: flex; align-items: center; gap: 12px; }
 .hello > span:last-child { display: grid; font-size: .9375rem; line-height: 1.3; min-width: 0; }
 .hello > span:last-child span { color: var(--quiet); font-size: .875rem; font-variant-numeric: tabular-nums; }
-.avatar { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--paprika); font-family: var(--font-display), sans-serif; font-size: 1.75rem; }
+.avatar { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--paprika); font-family: var(--font-display), sans-serif; text-transform: lowercase; font-size: 1.75rem; }
 .nav { display: grid; gap: 4px; }
 .nav a, .nav button { display: flex; align-items: center; min-height: 48px; padding: 0 18px; border: 0; border-radius: 999px; background: none; color: var(--black); font-size: 1rem; font-weight: 600; text-align: left; text-decoration: none; transition: background-color .2s; }
 .nav a:hover, .nav button:hover { background: var(--mist); }
@@ -33,7 +33,7 @@
 .stat { display: grid; gap: 4px; padding: 22px 24px; border-radius: 28px; border: 2px solid var(--line); text-decoration: none; transition: border-color .2s; }
 .stat:hover { border-color: var(--black); }
 .stat:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
-.stat strong { font-family: var(--font-display), sans-serif; font-size: 3rem; line-height: 1; }
+.stat strong { font-family: var(--font-display), sans-serif; text-transform: lowercase; font-size: 3rem; line-height: 1; }
 .stat span { color: var(--quiet); font-size: .9375rem; }
 .emptyBox { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 32px; border: 2px dashed rgb(0 0 0 / .18); border-radius: 32px; color: var(--quiet); line-height: 1.5; }
 .emptySeed { width: 64px; height: auto; }

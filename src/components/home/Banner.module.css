@@ -1,44 +1,41 @@
 /*
- * White counter, black type, one Paprika seed. The banner is laid out like the wordmark:
- * letters either side, the broken makhana in the middle.
+ * The banner film, edge to edge across the first screen. A dark wash from the bottom left
+ * keeps the white type readable whatever frame the film is on.
  */
-.banner { position: relative; overflow: clip; background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; }
-.inner { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: min(calc(100svh - var(--header-h) - 40px), 720px); padding-block: clamp(48px, 8vh, 96px); text-align: center; }
+.banner {
+  position: relative; isolation: isolate; overflow: clip; display: flex; align-items: flex-end;
+  /* Pulled up under the sticky header, which is clear while it sits over the film. */
+  margin-top: calc(-1 * var(--header-h) - 1px); padding-top: calc(var(--header-h) + 1px);
+  min-height: calc(100svh - var(--notice-h, 40px)); max-height: 1040px;
+  background: #111; color: var(--white); font-family: var(--font-text), sans-serif;
+}
+.video { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
+.shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(to bottom, rgb(0 0 0 / .5), rgb(0 0 0 / 0) 22%), linear-gradient(to top, rgb(0 0 0 / .78), rgb(0 0 0 / .2) 55%, rgb(0 0 0 / .05)), linear-gradient(to right, rgb(0 0 0 / .45), rgb(0 0 0 / 0) 60%); }
 
-/* Sized from the screen's shorter side and kept modest: the lockup leads without filling the screen. */
-.lockup { --type: min(11vw, 9.5svh, 7.75rem); --mark: calc(var(--type) * 1.3); position: relative; }
-.title { display: flex; flex-direction: column; align-items: center; gap: calc(var(--mark) * 1.02); font-size: var(--type); }
-.line { display: block; overflow: hidden; padding-bottom: .05em; margin-bottom: -.05em; white-space: nowrap; }
-.line > span { display: block; }
+.inner { display: grid; gap: clamp(20px, 3vw, 36px); padding-block: clamp(40px, 7vh, 88px); }
+.title { font-size: clamp(4.25rem, 2rem + 9vw, 11rem); line-height: .9; }
+/* Each line masks its letters as they rise. The mask is padded so Boomme's tall capitals are never cut. */
+.line { display: block; overflow: hidden; padding: .1em .02em .06em; margin: -.1em -.02em -.06em; }
+.lineInner { display: inline-block; position: relative; }
+.word { display: inline-block; margin-right: .22em; white-space: nowrap; }
+.word:last-child { margin-right: 0; }
+.char { display: inline-block; }
 .accent { color: var(--paprika); }
+/* The makhana sits on the second line's full stop, the way it sits in the wordmark. */
+.seed { position: absolute; right: -.62em; top: -.02em; width: .5em; height: auto; color: var(--white); rotate: 10deg; }
+/* Room inside the mask, to the right, for the symbol on the full stop. */
+.line.accent { padding-right: .75em; margin-right: -.75em; width: fit-content; }
 
-/* The seed fills the gap between the lines; clear of the first, its foot just resting on the second. */
-.markBtn { position: absolute; left: 50%; top: 50%; height: var(--mark); aspect-ratio: 125 / 144.36; translate: -50% -50%; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; }
-.markBtn:focus-visible { outline: 3px solid var(--black); outline-offset: 8px; }
-.mark { display: block; width: 100%; height: 100%; overflow: visible; }
-/* Each part turns about its own centre, not the drawing's corner. */
-.part { transform-box: fill-box; transform-origin: 50% 50%; }
-.main { transform-origin: 50% 100%; }
-.piece { transform-origin: 0% 100%; }
-.burst path { transform-box: fill-box; transform-origin: 50% 100%; }
-.spray { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; z-index: 3; }
-.crumb { position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50% 40% 55% 45%; background: var(--paprika); }
+.foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 40px; }
+.sub { max-width: 30em; font-size: var(--t-lede); line-height: 1.5; color: rgb(255 255 255 / .86); }
+.cta { padding: 0 1.75rem; }
 
-.sub { margin-top: clamp(16px, 3vh, 28px); max-width: 32em; color: var(--quiet); }
-.ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 24px; }
-/* Clean ingredients support the story; they never lead it (guide p.3). */
-.claims { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 20px; margin-top: 24px; font-size: var(--t-small); font-weight: 600; }
-.claims li { display: flex; align-items: center; gap: 8px; }
-.claims li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--paprika); }
+.tag { position: absolute; right: var(--gutter); bottom: 14px; padding: 6px 12px; border-radius: 999px; background: rgb(0 0 0 / .55); font-size: .75rem; font-weight: 700; letter-spacing: .02em; }
 
 @media (max-width: 600px) {
-  .lockup { --type: min(12.5vw, 10svh); }
-  /* The banner is the whole first screen on a phone: the range starts below the fold. */
-  .inner { min-height: calc(100svh - var(--header-h) - var(--notice-h, 40px)); padding-block: 36px 44px; }
-  /* The flavour list is left to the range below, so the line under the lockup stays two lines long. */
-  .more { display: none; }
-  .sub { max-width: 19em; font-size: 1rem; }
-  .ctas { gap: 8px; margin-top: 20px; }
-  .ctas > * { min-height: 48px; padding: 0 1.25rem; font-size: .9375rem; }
-  .claims { margin-top: 18px; font-size: .8125rem; }
+  .title { font-size: clamp(3rem, 15.5vw, 5.5rem); }
+  .seed { right: -.56em; width: .44em; }
+  .sub { font-size: 1rem; }
+  .cta { width: 100%; }
+  .tag { bottom: auto; top: calc(var(--header-h) + 10px); }
 }

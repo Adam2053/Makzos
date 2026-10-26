@@ -1,0 +1,19 @@
+/*
+ * A black ribbon on a slight slant with a Paprika one crossing behind it, on the grey of the
+ * range below, so nothing of the page shows round its ends. Clipped sideways only: the slant
+ * has room above and below.
+ */
+.band { position: relative; z-index: 2; padding-block: clamp(26px, 3vw, 40px) clamp(14px, 2vw, 24px); overflow-x: clip; background: var(--mist); pointer-events: none; }
+.band::before { content: ""; position: absolute; left: -5%; right: -5%; top: 50%; height: clamp(46px, 5vw, 68px); translate: 0 -40%; rotate: 1.4deg; background: var(--paprika); }
+.ribbon { position: relative; rotate: -1.2deg; margin-inline: -5%; background: var(--black); color: var(--white); }
+.track { display: flex; width: max-content; animation: run 38s linear infinite; }
+.run { display: flex; flex: none; }
+.item { display: inline-flex; align-items: center; gap: clamp(18px, 2vw, 32px); padding: clamp(12px, 1.3vw, 18px) clamp(9px, 1vw, 16px); white-space: nowrap; }
+.item .seed { width: clamp(24px, 2.3vw, 34px); height: auto; color: var(--white); }
+.item:nth-child(even) .seed { color: var(--paprika); }
+.item > span { font-size: clamp(1.25rem, 1rem + 1vw, 2rem); }
+.item:nth-child(even) > span { color: var(--paprika); }
+/* The range continues the grey straight on: no rounded top to show the page behind it. */
+.band + section { border-radius: 0; }
+@keyframes run { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .track { animation: none; } }

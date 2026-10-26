@@ -3,22 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { BAG_PRICE, BOX_MAX, BOX_SIZE, FEATURED, FLAVOURS, PACK_H, PACK_W, SUB_EVERY, SUB_OFF, boxPrice, byId, inr, type Every } from "@/lib/products";
+import { BAG_PRICE, BOX_MAX, BOX_SIZE, FLAVOURS, PACK_H, PACK_W, SUB_EVERY, SUB_OFF, boxPrice, byId, inr, type Every } from "@/lib/products";
 import { useCart } from "@/lib/cart";
+import { BUNDLES as COMBOS } from "@/lib/bundles";
 import { MOTION_OK, gsap } from "@/lib/motion";
 import { Pack } from "@/components/shop/Pack";
-import { Makhana } from "./Makhana";
+import { Makhana, makhanaImage } from "./Makhana";
+import { BoxFront } from "./BoxFront";
 import ui from "./ui.module.css";
 import forms from "@/components/shop/forms.module.css";
 import styles from "./BuildBox.module.css";
-
-/** The upsell at the end: boxes already worked out, for people who'd rather not choose. */
-const COMBOS: { id: string; name: string; dek: string; ids: () => string[]; size: number; mystery?: boolean }[] = [
-  { id: "first", name: "The first four", dek: "Where everyone starts.", ids: () => FEATURED.map((f) => f.id), size: BOX_SIZE },
-  { id: "spicy", name: "The spicy side", dek: "Pepper, chilli and a tadka.", ids: () => ["rasam", "chettinadu", "thai-chilli", "curry-leaves"], size: BOX_SIZE },
-  { id: "all", name: "One of everything", dek: "The whole range, the best price a bag.", ids: () => FLAVOURS.map((f) => f.id), size: BOX_MAX },
-  { id: "surprise", name: "Surprise me", dek: "Four we pick. No peeking.", ids: () => [...FLAVOURS].sort(() => Math.random() - 0.5).slice(0, BOX_SIZE).map((f) => f.id), size: BOX_SIZE, mystery: true },
-];
 
 const NOTE_MAX = 120;
 
@@ -48,6 +42,7 @@ export function BuildBox({ full = false, as: Heading = "h2" }: { full?: boolean;
 
   const pick = (id: string) => { if (n < BOX_MAX && !packing) { setPicks((p) => [...p, id]); setAdded(false); } };
   const drop = (i: number) => { if (!packing) setPicks((p) => p.filter((_, j) => j !== i)); };
+  const dropOne = (id: string) => { if (!packing) setPicks((p) => { const i = p.lastIndexOf(id); return i < 0 ? p : p.filter((_, j) => j !== i); }); };
 
   /** Close the box and send it to the bag. `ids` is passed in when a combo packs itself. */
   const pack = (ids: string[] = picks) => {
@@ -101,45 +96,32 @@ export function BuildBox({ full = false, as: Heading = "h2" }: { full?: boolean;
 
   return (
     <section id="box" className={styles.section} aria-labelledby="box-title" data-full={full || undefined}>
-      <div className={ui.shell}>
+      <div className={`${ui.shell} ${styles.inner}`}>
         <header className={styles.head}>
           <Heading id="box-title" className={`${ui.display} ${styles.title}`}>Build a box of {BOX_SIZE} to {BOX_MAX}.</Heading>
           <p className={`${ui.lede} ${styles.lede}`}>Pick your flavours and watch them go in. Doubles welcome; the fuller the box, the less each bag costs.</p>
         </header>
 
-        {/* ---------- 1. The flavours ---------- */}
-        <ul className={styles.flavours} aria-label="Flavours: tap one to put it in the box">
-          {FLAVOURS.map((f) => {
-            const c = count(f.id);
-            return (
-              <li key={f.id}>
-                <button type="button" className={styles.flavour} disabled={n >= BOX_MAX || packing} onClick={() => pick(f.id)}
-                  aria-label={`Add ${f.name} to your box${c ? `, ${c} in it` : ""}`}>
-                  <Pack id={f.id} sizes="120px" className={styles.flavourPack} alt="" />
-                  <span className={styles.flavourName}>{f.name}</span>
-                  <span className={styles.plus} aria-hidden="true">+</span>
-                  {c > 0 && <span className={styles.badge} aria-hidden="true">{c}</span>}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-
         {/* ---------- 2. The box, and what it costs ---------- */}
         <div className={styles.packing}>
           {/*
-            * The Makzo's box in 3D: a rigid gift box, Paprika outside and black inside, its black
-            * lid propped open behind it. The packs stand in it one behind another like a deck of
+            * The Makzo's box in 3D, printed like the packaging (guide D4): Paprika board with the
+            * wordmark, the slanted tagline ribbon and the checkerboard edge; black inside, lined with
+            * the checkerboard tissue; the lid in the makhana gift-wrap repeat, propped open behind it. The packs stand in it one behind another like a deck of
             * cards, the first one picked at the back. Packing lays them down, swings the lid
             * shut, stamps it, and the closed box flies into the bag.
             */}
-          <div ref={stage} className={styles.stage}>
+          <div ref={stage} className={styles.stage} style={{ "--seed": makhanaImage("ink", 70) } as React.CSSProperties}>
             <div className={styles.box}>
               <span className={styles.ground} aria-hidden="true" />
               <div className={styles.cube}>
                 <span className={styles.floor} aria-hidden="true" />
                 {(["wBack", "wLeft", "wRight"] as const).map((w) => (
-                  <span key={w} className={`${styles.wall} ${styles[w]}`} aria-hidden="true"><span className={styles.out} /><span className={styles.in} /></span>
+                  <span key={w} className={`${styles.wall} ${styles[w]}`} aria-hidden="true">
+                    {/* The sides carry the brand pattern and the tagline, like the pack's back panel. */}
+                    <span className={styles.out}>{w !== "wBack" && <span className={`${ui.label} ${styles.sideLine}`}>Nothing artificial. Nothing unnecessary.</span>}</span>
+                    <span className={styles.in} />
+                  </span>
                 ))}
                 <ol className={styles.slots} aria-label={`Your box, ${n} of ${BOX_MAX}`}>
                   {picks.map((id, i) => {
@@ -156,12 +138,13 @@ export function BuildBox({ full = false, as: Heading = "h2" }: { full?: boolean;
                 </ol>
                 <span className={`${styles.wall} ${styles.wFront}`} aria-hidden="true">
                   <span className={styles.out}>
-                    <Image src="/brand/logo-dark.png" alt="" width={1200} height={296} className={styles.print} />
-                    <span className={styles.printLabel}>{n > 0 ? `Box of ${n}` : "Your box"}</span>
-                    <span className={styles.sticker}>
-                      <Makhana variant="fill" className={styles.stickerSeed} />
-                      <strong>Packed</strong>
-                    </span>
+                    {/* Printed like the packs: Paprika, the wordmark in white, the tagline on a slanted ribbon. */}
+                    <BoxFront className={styles.print} label={n > 0 ? `Box of ${n}` : "Your box"}>
+                      <span className={styles.sticker}>
+                        <Makhana variant="fill" className={styles.stickerSeed} />
+                        <strong>Packed</strong>
+                      </span>
+                    </BoxFront>
                   </span>
                   <span className={styles.in} />
                 </span>
@@ -169,7 +152,9 @@ export function BuildBox({ full = false, as: Heading = "h2" }: { full?: boolean;
                 <span className={styles.lid} aria-hidden="true">
                   <span className={`${styles.lidFace} ${styles.lidTop}`}>
                     <span className={styles.out}>
-                      <Image src="/brand/logo-light.png" alt="" width={1200} height={296} className={styles.lidLogo} />
+                      <span className={styles.lidBadge}>
+                        <Image src="/brand/logo-light.png" alt="" width={1200} height={296} className={styles.lidLogo} />
+                      </span>
                     </span>
                     <span className={styles.in} />
                   </span>
@@ -182,6 +167,29 @@ export function BuildBox({ full = false, as: Heading = "h2" }: { full?: boolean;
           </div>
 
           <div className={styles.controls}>
+            {/* ---------- The flavours: beside the box, so every tap is seen landing ---------- */}
+            <ul className={styles.flavours} aria-label="Flavours: tap one to put it in the box">
+              {FLAVOURS.map((f) => {
+                const c = count(f.id);
+                return (
+                  <li key={f.id} className={styles.flavourItem} data-in={c > 0 || undefined}>
+                    <button type="button" className={styles.flavour} disabled={n >= BOX_MAX || packing} onClick={() => pick(f.id)}
+                      aria-label={`Add ${f.name} to your box${c ? `, ${c} in it` : ""}`}>
+                      <Pack id={f.id} sizes="120px" className={styles.flavourPack} alt="" />
+                      <span className={styles.flavourName}>{f.name}</span>
+                      <span className={styles.plus} aria-hidden="true">{c > 0 ? c : "+"}</span>
+                    </button>
+                    {/* Once it's in, it can come out again: the last one of this flavour leaves the box. */}
+                    {c > 0 && (
+                      <button type="button" className={styles.minus} disabled={packing} onClick={() => dropOne(f.id)} aria-label={`Take one ${f.name} out of your box`}>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12" /></svg>
+                      </button>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+
             {/* The price ladder: every size, its price and what it saves, the current one marked. */}
             <ol className={styles.ladder} aria-label="Box prices">
               {Array.from({ length: BOX_MAX - BOX_SIZE + 1 }, (_, i) => BOX_SIZE + i).map((s) => (

@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { useActiveCard } from "@/lib/useActiveCard";
 import { BAG_PRICE, BOX_PRICE, BOX_SIZE, FLAVOURS, byId, inr, productHref } from "@/lib/products";
 import { bagKey, useCart } from "@/lib/cart";
 import { Makhana } from "./Makhana";
 import { INSIDE, IngredientArt } from "./Ingredients";
 import { Pack } from "@/components/shop/Pack";
+import { Checkpoint } from "./Checkpoint";
 import ui from "./ui.module.css";
 import styles from "./Products.module.css";
 
@@ -24,6 +26,8 @@ type Props = {
   children?: React.ReactNode;
   /** Fade the grey section out into the white one below it, instead of ending on a hard edge. */
   fade?: boolean;
+  /** The page already has a banner saying it: keep the heading for screen readers only. */
+  quietHead?: boolean;
 };
 
 /**
@@ -32,12 +36,15 @@ type Props = {
  * straight to checkout. The bar below shows what the bag holds and takes you to it.
  * Nothing flies or bounces; the stepper is the feedback.
  */
-export function Products({ layout = "grid", ids, title, as: Heading = "h2", children, fade }: Props) {
-  const { lines, bags, count, subtotal, addBag, setQty, setOpen } = useCart();
+export function Products({ layout = "grid", ids, title, as: Heading = "h2", children, fade, quietHead }: Props) {
+  const { lines, bags, count, subtotal, addBag, setQty } = useCart();
+  /** "Go to bag" stops at the checkpoint first, which shows the offers, then opens the bag. */
+  const [checkpoint, setCheckpoint] = useState(false);
   const router = useRouter();
   const list = useRef<HTMLUListElement>(null);
   const flavours = ids ? ids.map(byId) : FLAVOURS;
   const rail = layout === "rail";
+  useActiveCard(list, rail ? "x" : "y");
 
   const inBag = (id: string) => lines.find((l) => l.key === bagKey(id))?.qty ?? 0;
   const loose = bags % BOX_SIZE;
@@ -72,22 +79,40 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
     el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: smooth ? "smooth" : "auto" });
   };
 
+  /*
+   * Depth, the way Feastables and Bucks do it: the card turns a few degrees towards the
+   * pointer, and the layers inside it sit at different depths, so the pack and whatever is
+   * bursting out of it part as it turns. Written straight to the card's style: no re-render.
+   */
+  const tilt = (e: React.PointerEvent<HTMLLIElement>) => {
+    if (e.pointerType !== "mouse") return;
+    const el = e.currentTarget, r = el.getBoundingClientRect();
+    el.style.setProperty("--rx", `${((e.clientX - r.left) / r.width - 0.5) * 16}deg`);
+    el.style.setProperty("--ry", `${((e.clientY - r.top) / r.height - 0.5) * -12}deg`);
+  };
+  const untilt = (e: React.PointerEvent<HTMLLIElement>) => {
+    e.currentTarget.style.removeProperty("--rx");
+    e.currentTarget.style.removeProperty("--ry");
+  };
+
   const lede = <>{inr(BAG_PRICE)} a bag. Every four you pick count as a box, {inr(BOX_PRICE)}.</>;
 
   /*
    * The card, Bucks-style: at rest it's only the pack, big. On hover (or keyboard focus) the
-   * pack steps back a little, two pieces of the flavour's ingredient slide out from behind it,
-   * and the name, price and the two calls rise from the bottom. Everything stays inside the
+   * pack lifts out of the white card towards you, breaking past its top edge, the flavour's
+   * ingredient comes out from behind it on both sides, and the name, price and the two calls
+   * rise from the bottom. On a touch screen the card in front of you opens the same way. Everything stays inside the
    * card. Once it's in the bag, or on a touch screen, the bottom half simply stays up.
    */
   const cards = flavours.map((f) => {
     const n = inBag(f.id);
     const kind = INSIDE[f.id];
     return (
-      <li key={f.id} className={styles.item} data-in={n > 0 || undefined}>
+      <li key={f.id} className={styles.item} data-in={n > 0 || undefined} onPointerMove={tilt} onPointerLeave={untilt}>
         {/* The picture links too, but only the name is announced and tabbed to. */}
         <Link href={productHref(f.id)} className={styles.shot} tabIndex={-1} aria-hidden="true">
           <span className={styles.stagePack}>
+            {/* Behind the pack, one either side: the flavour's ingredient. */}
             {kind && [0, 1].map((i) => <span key={i} className={styles.pop} data-at={i}><IngredientArt kind={kind} /></span>)}
             <Pack id={f.id} sizes="(max-width: 700px) 60vw, 240px" className={styles.pack} alt="" />
             <span className={styles.floor} />
@@ -95,7 +120,7 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
         </Link>
         <div className={styles.panel}>
           <div className={styles.meta}>
-            <h3 className={`${ui.display} ${styles.name}`}><Link href={productHref(f.id)}>{f.name}</Link></h3>
+            <h3 className={`${ui.label} ${styles.name}`}><Link href={productHref(f.id)}>{f.name}</Link></h3>
             <span className={styles.price}>{inr(BAG_PRICE)}</span>
           </div>
           {/* Two calls, one above the other: keep shopping, or go now. */}
@@ -121,7 +146,7 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
   });
 
   return (
-    <section id="shop" className={styles.section} data-layout={layout} data-fade={fade || undefined} aria-labelledby="shop-title">
+    <section id="shop" className={styles.section} data-layout={layout} data-fade={fade || undefined} data-quiet={quietHead || undefined} aria-labelledby="shop-title">
       {rail ? (
         /*
          * The rail: words on the left, cards running off the right of the screen.
@@ -160,12 +185,12 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
         </div>
       ) : (
         <div className={ui.shell}>
-          <header className={styles.head}>
+          <header className={quietHead ? ui.sr : styles.head}>
             <Heading id="shop-title" className={`${ui.display} ${styles.title}`}>{title ?? "Meet the flavours."}</Heading>
             <p className={`${ui.lede} ${styles.lede}`}>{lede}</p>
           </header>
           {children}
-          <ul className={styles.grid}>
+          <ul ref={list} className={styles.grid}>
             {cards}
             {note}
           </ul>
@@ -178,11 +203,12 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
             <strong>{count} {count === 1 ? "item" : "items"} in your bag, {inr(subtotal)}</strong>
             <span>{toBox > 0 ? `Add ${toBox} more and ${bags > BOX_SIZE ? "the next four are" : "they're"} priced as a box.` : "Every four priced as a box."}</span>
           </div>
-          <button type="button" className={ui.btnPaprika} onClick={() => setOpen(true)}>
+          <button type="button" className={ui.btnPaprika} onClick={() => setCheckpoint(true)}>
             Go to bag
           </button>
         </div>
       </div>
+      {checkpoint && <Checkpoint onClose={() => setCheckpoint(false)} />}
     </section>
   );
 }

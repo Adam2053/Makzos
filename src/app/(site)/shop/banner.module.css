@@ -1,0 +1,22 @@
+.banner { position: relative; overflow: clip; background: linear-gradient(160deg, #f2563a, var(--paprika) 55%, #d63d1f); color: var(--black); font-family: var(--font-text), sans-serif; }
+.checks { display: block; height: 14px; background: repeating-conic-gradient(#181818 0 25%, #fff 0 50%) 0 0 / 28px 28px; }
+.inner { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: center; gap: 24px; padding-block: clamp(36px, 5vw, 64px) clamp(56px, 6vw, 88px); }
+.eyebrow { font-size: 1rem; color: var(--white); }
+.title { margin-top: 10px; font-size: clamp(3.5rem, 2rem + 5vw, 7.5rem); color: var(--white); }
+.lede { margin-top: 16px; max-width: 26em; font-size: var(--t-lede); line-height: 1.5; font-weight: 600; }
+
+/* The range, fanned like a hand of cards: the middle pack stands tallest. */
+.fan { display: flex; justify-content: center; align-items: flex-end; padding-top: 24px; }
+.pack { width: clamp(64px, 9vw, 132px); margin-inline: clamp(-22px, -1.6vw, -10px); transform-origin: 50% 120%; }
+.pack:nth-child(4) { translate: 0 -14px; z-index: 1; }
+.fan:hover .pack { translate: 0 -8px; }
+.fan:hover .pack:nth-child(4) { translate: 0 -22px; }
+
+.ribbon { position: absolute; left: -4%; right: -4%; bottom: 14px; padding: 8px 0; background: #181818; rotate: -1.5deg; white-space: nowrap; overflow: hidden; }
+.ribbon span { display: block; font-size: 1rem; color: var(--paprika); letter-spacing: .08em; }
+
+@media (max-width: 800px) {
+  .inner { grid-template-columns: minmax(0, 1fr); padding-bottom: 72px; }
+  .fan { padding-top: 8px; }
+  .pack { width: 15vw; margin-inline: -3vw; }
+}

@@ -30,7 +30,7 @@
 
 .foot { padding: 20px 28px 28px; }
 .saving { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: .9375rem; font-weight: 600; color: var(--quiet); }
-.subtotal { display: flex; justify-content: space-between; font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.75rem; text-transform: uppercase; line-height: 1; }
+.subtotal { display: flex; justify-content: space-between; font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.75rem; text-transform: lowercase; line-height: 1; }
 .note { margin: 8px 0 16px; font-size: .875rem; color: var(--quiet); }
 .checkout { width: 100%; }
 .full { display: block; width: fit-content; margin: 14px auto 0; font-size: .9375rem; }

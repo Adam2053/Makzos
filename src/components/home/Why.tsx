@@ -38,12 +38,7 @@ export function Why() {
           <thead>
             <tr>
               <td />
-              <th scope="col" className={styles.us}>
-                <Image src={PACK.pack} alt="" width={PACK_W} height={PACK_H} sizes="120px" className={styles.pack} />
-                <Image src="/brand/logo-dark.png" alt="Makzo's" width={1200} height={296} className={styles.logo} />
-              </th>
               <th scope="col" className={styles.them}>
-                <span className={styles.vs} aria-hidden="true">vs</span>
                 {/* A plain, unbranded bag: the guide rules out showing anyone else's pack (p.6). */}
                 <svg viewBox="0 0 96 128" aria-hidden="true" className={styles.bag}>
                   <path d="M10 14h76l-5 10 7 80-7 10H15l-7-10 7-80-5-10Z" />
@@ -53,22 +48,28 @@ export function Why() {
                 <span className={`${ui.display} ${styles.others}`}>Others</span>
                 <span className={styles.othersSub}>The usual bag of chips</span>
               </th>
+              {/* Ours on the right: the column the eye lands on last, and the one that wins. */}
+              <th scope="col" className={styles.us}>
+                <span className={styles.vs} aria-hidden="true">vs</span>
+                <Image src={PACK.pack} alt="" width={PACK_W} height={PACK_H} sizes="120px" className={styles.pack} />
+                <Image src="/brand/logo-dark.png" alt="Makzo's" width={1200} height={296} className={styles.logo} />
+              </th>
             </tr>
           </thead>
           <tbody>
             {ROWS.map((r) => (
               <tr key={r.label}>
                 <th scope="row">{r.label}</th>
-                <td className={styles.us}>
-                  <span className={styles.cell}>
-                    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.mark}><circle cx="12" cy="12" r="12" /><path d="M6.8 12.4l3.4 3.4 7-7.2" /></svg>
-                    <span>{r.us}</span>
-                  </span>
-                </td>
                 <td className={styles.them}>
                   <span className={styles.cell}>
                     <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.cross}><circle cx="12" cy="12" r="12" /><path d="M8 8l8 8M16 8l-8 8" /></svg>
                     <span>{r.them}</span>
+                  </span>
+                </td>
+                <td className={styles.us}>
+                  <span className={styles.cell}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.mark}><circle cx="12" cy="12" r="12" /><path d="M6.8 12.4l3.4 3.4 7-7.2" /></svg>
+                    <span>{r.us}</span>
                   </span>
                 </td>
               </tr>

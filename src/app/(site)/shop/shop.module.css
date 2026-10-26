@@ -1,5 +1,20 @@
-.bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; font-family: var(--font-text), sans-serif; }
-.n { margin-left: 4px; opacity: .6; font-variant-numeric: tabular-nums; }
-.sort { display: flex; align-items: center; gap: 10px; font-size: .9375rem; font-weight: 700; }
-.sort select { min-height: 44px; width: auto; border-radius: 999px; font-size: .9375rem; }
-.count { margin: 16px 0 clamp(24px, 3vw, 40px); font-size: .875rem; font-weight: 600; color: var(--quiet); }
+/* One line: chips, then the count and the sort pushed to the right. Small, so the packs lead. */
+.bar { display: flex; align-items: center; gap: 8px 12px; padding: 6px; border-radius: 999px; background: var(--white); font-family: var(--font-text), sans-serif; }
+.chips { display: flex; gap: 4px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-height: 34px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--black); font-size: .8125rem; font-weight: 700; white-space: nowrap; transition: background-color .15s, color .15s; }
+.chip:hover { background: var(--mist); }
+.chip[aria-pressed="true"] { background: var(--black); color: var(--white); }
+.chip:focus-visible { outline: 2px solid var(--paprika); outline-offset: 1px; }
+.n { margin-left: 2px; opacity: .55; font-variant-numeric: tabular-nums; }
+.count { margin-left: auto; flex: none; font-size: .8125rem; font-weight: 600; color: var(--quiet); white-space: nowrap; }
+.sort { flex: none; display: flex; align-items: center; }
+.sort select { min-height: 34px; padding: 0 30px 0 14px; border: 0; border-radius: 999px; background: var(--mist) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") right 10px center / 12px no-repeat; font-size: .8125rem; font-weight: 700; appearance: none; cursor: pointer; }
+.sort select:focus-visible { outline: 2px solid var(--paprika); outline-offset: 1px; }
+.sortLabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+@media (max-width: 700px) {
+  .bar { flex-wrap: wrap; border-radius: 22px; }
+  .chips { flex: 1 1 100%; }
+  .count { margin-left: 8px; }
+}

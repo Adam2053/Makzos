@@ -34,3 +34,14 @@ export function Makhana({ variant = "fill", className, style, title }: { variant
     </svg>
   );
 }
+
+/**
+ * The same makhana as a CSS image, for repeating patterns (guide D4, brand patterns: the gift
+ * wrap and tissue). Use it as `background-image`; the colours come from the variant.
+ */
+export function makhanaImage(variant: MakhanaVariant = "fill", pad = 0) {
+  const [ink, body] = COLOURS[variant];
+  // `pad` is clear space around the seed, in the drawing's units: it spaces out a repeat.
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-pad} ${-pad} ${125 + 2 * pad} ${144.36 + 2 * pad}"><g fill="${body}">${BODY.map((d) => `<path d="${d}"/>`).join("")}</g><g fill="${ink}">${INK.map((d) => `<path d="${d}"/>`).join("")}</g></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}

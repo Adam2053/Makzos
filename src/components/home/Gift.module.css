@@ -9,7 +9,7 @@
 .sleeveLogo { width: 70%; height: auto; }
 .sleeveLine { font-weight: 600; }
 .tag { margin-top: 18px; width: 100%; padding: 18px 20px; border-radius: 18px; background: var(--white); text-align: left; rotate: -2deg; box-shadow: 0 8px 18px -10px rgb(0 0 0 / .4); }
-.tagTo { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.5rem; text-transform: uppercase; line-height: 1; overflow-wrap: anywhere; }
+.tagTo { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.5rem; text-transform: lowercase; line-height: 1; overflow-wrap: anywhere; }
 .tagNote { margin-top: 8px; font-size: 1rem; line-height: 1.45; color: var(--quiet); overflow-wrap: anywhere; min-height: 2.9em; }
 
 /* ---------- The form ---------- */

@@ -31,9 +31,11 @@
 .bag circle { fill: #c6c6c6; stroke: none; }
 .logo { width: min(100%, 176px); height: auto; }
 .others { display: block; font-size: clamp(1.75rem, 1.3rem + 1.2vw, 2.5rem); color: var(--black); }
+/* The table is read left to right, so ours, on the right, is the answer. */
+.table thead .us { padding-left: clamp(28px, 2.6vw, 40px); }
 .othersSub { display: block; margin-top: 4px; font-size: var(--t-small); font-weight: 500; }
 /* The badge sits on the seam between the two sides. */
-.vs { position: absolute; left: 0; bottom: 18px; translate: -50% 0; z-index: 1; display: grid; place-items: center; width: 48px; height: 48px; border: 3px solid var(--white); border-radius: 50%; background: var(--black); color: var(--white); font-family: var(--font-display), sans-serif; font-size: 1.25rem; font-weight: 700; line-height: 1; text-transform: uppercase; }
+.vs { position: absolute; left: 0; bottom: 18px; translate: -50% 0; z-index: 1; display: grid; place-items: center; width: 48px; height: 48px; border: 3px solid var(--white); border-radius: 50%; background: var(--black); color: var(--white); font-family: var(--font-display), sans-serif; font-size: 1.25rem; font-weight: 700; line-height: 1; text-transform: lowercase; }
 
 /* Icon and words side by side, so a second line starts under the words, not under the icon. */
 .cell { display: flex; align-items: flex-start; gap: 10px; }
@@ -66,7 +68,7 @@
   .pack, .bag { width: 48px; margin: -38px 0 14px; }
   /* Room either side of the seam for the badge. */
   .logo { width: calc(100% - 12px); }
-  .table thead .them { padding-left: 24px; }
+  .table thead .us { padding-left: 24px; }
   .others { font-size: 1.25rem; }
   .othersSub { margin-top: 6px; font-size: .6875rem; line-height: 1.35; }
   .cell { flex-direction: column; gap: 8px; }

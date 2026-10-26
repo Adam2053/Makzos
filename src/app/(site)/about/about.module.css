@@ -1,27 +1,118 @@
-.intro, .points, .dishes { font-family: var(--font-text), sans-serif; color: var(--black); }
-.intro { padding-block: clamp(56px, 9vw, 128px) clamp(40px, 6vw, 80px); background: var(--white); }
-.title { font-size: var(--t-hero); max-width: 9em; }
-.title span { display: block; color: var(--paprika); }
-.lede { margin-top: 28px; color: var(--quiet); }
+.hero, .belief, .name, .roast, .dishes, .lab, .band { font-family: var(--font-text), sans-serif; color: var(--black); }
+.quiet { color: var(--quiet); }
+.eyebrow { font-size: 1rem; color: var(--paprika-ink); }
+.eyebrowLight { font-size: 1rem; color: var(--paprika); }
+.accent { color: var(--paprika); }
+.h2 { font-size: var(--t-h2); }
+.h2 span { display: block; color: var(--paprika); }
 
-.points { padding-block: clamp(56px, 8vw, 104px); background: var(--mist); border-radius: clamp(28px, 4vw, 56px); }
-.pointGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(32px, 4vw, 64px); }
-.h { font-size: var(--t-h3); margin-bottom: 16px; }
-.pointGrid p, .claims { font-size: 1rem; line-height: 1.55; }
-.claims { display: grid; gap: 8px; font-weight: 600; }
-.claims li { display: flex; align-items: center; gap: 12px; }
-.claims li::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--paprika); }
+/* ---------- The opening ---------- */
+.hero { position: relative; overflow: clip; padding-block: clamp(56px, 9vw, 128px) clamp(56px, 8vw, 112px); background: var(--white); }
+.heroTitle { margin-top: 18px; font-size: clamp(3.75rem, 1.5rem + 7vw, 9.5rem); line-height: .86; }
+.heroLine { display: block; }
+.heroMask { display: inline-block; overflow: hidden; padding-bottom: .04em; margin-right: .22em; vertical-align: top; }
+.heroWord { display: inline-block; }
+.heroFoot { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px 48px; margin-top: clamp(28px, 4vw, 48px); }
+.scrollCue { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; border-bottom: 2px solid currentColor; padding-bottom: 4px; }
+.scrollCue span { display: inline-block; animation: nudge 1.6s ease-in-out infinite; }
+@keyframes nudge { 50% { translate: 0 5px; } }
+.heroSeed { position: absolute; z-index: 0; width: clamp(90px, 12vw, 200px); height: auto; pointer-events: none; opacity: .95; }
+.heroSeed:nth-of-type(1) { right: 8%; top: 12%; rotate: 18deg; }
+.heroSeed:nth-of-type(2) { right: 26%; top: 48%; width: clamp(60px, 7vw, 120px); rotate: -24deg; }
+.heroSeed:nth-of-type(3) { right: 4%; bottom: 6%; width: clamp(70px, 9vw, 150px); rotate: 40deg; }
+.hero > div { position: relative; z-index: 1; }
 
-.dishes { padding-block: clamp(72px, 10vw, 128px); background: var(--white); }
-.h2 { font-size: var(--t-h2); max-width: 10em; }
+/* ---------- The belief: one statement that lights up as you read ---------- */
+.belief { padding-block: clamp(88px, 12vw, 176px); background: #181818; color: var(--white); border-radius: clamp(28px, 4vw, 56px); }
+.beliefText { margin-top: 24px; font-size: clamp(2.5rem, 1.2rem + 4.4vw, 6.25rem); line-height: .98; text-wrap: pretty; }
+.beliefWord { transition: opacity .2s; }
+
+/* ---------- The name, and what we're for ---------- */
+.name { padding-block: clamp(72px, 10vw, 128px); background: var(--white); }
+.nameRow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); margin-top: clamp(32px, 4vw, 56px); border-top: 2px solid var(--black); }
+.nameItem { display: grid; align-content: start; gap: 12px; padding-top: 24px; }
+.nameItem p:last-child { max-width: 22em; font-size: 1.0625rem; line-height: 1.55; color: var(--quiet); }
+.word { font-size: clamp(3rem, 1.5rem + 4vw, 6rem); line-height: .9; color: rgb(0 0 0 / .22); }
+.word b { font-weight: inherit; color: var(--paprika); }
+.pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 20px); margin-top: clamp(48px, 6vw, 80px); }
+.pillars li { display: grid; align-content: start; gap: 12px; padding: clamp(24px, 2.6vw, 36px); border-radius: 28px; background: var(--mist); transition: transform .35s cubic-bezier(.3, 1.4, .5, 1); }
+.pillars li:hover { transform: translateY(-6px) rotate(-.6deg); }
+.pillarSeed { width: 48px; height: auto; }
+.pillarTitle { font-size: 1.5rem; }
+.pillars p { font-size: 1rem; line-height: 1.55; }
+
+/* ---------- How we roast: pinned, the steps slide past sideways ---------- */
+.roast { background: var(--paprika); border-radius: clamp(28px, 4vw, 56px); overflow: clip; }
+.roast .eyebrow { color: var(--black); }
+.roast .quiet { color: rgb(0 0 0 / .72); }
+.pin { position: relative; min-height: 100svh; display: flex; align-items: center; }
+.track { display: flex; align-items: stretch; gap: clamp(16px, 2vw, 28px); width: max-content; padding: clamp(72px, 9vh, 120px) max(var(--gutter), (100vw - var(--max)) / 2); }
+.roastHead { flex: none; width: min(460px, 80vw); display: grid; align-content: center; gap: 18px; padding-right: clamp(16px, 3vw, 48px); }
+.roastTitle { font-size: clamp(3.5rem, 2rem + 4vw, 7rem); }
+.roastTitle span { display: block; color: var(--white); }
+.steps { display: flex; gap: clamp(16px, 2vw, 28px); }
+.step { flex: none; display: grid; grid-template-rows: auto auto auto 1fr; align-content: start; gap: 12px; width: clamp(280px, 26vw, 360px); min-height: min(560px, 70svh); padding: 28px; border-radius: 32px; background: var(--white); }
+.num { font-size: clamp(4rem, 3rem + 3vw, 6.5rem); line-height: .8; color: transparent; -webkit-text-stroke: 2px var(--black); }
+.step:hover .num { color: var(--paprika); -webkit-text-stroke-color: var(--paprika); }
+.stepArt { display: grid; place-items: center; height: 150px; border-radius: 22px; background: var(--mist); }
+.stepSeed { width: 84px; height: auto; }
+.stepPack { width: 72px; }
+.stepTitle { font-size: var(--t-h3); }
+.step p { font-size: 1rem; line-height: 1.55; color: #2b2b2b; }
+.todo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: .8125rem !important; color: var(--quiet) !important; }
+.bar { position: absolute; left: max(var(--gutter), (100% - var(--max)) / 2); right: max(var(--gutter), (100% - var(--max)) / 2); bottom: 32px; height: 4px; border-radius: 999px; background: rgb(0 0 0 / .18); overflow: hidden; }
+.bar > span { display: block; height: 100%; background: var(--black); transform-origin: 0 50%; }
+
+/* ---------- The promise, over a photo ---------- */
+.band { position: relative; overflow: hidden; display: flex; align-items: flex-end; min-height: min(80svh, 680px); margin-top: clamp(16px, 2vw, 24px); color: var(--white); background: #111; border-radius: clamp(28px, 4vw, 56px); }
+.bandPhoto { position: absolute; inset: 0; }
+.bandPhoto img { object-fit: cover; }
+.bandPhoto::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / .72), rgb(0 0 0 / 0) 60%); }
+.bandCopy { position: relative; z-index: 1; display: grid; gap: 20px; padding-block: clamp(40px, 6vw, 80px); }
+.bandTitle { font-size: var(--t-h2); max-width: 12em; }
+.claims { display: flex; flex-wrap: wrap; gap: 10px; }
+.claims li { padding: 8px 16px; border-radius: 999px; background: rgb(255 255 255 / .14); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); font-size: .9375rem; font-weight: 700; }
+
+/* ---------- Tested ---------- */
+.lab { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 5vw, 80px); align-items: center; padding-block: clamp(72px, 10vw, 128px); }
+.lab > div { display: grid; gap: 20px; justify-items: start; }
+.tests { display: grid; gap: 10px; }
+.tests li { display: flex; align-items: center; gap: 14px; padding: 18px 22px; border-radius: 22px; background: var(--mist); font-weight: 700; }
+.tests li::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--paprika); }
+
+/* ---------- The dishes ---------- */
+.dishes { padding-block: clamp(56px, 8vw, 104px) clamp(72px, 10vw, 128px); background: var(--white); }
 .dishGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 3vw, 40px) clamp(16px, 2vw, 28px); margin-block: clamp(32px, 4vw, 56px); }
-.dish figure { display: grid; gap: 14px; }
-.dishPhoto { position: relative; aspect-ratio: 4 / 3; border-radius: 28px; overflow: hidden; background: #111; }
-.dishPhoto img { object-fit: cover; }
-.dish figcaption { display: grid; gap: 4px; }
-.dish strong { font-size: clamp(1.75rem, 1.4rem + 1vw, 2.25rem); }
-.dish span { font-size: .9375rem; color: var(--quiet); }
+.dish a { display: grid; gap: 8px; text-decoration: none; }
+.dishPhoto { position: relative; display: block; aspect-ratio: 4 / 3; margin-bottom: 6px; border-radius: 28px; overflow: hidden; background: #111; }
+.dishPhoto img { object-fit: cover; transition: scale .6s cubic-bezier(.3, 1, .5, 1); }
+.dish a:hover .dishPhoto img { scale: 1.06; }
+.dish strong { font-size: clamp(1.5rem, 1.2rem + .8vw, 2rem); }
+.dish a > span:last-child { font-size: .9375rem; color: var(--quiet); }
+.dish a:focus-visible { outline: 3px solid var(--paprika); outline-offset: 4px; border-radius: 28px; }
 
 @media (max-width: 1100px) { .dishGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 800px) { .pointGrid { grid-template-columns: minmax(0, 1fr); } }
+/* Below 900px (and without motion) the roast steps stack: no pin, no sideways scroll. */
+@media (max-width: 899px) {
+  .pin { min-height: 0; display: block; }
+  .track { display: grid; width: auto; padding: clamp(56px, 10vw, 88px) var(--gutter); }
+  .roastHead { width: auto; padding: 0 0 12px; }
+  .steps { display: grid; }
+  .step { width: auto; min-height: 0; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: none; column-gap: 18px; }
+  .step > :not(.num) { grid-column: 2; }
+  .num { grid-row: 1 / span 4; }
+  .stepArt { display: none; }
+  .bar { display: none; }
+}
+@media (max-width: 800px) {
+  .nameRow, .pillars { grid-template-columns: minmax(0, 1fr); }
+  .lab { grid-template-columns: minmax(0, 1fr); }
+  .heroSeed:nth-of-type(1), .heroSeed:nth-of-type(2) { display: none; }
+}
 @media (max-width: 700px) { .dishGrid { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) {
+  .scrollCue span { animation: none; }
+  .pin { min-height: 0; }
+  .track { flex-wrap: wrap; width: auto; }
+  .steps { flex-wrap: wrap; }
+}

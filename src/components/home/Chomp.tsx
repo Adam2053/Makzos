@@ -16,7 +16,7 @@ const CRUMB = ["#ffffff", "#ea4b2b"];
  * The break between the comparison and the box builder. "Artificial flavours" sits on a black
  * band lit by soft Paprika glows; our makhana chomps through it letter by letter, its broken-off
  * piece working as the jaw; then "Nothing artificial." rises in its place and the makhana
- * hops up to sit on the full stop. It plays once, when the section is well on screen.
+ * hops up to sit on the full stop. It loops for as long as the section is on screen.
  * Without motion (or before the script runs) the end state is simply there.
  */
 export function Chomp() {
@@ -57,7 +57,7 @@ export function Chomp() {
         }
       };
 
-      const play = () => {
+      const play = (): gsap.core.Timeline => {
         const box = stage.getBoundingClientRect();
         const m = muncher.getBoundingClientRect();
         // The mouth is the gap at the seed's upper right: put that on the letter's centre.
@@ -101,10 +101,39 @@ export function Chomp() {
           .set(seat, { autoAlpha: 1 })
           .set(muncher, { autoAlpha: 0 })
           .fromTo(after, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.2");
+        return tl;
       };
 
-      const st = ScrollTrigger.create({ trigger: stage, start: "top 65%", once: true, onEnter: play });
-      return () => st.kill();
+      /*
+       * The loop: hold the answer for a beat, put the eaten words back, and chomp again. It
+       * only runs while the section is on screen; scrolled away, the current round pauses
+       * where it is and picks up when it's back.
+       */
+      let round: gsap.core.Timeline | null = null;
+      const reset = () => {
+        gsap.killTweensOf(piece);
+        gsap.set(piece, { rotation: 0 });
+        gsap.set(letters, { scale: 1, rotation: 0, autoAlpha: 1 });
+        gsap.set([...lines, seat, ...after], { autoAlpha: 0 });
+        gsap.set(burst, { scale: 0, autoAlpha: 0 });
+        gsap.set(glow, { opacity: 0.55, scale: 1 });
+        gsap.set(muncher, { autoAlpha: 0, scale: 1, scaleX: 1, scaleY: 1 });
+      };
+      const loop = () => {
+        round = play();
+        round.to({}, { duration: 2.6 })
+          .to([...lines, seat, ...after], { autoAlpha: 0, duration: 0.4, ease: "power2.in" })
+          .call(() => { reset(); loop(); });
+      };
+      const st = ScrollTrigger.create({
+        trigger: stage, start: "top 75%", end: "bottom 10%",
+        onToggle: (self) => {
+          if (!self.isActive) round?.pause();
+          else if (round) round.resume();
+          else loop();
+        },
+      });
+      return () => { st.kill(); round?.kill(); };
     });
     return () => mm.revert();
   }, { scope: root });

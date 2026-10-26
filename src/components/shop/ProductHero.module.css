@@ -9,7 +9,7 @@
 .thumb[data-v="pack"] { background: radial-gradient(70% 60% at 50% 45%, color-mix(in srgb, var(--field) 22%, transparent), transparent), var(--white); border-color: var(--line); }
 .thumb img { object-fit: cover; }
 .thumbCrop { object-position: 50% 20%; scale: 1.5; }
-.thumbFacts { display: grid; font-family: var(--font-display), sans-serif; font-size: 1.5rem; line-height: .9; text-align: center; }
+.thumbFacts { display: grid; font-family: var(--font-display), sans-serif; text-transform: lowercase; font-size: 1.5rem; line-height: .9; text-align: center; }
 .thumbFacts small { font-size: .75rem; }
 .thumb:hover { border-color: rgb(0 0 0 / .3); }
 .thumb[aria-pressed="true"] { border-color: var(--black); }
@@ -40,7 +40,7 @@
 .dish { object-fit: cover; animation: fade .4s ease-out; }
 @keyframes stand { from { translate: 0 6%; opacity: 0; } }
 @keyframes fade { from { opacity: 0; } }
-.line { position: absolute; left: 24px; right: 24px; bottom: 24px; z-index: 1; color: var(--black); font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.25rem, 1rem + .8vw, 1.75rem); line-height: 1; text-transform: uppercase; text-align: center; text-wrap: balance; }
+.line { position: absolute; left: 24px; right: 24px; bottom: 24px; z-index: 1; color: var(--black); font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.25rem, 1rem + .8vw, 1.75rem); line-height: 1; text-transform: lowercase; text-align: center; text-wrap: balance; }
 .lineOnPhoto { color: var(--white); text-shadow: 0 2px 14px rgb(0 0 0 / .7); }
 .facts { display: grid; gap: 20px; width: 78%; animation: fade .4s ease-out; }
 .facts > p { font-size: 1.5rem; }
@@ -78,14 +78,14 @@
 .format:has(input:focus-visible) { box-shadow: 0 0 0 4px rgb(234 75 43 / .35); }
 .format input { position: absolute; opacity: 0; pointer-events: none; }
 .formatName { font-size: .9375rem; font-weight: 800; }
-.formatPrice { font-family: var(--font-display), sans-serif; font-size: 1.75rem; line-height: 1.05; }
+.formatPrice { font-family: var(--font-display), sans-serif; text-transform: lowercase; font-size: 1.75rem; line-height: 1.05; }
 .formatNote { font-size: .8125rem; color: var(--quiet); }
 .formatSave { position: absolute; top: -10px; right: 10px; padding: 3px 9px; border-radius: 999px; background: var(--paprika); font-size: .6875rem; font-weight: 800; }
 .every { margin-top: 10px; }
 
 .buy { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
-.stepper { display: inline-flex; align-items: center; height: 54px; border: 2px solid var(--black); border-radius: 999px; }
-.stepper button { width: 46px; height: 50px; border: 0; border-radius: 50%; background: none; font-size: 1.375rem; font-weight: 700; }
+.stepper { display: inline-flex; align-items: center; height: 46px; border: 2px solid var(--black); border-radius: 999px; }
+.stepper button { width: 42px; height: 42px; border: 0; border-radius: 50%; background: none; font-size: 1.375rem; font-weight: 700; }
 .stepper button:hover:not(:disabled) { color: var(--paprika); }
 .stepper button:disabled { opacity: .3; cursor: not-allowed; }
 .stepper button:focus-visible { outline: 3px solid var(--paprika); outline-offset: -2px; }

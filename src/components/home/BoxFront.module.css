@@ -1,0 +1,15 @@
+/* The printed face: stacked bands, each scaled by its own SVG, so it prints the same at any size. */
+.face {
+  position: relative; display: grid; grid-template-rows: 8% minmax(0, 1fr) auto; overflow: hidden;
+  background: linear-gradient(170deg, #f2563a, var(--paprika) 45%, #d63d1f); color: var(--white);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / .1);
+}
+.checks { display: block; width: 100%; height: 100%; }
+.brand { display: block; width: 100%; height: 100%; padding: 4% 8% 1%; overflow: visible; }
+.roasted { font-family: var(--font-label), sans-serif; font-size: 7.4px; letter-spacing: 1.6px; fill: #fff; }
+/* The tagline ribbon, on the same slant as the pack's and running past both edges. */
+.ribbon { display: block; margin: 0 -4% 8%; padding: 1.4% 4%; background: #181818; rotate: -3deg; }
+.ribbon svg { display: block; width: 100%; height: auto; }
+.tagline { font-family: var(--font-label), sans-serif; font-size: 3.7px; letter-spacing: .25px; fill: var(--paprika); }
+.count { position: absolute; right: 3%; top: 11%; width: 27%; height: auto; rotate: 6deg; filter: drop-shadow(0 1px 2px rgb(0 0 0 / .25)); }
+.countText { font-family: var(--font-play), sans-serif; font-size: 5.6px; fill: #181818; }

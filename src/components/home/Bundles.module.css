@@ -1,0 +1,33 @@
+/* The bundles sit on white after the reviews, so their grey card field becomes the white page and the cards turn grey. */
+.section { background: var(--white); border-radius: 0; }
+.section li { background: var(--mist); }
+
+/*
+ * The box stands in the middle of the card with its packs in it, tops well clear of the wall.
+ * The stage scales down a little when the card opens, so the panel never covers the box.
+ */
+.section .stage { display: block; transform: translateY(var(--lift)) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg)) scale(var(--s, 1)); }
+/* Scoped under .stage: BoxFront brings its own base styles, and which file loads last varies by browser. */
+.stage .front { position: absolute; left: 13%; right: 13%; bottom: 20%; z-index: 2; aspect-ratio: 1.45; border-radius: 4px 4px 10px 10px; transform: translateZ(20px); box-shadow: 0 28px 30px -22px rgb(0 0 0 / .55); }
+
+.packs { position: absolute; left: 13%; right: 13%; bottom: 46%; height: 30%; z-index: 1; transform-style: preserve-3d; }
+.slot, .mystery { position: absolute; left: 50%; bottom: 0; width: 32%; translate: -50% 0; transition: transform .6s cubic-bezier(.3, 1.4, .5, 1); }
+.pack { width: 100%; }
+/* At rest: standing in a tight row, like the packs in an open box. */
+.slot { transform: translateX(calc((var(--i) - (var(--n) - 1) / 2) * 56%)) rotate(calc((var(--i) - (var(--n) - 1) / 2) * 3deg)); }
+/* On hover: they rise out of the box and fan, each at its own depth. */
+li:is(:hover, :focus-within, [data-active]) .slot {
+  transform: translateZ(calc(var(--i) * 18px - 20px)) translateX(calc((var(--i) - (var(--n) - 1) / 2) * 80%)) translateY(-50%) rotate(calc((var(--i) - (var(--n) - 1) / 2) * 11deg));
+  transition-delay: calc(var(--i) * .04s);
+}
+.mystery { display: grid; place-items: center; aspect-ratio: 960 / 1279; border-radius: 7px; background: #181818; color: var(--paprika); font-family: var(--play); font-size: 2.25rem; box-shadow: 0 14px 18px -12px rgb(0 0 0 / .5); transform: translateX(calc((var(--i) - 1.5) * 56%)) rotate(calc((var(--i) - 1.5) * 3deg)); }
+li:is(:hover, :focus-within, [data-active]) .mystery { transform: translateZ(calc(var(--i) * 18px - 20px)) translateX(calc((var(--i) - 1.5) * 80%)) translateY(-50%) rotate(calc((var(--i) - 1.5) * 11deg)); transition-delay: calc(var(--i) * .04s); }
+
+.dek { padding-inline: 6px; margin-top: -4px; font-size: .875rem; line-height: 1.4; color: var(--quiet); }
+.was { margin-right: 6px; font-family: var(--font-text), sans-serif; font-size: .8125rem; font-weight: 600; color: var(--quiet); }
+.section h3 { font-size: clamp(1.25rem, 1.05rem + .5vw, 1.5rem); }
+
+/* The card's open state lifts the stage less than a flavour card: the box needs the room. */
+/* Open: the box lifts well clear of the panel, smaller, so the name and buttons never cover it. */
+.section li:is(:hover, :focus-within, [data-active]) .stage { --lift: -22%; --s: .8; }
+@media (prefers-reduced-motion: reduce) { .slot, .mystery { transition: none; } }

@@ -4,7 +4,7 @@
 .lede { max-width: 26em; color: var(--quiet); }
 .side { flex: 1 1 100%; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
 .arrows { display: flex; gap: 8px; flex: none; }
-.arrows button { display: grid; place-items: center; width: 54px; height: 54px; padding: 0; border: 2px solid var(--black); border-radius: 50%; background: var(--white); color: var(--black); transition: background-color .2s, color .2s; }
+.arrows button { display: grid; place-items: center; width: 46px; height: 46px; padding: 0; border: 2px solid var(--black); border-radius: 50%; background: var(--white); color: var(--black); transition: background-color .2s, color .2s; }
 .arrows button:hover { background: var(--black); color: var(--white); }
 .arrows button:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
 .arrows svg { display: block; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }

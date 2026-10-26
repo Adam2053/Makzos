@@ -93,3 +93,10 @@ export function ratingFor(flavour: string) {
   const average = mine.length ? (mine.reduce((n, r) => n + r.rating, 0) / mine.length + 4.6) / 2 : 4.6;
   return { average: Math.round(average * 10) / 10, count, bars, sample: true, reviews: mine };
 }
+
+/**
+ * The homepage hero. MOCK: Mixkit stock (hands reaching into a bowl of puffed white kernels, the
+ * nearest stock gets to a bowl of makhana), standing in until the final banner film is designed.
+ * Landscape, cropped to fill the screen. Swap `src` and `poster`.
+ */
+export const HERO_CLIP: Clip = { id: "hero", flavour: "rasam", sample: true, ...mixkit(44586) };

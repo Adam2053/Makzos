@@ -1,31 +1,39 @@
 .section { background: var(--mist); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(72px, 10vw, 128px); scroll-margin-top: var(--header-h); border-radius: clamp(28px, 4vw, 56px); }
 .section[data-full] { padding-top: clamp(40px, 6vw, 80px); }
 .head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; }
-.title { font-size: var(--t-h2); }
+.title { font-size: clamp(2.5rem, 1.4rem + 3.2vw, 4.75rem); }
 .lede { max-width: 26em; }
 
-/* ---------- 1. The flavours: every pack on a shelf, tap to put one in ---------- */
-.flavours { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: clamp(8px, 1vw, 14px); margin-top: clamp(28px, 4vw, 48px); }
-.flavour { position: relative; display: grid; justify-items: center; gap: 10px; width: 100%; padding: 16px 10px 14px; border: 0; border-radius: 22px; background: var(--white); color: var(--black); transition: transform .25s cubic-bezier(.3, 1.6, .5, 1), box-shadow .25s; }
-.flavour:hover:not(:disabled) { transform: translateY(-4px); box-shadow: 0 16px 28px -16px rgb(0 0 0 / .4); }
-.flavour:active:not(:disabled) { transform: translateY(0) scale(.97); }
+/* ---------- The flavours: a compact grid beside the box, tap to put one in ---------- */
+.flavours { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.flavourItem { position: relative; }
+.flavour { position: relative; display: grid; justify-items: center; gap: 6px; width: 100%; height: 100%; padding: 12px 6px 10px; border: 2px solid transparent; border-radius: 18px; background: var(--white); color: var(--black); transition: transform .25s cubic-bezier(.3, 1.6, .5, 1), box-shadow .25s, border-color .2s; touch-action: manipulation; }
+.flavourItem[data-in] .flavour { border-color: var(--black); }
+.flavour:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 14px 24px -16px rgb(0 0 0 / .4); }
+.flavour:active:not(:disabled) { transform: scale(.96); }
 .flavour:disabled { cursor: not-allowed; opacity: .5; }
-.flavour:focus-visible { outline: 3px solid var(--paprika); outline-offset: 3px; }
-.flavourPack { width: 62%; }
-.flavour:hover:not(:disabled) .flavourPack { rotate: -4deg; }
-.flavourName { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.125rem; line-height: 1; text-transform: uppercase; text-align: center; }
-.plus { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--black); color: var(--white); font-size: 1.125rem; font-weight: 700; line-height: 1; transition: background-color .2s, color .2s; }
+.flavour:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
+.flavourPack { width: 44%; }
+.flavourName { display: grid; place-items: center; min-height: 2.1em; font-family: var(--font-label), sans-serif; font-size: .8125rem; line-height: 1.05; letter-spacing: .03em; text-transform: uppercase; text-align: center; }
+.plus { position: absolute; right: 6px; top: 6px; display: grid; place-items: center; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 999px; background: var(--black); color: var(--white); font-size: .875rem; font-weight: 800; line-height: 1; transition: background-color .2s, color .2s; }
+.flavourItem[data-in] .plus { background: var(--paprika); color: var(--black); }
 .flavour:hover:not(:disabled) .plus { background: var(--paprika); color: var(--black); }
-.badge { position: absolute; right: 8px; top: 8px; display: grid; place-items: center; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 999px; background: var(--paprika); font-size: .8125rem; font-weight: 800; }
+/* Take one out: a small round button on the tile's other corner, only once it's in the box. */
+.minus { position: absolute; left: 6px; top: 6px; z-index: 1; display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; background: var(--mist); color: var(--black); transition: background-color .2s, color .2s; touch-action: manipulation; }
+.minus::before { content: ""; position: absolute; inset: -8px; }
+.minus:hover { background: var(--black); color: var(--white); }
+.minus:focus-visible { outline: 3px solid var(--paprika); outline-offset: 2px; }
+.minus svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
 
 /* ---------- 2. The box ---------- */
-.packing { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 4vw, 64px); align-items: center; margin-top: clamp(40px, 5vw, 72px); }
+/* The box on the left, everything you do on the right: flavours, price, pack. One screen. */
+.packing { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(24px, 3vw, 48px); align-items: center; margin-top: clamp(20px, 2.5vw, 36px); }
 /*
  * The Makzo's box, built in 3D from its faces. Sizes are container units, so it scales as one
  * object: --w wide, --d deep, --h tall. A long perspective keeps it solid rather than
  * stretched. Each face has an outside and an inside; the lid is a shallow box of its own.
  */
-.stage { position: relative; width: 100%; max-width: 620px; margin-inline: auto; aspect-ratio: 1; }
+.stage { position: relative; width: 100%; max-width: min(540px, 64svh); margin-inline: auto; aspect-ratio: 1; }
 /* The box is its own size container, so the copy that flies to the bag keeps its proportions. */
 .box { position: absolute; inset: 0; container-type: inline-size; perspective: 2600px; perspective-origin: 50% 10%; }
 .ground { position: absolute; left: 12%; right: 12%; top: 87%; height: 13%; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 0 0 / .34), rgb(0 0 0 / 0)); filter: blur(5px); }
@@ -34,25 +42,49 @@
 .wall, .lidFace { position: absolute; transform-style: preserve-3d; }
 .out, .in { position: absolute; inset: 0; backface-visibility: hidden; }
 .in { transform: rotateY(180deg); }
-/* Paprika board, lit from the top left, with a crisp lighter edge along the top. */
-.wall > .out { background: linear-gradient(#f2603d, #d8401f); box-shadow: inset 0 .5cqw 0 rgb(255 255 255 / .18), inset 0 0 0 1px rgb(0 0 0 / .12); }
-.wall > .in { background: linear-gradient(#262626, #0d0d0d); }
-.wRight > .out { background: linear-gradient(#c9381a, #a82c12); }
+/*
+ * Paprika board printed with the brand pattern (guide D4): the makhana repeated on a
+ * half-drop, the way the gift wrap does it, and the checkerboard along the top edge.
+ * Inside it's black. --seed is the makhana as an image, set on the stage.
+ */
+.wall > .out {
+  background:
+    var(--seed, none) 0 0 / 7cqw 7.6cqw,
+    var(--seed, none) 3.5cqw 3.8cqw / 7cqw 7.6cqw,
+    linear-gradient(#f2563a, #d63d1f);
+  background-repeat: repeat;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / .12);
+}
+.wall > .out::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1.3cqw; background: repeating-conic-gradient(#181818 0 25%, #fff 0 50%) 0 0 / 2.6cqw 2.6cqw; }
+.wall > .out::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgb(255 255 255 / .08), rgb(0 0 0 / .1)); pointer-events: none; }
+.wall > .in { background: linear-gradient(#262626, #121212); }
+/* The right side is turned from the light. */
+.wRight > .out::after { background: rgb(0 0 0 / .26); }
+.sideLine { position: absolute; left: 0; right: 0; bottom: 1.6cqw; z-index: 1; padding: .7cqw 0; background: #181818; color: var(--white); font-size: 1.7cqw; text-align: center; white-space: nowrap; }
 .wFront, .wBack { left: calc(var(--w) / -2); top: calc(var(--h) / -2); width: var(--w); height: var(--h); }
 .wLeft, .wRight { left: calc(var(--d) / -2); top: calc(var(--h) / -2); width: var(--d); height: var(--h); }
 .wFront { transform: translateZ(calc(var(--d) / 2)); }
 .wBack { transform: rotateY(180deg) translateZ(calc(var(--d) / 2)); }
 .wLeft { transform: rotateY(-90deg) translateZ(calc(var(--w) / 2)); }
 .wRight { transform: rotateY(90deg) translateZ(calc(var(--w) / 2)); }
-.floor { position: absolute; left: calc(var(--w) / -2); top: calc(var(--d) / -2); width: var(--w); height: var(--d); background: radial-gradient(120% 80% at 50% 30%, #222, #070707); transform: rotateX(90deg) translateZ(calc(var(--h) / -2)); }
+/* The floor is lined with the checkerboard tissue from the guide's pattern page, crumpled a little. */
+.floor {
+  position: absolute; left: calc(var(--w) / -2); top: calc(var(--d) / -2); width: var(--w); height: var(--d);
+  background:
+    radial-gradient(60% 40% at 30% 30%, rgb(255 255 255 / .14), transparent 70%),
+    radial-gradient(50% 40% at 75% 70%, rgb(0 0 0 / .35), transparent 70%),
+    repeating-conic-gradient(#181818 0 25%, var(--paprika) 0 50%) 0 0 / 6cqw 6cqw;
+  transform: rotateX(90deg) translateZ(calc(var(--h) / -2));
+}
 
-/* The print on the front: the wordmark in black, what's inside, and the seal. */
-.wFront > .out { display: grid; place-content: end center; justify-items: center; gap: .8cqw; padding-bottom: 3cqw; }
-.print { width: 24cqw; height: auto; }
-.printLabel { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: 1.9cqw; letter-spacing: .08em; text-transform: uppercase; color: var(--black); }
-.sticker { position: absolute; right: 2.4cqw; bottom: 2.2cqw; display: grid; place-content: center; justify-items: center; gap: .2cqw; width: 11cqw; aspect-ratio: 1; border: .4cqw solid var(--black); border-radius: 50%; background: var(--white); box-shadow: 0 .6cqw 1.2cqw rgb(0 0 0 / .3); visibility: hidden; }
-.sticker strong { font-family: var(--font-display), sans-serif; font-size: 1.9cqw; line-height: 1; text-transform: uppercase; }
-.stickerSeed { width: 4.4cqw; height: auto; }
+/* The print on the front is the box face (BoxFront), filling the wall. */
+.wFront .print { position: absolute; inset: 0; }
+.wFront > .out { background: none; }
+.wFront > .out::before, .wFront > .out::after { content: none; }
+/* Measured in the box's units (cqw of .box): the face itself is no longer a size container. */
+.sticker { position: absolute; right: 1.8cqw; bottom: 1.1cqw; z-index: 2; display: grid; place-content: center; justify-items: center; gap: .2cqw; width: 9.4cqw; aspect-ratio: 1; border: .36cqw solid #181818; border-radius: 50%; background: var(--white); color: #181818; box-shadow: 0 .6cqw 1.1cqw rgb(0 0 0 / .3); visibility: hidden; }
+.sticker strong { font-family: var(--font-play), sans-serif; font-weight: 400; font-size: 1.8cqw; line-height: 1; }
+.stickerSeed { width: 3.6cqw; height: auto; }
 
 /* The packs, standing front to back like cards in a deck, each leaning back a touch. */
 .slots { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
@@ -68,14 +100,19 @@
 .pack:focus-visible { outline: 3px solid var(--white); outline-offset: 2px; border-radius: 1cqw; }
 @keyframes drop { from { translate: 0 -46cqw; opacity: 0; } 45% { opacity: 1; } }
 
-/* The lid: black, the wordmark in white on top, propped open behind the box until packing.
-   Its lower edge rests just behind the back wall, so it never cuts through the packs. */
+/* The lid: the makhana gift wrap on top with the wordmark on a black badge, a checkerboard rim,
+   propped open behind the box until packing. Its lower edge rests just behind the back wall,
+   so it never cuts through the packs. */
 .lid { position: absolute; left: 0; top: 0; transform-style: preserve-3d; transform: translate3d(0, -29cqw, -52cqw) rotateX(-60deg); }
-.lidFace > .out { background: linear-gradient(135deg, #2c2c2c, #0a0a0a); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .06); }
+.lidFace > .out { background: repeating-conic-gradient(#181818 0 25%, #fff 0 50%) 0 0 / 2.25cqw 2.25cqw; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .2); }
 .lidFace > .in { background: #111; }
 .lidTop { --lw: calc(var(--w) + 1.2cqw); --ld: calc(var(--d) + 1.2cqw); left: calc(var(--lw) / -2); top: calc(var(--ld) / -2); width: var(--lw); height: var(--ld); transform: rotateX(90deg) translateZ(calc(var(--h) / 2 + .3cqw)); }
-.lidTop > .out { display: grid; place-items: center; }
-.lidLogo { width: 70%; height: auto; rotate: -90deg; }
+.lidTop > .out {
+  display: grid; place-items: center;
+  background: var(--seed, none) 0 0 / 8cqw 8.6cqw, var(--seed, none) 4cqw 4.3cqw / 8cqw 8.6cqw, linear-gradient(135deg, #f2563a, #d63d1f);
+}
+.lidBadge { display: grid; place-items: center; width: 76%; height: 30%; border-radius: 2cqw; background: #181818; rotate: -90deg; box-shadow: 0 .6cqw 1.4cqw rgb(0 0 0 / .3); }
+.lidLogo { width: 82%; height: auto; }
 .rim { --rh: 4.5cqw; top: calc(var(--h) / -2 - .3cqw); height: var(--rh); }
 .lidFront, .lidBack { left: calc(var(--w) / -2 - .6cqw); width: calc(var(--w) + 1.2cqw); }
 .lidLeft, .lidRight { left: calc(var(--d) / -2 - .6cqw); width: calc(var(--d) + 1.2cqw); }
@@ -83,10 +120,13 @@
 .lidBack { transform: rotateY(180deg) translateZ(calc(var(--d) / 2 + .6cqw)); }
 .lidLeft { transform: rotateY(-90deg) translateZ(calc(var(--w) / 2 + .6cqw)); }
 .lidRight { transform: rotateY(90deg) translateZ(calc(var(--w) / 2 + .6cqw)); }
-.lidRight > .out { background: linear-gradient(135deg, #1c1c1c, #050505); }
+.lidRight > .out { filter: brightness(.75); }
 
 /* ---------- Price and the pack button ---------- */
-.controls { display: grid; gap: 20px; align-content: center; }
+.controls { display: flex; flex-direction: column; gap: 14px; justify-content: center; }
+/* Options (subscribe, gift) come after the pack button, so the button is always on screen with the box. */
+.controls > .options { order: 9; }
+.controls > .added, .controls > .more { order: 10; }
 .ladder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
 .ladder li { display: grid; gap: 2px; padding: 12px 12px 10px; border-radius: 18px; background: var(--white); transition: background-color .2s, color .2s; }
 .ladder strong { font-size: .8125rem; }
@@ -96,7 +136,7 @@
 .ladder li[aria-current] small { color: var(--paprika); }
 .options { display: grid; gap: 18px; padding: 20px; border-radius: 24px; background: var(--white); }
 .option { margin: 0; padding: 0; border: 0; display: grid; gap: 10px; min-width: 0; }
-.status { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.5rem, 1.2rem + .8vw, 2rem); line-height: 1.05; text-transform: uppercase; }
+.status { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.5rem, 1.2rem + .8vw, 2rem); line-height: 1.05; text-transform: lowercase; }
 .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
 .sum { display: grid; line-height: 1; }
 .sum strong { font-size: 2.25rem; }
@@ -115,7 +155,7 @@
 .fan { display: flex; justify-content: center; align-items: flex-end; height: 120px; margin-bottom: 8px; }
 .fanPack { width: 62px; margin-inline: -9px; }
 .combo:hover .fanPack { translate: 0 -6px; }
-.mystery { display: grid; place-items: center; width: 62px; aspect-ratio: 960 / 1279; margin-inline: -9px; border-radius: 7px; background: var(--black); color: var(--paprika); font-family: var(--font-display), sans-serif; font-size: 2rem; font-weight: 700; box-shadow: 0 14px 18px -12px rgb(0 0 0 / .5); }
+.mystery { display: grid; place-items: center; width: 62px; aspect-ratio: 960 / 1279; margin-inline: -9px; border-radius: 7px; background: var(--black); color: var(--paprika); font-family: var(--font-display), sans-serif; text-transform: lowercase; font-size: 2rem; font-weight: 700; box-shadow: 0 14px 18px -12px rgb(0 0 0 / .5); }
 .comboName { font-size: 1.75rem; }
 .comboDek { font-size: .9375rem; line-height: 1.45; color: var(--quiet); }
 .comboPrice { display: flex; align-items: baseline; gap: 8px; margin-top: auto; padding-top: 8px; }
@@ -127,16 +167,40 @@
 
 @media (max-width: 1000px) {
   .packing { grid-template-columns: minmax(0, 1fr); }
+  .controls { display: flex; flex-direction: column; }
   .combos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 /* Phones: the flavours become a row to swipe; the box takes the full width. */
+@media (max-width: 1000px) and (min-width: 701px) { .flavours { grid-template-columns: repeat(7, minmax(0, 1fr)); } }
+/*
+ * Phones: the whole job on one screen. The box first, sized from the screen's height; the
+ * flavours in a strip right under it, so you see each pack land; then the price row, the
+ * status and the pack button. Options and combos follow below.
+ */
 @media (max-width: 700px) {
-  .flavours { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 112px; overflow-x: auto; margin-inline: calc(-1 * var(--gutter)); padding: 4px var(--gutter) 12px; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .section { padding-block: 16px 48px; border-radius: 24px; scroll-margin-top: var(--header-h); }
+  .head { gap: 4px; }
+  .title { font-size: clamp(2rem, 9vw, 2.5rem); }
+  .lede { display: none; }
+  .packing { margin-top: 4px; gap: 0; }
+  .stage { width: min(100%, 34svh); margin: 1svh auto -3svh; }
+  .controls { gap: 10px; }
+  .flavours { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 96px; gap: 8px; overflow-x: auto; margin-inline: calc(-1 * var(--gutter)); padding: 6px var(--gutter) 6px; scroll-padding-inline: var(--gutter); scroll-snap-type: x proximity; scrollbar-width: none; overscroll-behavior-x: contain; }
   .flavours::-webkit-scrollbar { display: none; }
   .flavours > li { scroll-snap-align: start; }
-  .flavourName { font-size: 1rem; }
-  .ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .packBtn { min-width: 0; width: 100%; }
+  .flavour { padding: 10px 4px 8px; border-radius: 16px; }
+  .flavourPack { width: 46%; margin-top: 8px; }
+  .flavourName { font-size: .75rem; }
+  .ladder { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+  .ladder li { gap: 0; padding: 6px 8px; border-radius: 12px; }
+  .ladder strong { font-size: .6875rem; }
+  .ladder span { font-size: 1.125rem; }
+  .ladder small { font-size: .625rem; }
+  .status { font-size: 1.25rem; }
+  .foot { flex-wrap: nowrap; gap: 12px; }
+  .sum strong { font-size: 1.5rem; }
+  .packBtn { min-width: 0; flex: 1; }
+  .options { order: 9; }
   .combos { grid-template-columns: minmax(0, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) { .pack, .pack img, .flavour { animation: none; transition: none; } }

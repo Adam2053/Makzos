@@ -108,7 +108,7 @@
 .primary:active { transform: translateY(1px); }
 .primary:disabled { background: #bdbdbd; cursor: not-allowed; }
 .primary:focus-visible { outline: 2px solid var(--black); outline-offset: 3px; }
-.pay { min-height: 56px; font-size: 1rem; }
+.pay { min-height: 50px; font-size: 1rem; }
 .lock { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 .terms { font-size: .75rem; color: #8a8a8a; text-align: center; }
 .terms a { color: inherit; text-underline-offset: .2em; }
