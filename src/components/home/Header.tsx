@@ -60,12 +60,15 @@ export function Header() {
    * Over the homepage film the header goes clear: no fill, white logo and links, so the film
    * runs up under it. Once the film has scrolled up behind the header it turns solid again.
    */
-  const [overHero, setOverHero] = useState(false);
+  const [heroAt, setHeroAt] = useState<{ path: string; over: boolean } | null>(null);
+  // Until the first check, assume the homepage film is behind the header, so the server render
+  // is already clear and a reload doesn't flash a white bar before it turns clear.
+  const overHero = heroAt?.path === path ? heroAt.over : path === "/";
   useEffect(() => {
     const check = () => {
       const hero = document.querySelector("[data-hero]");
       // Clear only while a good stretch of film is still behind the header, not its last sliver.
-      setOverHero(!!hero && hero.getBoundingClientRect().bottom > 160);
+      setHeroAt({ path, over: !!hero && hero.getBoundingClientRect().bottom > 160 });
     };
     const frame = requestAnimationFrame(check);
     window.addEventListener("scroll", check, { passive: true });
