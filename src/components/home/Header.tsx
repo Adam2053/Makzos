@@ -90,6 +90,13 @@ export function Header() {
       )}
       <header className={styles.header} data-clear={clear || undefined} onKeyDown={(e) => { if (e.key === "Escape") close(); }}>
         <div className={`${ui.shell} ${styles.inner}`}>
+          {/* On phones the menu sits left of the centred logo; it comes first so focus runs left to right. */}
+          <button type="button" className={styles.menuBtn} aria-expanded={sheet} aria-controls="mobile-menu"
+            aria-label={sheet ? "Close menu" : "Open menu"} onClick={() => setSheetAt(sheet ? null : path)}>
+            <svg viewBox="0 0 32 32" aria-hidden="true" className={styles.bagIcon}>
+              {sheet ? <path d="M9 9l14 14M23 9L9 23" /> : <path d="M6 11h20M6 21h20" />}
+            </svg>
+          </button>
           <Link href="/" className={styles.brand} aria-label="Makzo's, home">
             <Image src="/brand/logo-dark.png" alt="" width={1200} height={296} preload className={`${styles.logo} ${styles.logoDark}`} />
             <Image src="/brand/logo-light.png" alt="" width={1200} height={296} preload className={`${styles.logo} ${styles.logoLight}`} />
@@ -116,30 +123,26 @@ export function Header() {
             ))}
           </nav>
 
-          <Link href={account.href} className={styles.account} aria-label={account.label}>
-            {user ? (
-              <span className={styles.initial} aria-hidden="true">{user.name.trim().charAt(0).toUpperCase()}</span>
-            ) : (
+          <div className={styles.actions}>
+            <Link href={account.href} className={styles.account} aria-label={account.label}>
+              {user ? (
+                <span className={styles.initial} aria-hidden="true">{user.name.trim().charAt(0).toUpperCase()}</span>
+              ) : (
+                <svg viewBox="0 0 32 32" aria-hidden="true" className={styles.bagIcon}>
+                  <circle cx="16" cy="11.5" r="5" />
+                  <path d="M6.5 27c1.2-5.2 5-8 9.5-8s8.3 2.8 9.5 8" />
+                </svg>
+              )}
+            </Link>
+            <button ref={bagRef} type="button" className={styles.bag} onClick={() => setOpen(true)}
+              aria-label={`Open bag, ${count} ${count === 1 ? "item" : "items"}`}>
               <svg viewBox="0 0 32 32" aria-hidden="true" className={styles.bagIcon}>
-                <circle cx="16" cy="11.5" r="5" />
-                <path d="M6.5 27c1.2-5.2 5-8 9.5-8s8.3 2.8 9.5 8" />
+                <path d="M7 11h18l-1.4 15.2a2 2 0 0 1-2 1.8H10.4a2 2 0 0 1-2-1.8L7 11Z" />
+                <path d="M12 14v-4a4 4 0 0 1 8 0v4" />
               </svg>
-            )}
-          </Link>
-          <button ref={bagRef} type="button" className={styles.bag} onClick={() => setOpen(true)}
-            aria-label={`Open bag, ${count} ${count === 1 ? "item" : "items"}`}>
-            <svg viewBox="0 0 32 32" aria-hidden="true" className={styles.bagIcon}>
-              <path d="M7 11h18l-1.4 15.2a2 2 0 0 1-2 1.8H10.4a2 2 0 0 1-2-1.8L7 11Z" />
-              <path d="M12 14v-4a4 4 0 0 1 8 0v4" />
-            </svg>
-            <span className={styles.count} data-on={count > 0 || undefined}>{count}</span>
-          </button>
-          <button type="button" className={styles.menuBtn} aria-expanded={sheet} aria-controls="mobile-menu"
-            aria-label={sheet ? "Close menu" : "Open menu"} onClick={() => setSheetAt(sheet ? null : path)}>
-            <svg viewBox="0 0 32 32" aria-hidden="true" className={styles.bagIcon}>
-              {sheet ? <path d="M9 9l14 14M23 9L9 23" /> : <path d="M6 11h20M6 21h20" />}
-            </svg>
-          </button>
+              <span className={styles.count} data-on={count > 0 || undefined}>{count}</span>
+            </button>
+          </div>
         </div>
 
         {/* ---------- Phones: one sheet with everything ---------- */}
