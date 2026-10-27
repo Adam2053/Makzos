@@ -13,6 +13,7 @@
 /* 160 px is the digital minimum for the full logo (guide p.13). */
 .logo { width: clamp(160px, 14vw, 188px); height: auto; }
 .logoLight { display: none; }
+.actions { display: flex; align-items: center; gap: 8px; }
 
 /* Clear, over the homepage film: no fill, white everything. */
 .header { transition: background-color .3s, border-color .3s, color .3s; }
@@ -69,6 +70,14 @@
 @media (max-width: 960px) {
   .nav { display: none; }
   .menuBtn { display: grid; }
+  /* Menu left, logo dead centre, account and bag right: equal side columns keep the logo centred. */
+  .inner { display: grid; grid-template-columns: minmax(88px, 1fr) auto minmax(88px, 1fr); gap: 0; }
+  .menuBtn { justify-self: start; margin-left: -10px; }
+  .brand { margin-right: 0; }
+  .actions { justify-self: end; gap: 0; margin-right: -6px; }
+  .menuBtn, .account, .bag { width: 44px; height: 44px; }
+  /* 160 px is the guide's floor; only the narrowest phones (under ~370 px) take it a little below, so nothing collides. */
+  .logo { width: min(160px, 100vw - 2 * var(--gutter) - 176px); }
   .mega, .scrim { display: none; }
   .sheet:not([hidden]) {
     position: absolute; left: 0; right: 0; top: 100%; z-index: 2; display: grid; max-height: calc(100svh - var(--header-h) - 40px); overflow-y: auto;
