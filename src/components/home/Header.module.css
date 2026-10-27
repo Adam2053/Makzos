@@ -63,8 +63,10 @@
 .scrim { position: fixed; inset: 0; z-index: 39; border: 0; background: rgb(0 0 0 / .12); cursor: default; }
 
 /* ---------- Phones ---------- */
-/* Phones navigate from the tab bar at the foot of the screen (TabBar), so the header steps aside. */
+/* Phones navigate from the tab bar at the foot of the screen (TabBar), so the header keeps only the logo, centred. */
 @media (max-width: 960px) {
-  .header { display: none; }
+  .inner { justify-content: center; }
+  .brand { margin-right: 0; }
+  .nav, .account, .bag { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .mega { animation: none; } }

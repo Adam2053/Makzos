@@ -2,8 +2,8 @@
 .root { display: none; }
 
 @media (max-width: 960px) {
-  /* With the bar on the page, the header is gone (so nothing sits under it) and the page leaves room at its foot. */
-  :global(html):has(.root) { --header-h: 0px; --tabbar-h: calc(64px + env(safe-area-inset-bottom)); --tabbar-lift: 22px; }
+  /* With the bar on the page, the page leaves room at its foot. */
+  :global(html):has(.root) { --tabbar-h: calc(64px + env(safe-area-inset-bottom)); --tabbar-lift: 22px; }
   :global(body):has(.root) { padding-bottom: var(--tabbar-h); }
 
   .root { display: contents; font-family: var(--font-text), sans-serif; }
