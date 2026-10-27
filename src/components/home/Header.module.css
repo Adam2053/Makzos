@@ -19,9 +19,9 @@
 .header[data-clear] { background: transparent; border-bottom-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; color: var(--white); }
 .header[data-clear] .logoDark { display: none; }
 .header[data-clear] .logoLight { display: block; }
-.header[data-clear] :is(.account, .bag, .menuBtn) { color: var(--white); }
-.header[data-clear] :is(.account, .bag, .menuBtn):hover { background: rgb(255 255 255 / .16); }
-.header[data-clear] :is(.brand, .navLink, .bag, .menuBtn, .account):focus-visible { outline-color: var(--white); }
+.header[data-clear] :is(.account, .bag) { color: var(--white); }
+.header[data-clear] :is(.account, .bag):hover { background: rgb(255 255 255 / .16); }
+.header[data-clear] :is(.brand, .navLink, .bag, .account):focus-visible { outline-color: var(--white); }
 .nav { display: flex; align-items: center; gap: clamp(.75rem, 2vw, 1.75rem); margin-right: clamp(.5rem, 2vw, 1.5rem); }
 .navLink {
   display: inline-flex; align-items: center; gap: 4px; padding: .5rem 0; border: 0; background: linear-gradient(var(--paprika) 0 0) left bottom / 0 2px no-repeat;
@@ -46,9 +46,7 @@
   transform: scale(0); transition: transform .3s cubic-bezier(.3, 1.6, .5, 1);
 }
 .count[data-on] { transform: scale(1); }
-.menuBtn { display: none; place-items: center; width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--black); transition: background-color .2s; }
-.menuBtn:hover { background: rgb(0 0 0 / .1); }
-.brand:focus-visible, .navLink:focus-visible, .bag:focus-visible, .menuBtn:focus-visible, .account:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
+.brand:focus-visible, .navLink:focus-visible, .bag:focus-visible, .account:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
 
 /* ---------- Shop menu ---------- */
 /* The Shop menu: a small card hanging under its button, sized to the list it holds. */
@@ -65,21 +63,8 @@
 .scrim { position: fixed; inset: 0; z-index: 39; border: 0; background: rgb(0 0 0 / .12); cursor: default; }
 
 /* ---------- Phones ---------- */
-.sheet { display: none; }
+/* Phones navigate from the tab bar at the foot of the screen (TabBar), so the header steps aside. */
 @media (max-width: 960px) {
-  .nav { display: none; }
-  .menuBtn { display: grid; }
-  .mega, .scrim { display: none; }
-  .sheet:not([hidden]) {
-    position: absolute; left: 0; right: 0; top: 100%; z-index: 2; display: grid; max-height: calc(100svh - var(--header-h) - 40px); overflow-y: auto;
-    padding: 8px var(--gutter) 24px; background: var(--white); border-bottom: 1px solid var(--line); box-shadow: 0 24px 32px -24px rgb(0 0 0 / .3);
-  }
-  .sheetLink { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 14px 0; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--black); font-family: var(--font-display), sans-serif; font-size: 2rem; font-weight: 700; line-height: 1; text-transform: lowercase; text-align: left; text-decoration: none; }
-  .sheetLink .caret { width: 24px; height: 24px; }
-  .sheetShop { display: grid; gap: 14px; padding: 14px 0 18px; border-bottom: 1px solid var(--line); }
-  .sheetWays { display: grid; gap: 2px; }
-  .sheetWays a { display: block; padding: 8px 0; font-weight: 600; text-decoration: none; }
-  .sheetSmall { display: flex; flex-wrap: wrap; gap: 10px 20px; padding-top: 18px; font-size: .9375rem; font-weight: 600; }
-  .sheetSmall a { text-decoration: underline; text-underline-offset: .2em; }
+  .header { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .mega { animation: none; } }

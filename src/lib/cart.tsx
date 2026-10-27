@@ -47,6 +47,8 @@ type Cart = {
   ready: boolean;
   /** The bag button in the header: what added packs fly into. */
   bagRef: RefObject<HTMLButtonElement | null>;
+  /** The bag in the phone tab bar, which stands in for the header's on phones. */
+  barBagRef: RefObject<HTMLButtonElement | null>;
 };
 
 const CartContext = createContext<Cart | null>(null);
@@ -98,6 +100,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const ready = useSyncExternalStore(...hydrated);
   const [open, setOpen] = useState(false);
   const bagRef = useRef<HTMLButtonElement>(null);
+  const barBagRef = useRef<HTMLButtonElement>(null);
+  // Packs fly into whichever bag is on screen: the header's on wide screens, the tab bar's on phones.
+  const bag = () => [bagRef.current, barBagRef.current].find((el) => el?.checkVisibility()) ?? null;
 
   const addBag = useCallback((id: string, from?: HTMLElement | null, opts: AddOpts = {}) => {
     const size = opts.size ?? 1;
@@ -108,7 +113,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (hit) return ls.map((l) => (l === hit ? { ...l, qty: l.qty + n } : l));
       return [...ls, { key, kind: "bag", id, qty: n, ...(size === 3 ? { size } : {}), ...(opts.every ? { every: opts.every } : {}) }];
     });
-    if (!opts?.quiet) fly(from, bagRef.current);
+    if (!opts?.quiet) fly(from, bag());
   }, []);
 
   const addBox = useCallback((ids: string[], from?: HTMLElement | null, note?: string, every?: Every) => {
@@ -119,7 +124,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (hit) return ls.map((l) => (l === hit ? { ...l, qty: l.qty + 1 } : l));
       return [...ls, { key, kind: "box", ids: [...ids], qty: 1, ...(note ? { note } : {}), ...(every ? { every } : {}) }];
     });
-    fly(from, bagRef.current);
+    fly(from, bag());
   }, []);
 
   const setQty = useCallback((key: string, qty: number) => {
@@ -143,7 +148,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return {
       lines, bags, saving, subtotal,
       count: lines.reduce((n, l) => n + l.qty, 0),
-      open, setOpen, addBag, addBox, setQty, clear, coupon, applyCoupon, removeCoupon, ready, bagRef,
+      open, setOpen, addBag, addBox, setQty, clear, coupon, applyCoupon, removeCoupon, ready, bagRef, barBagRef,
     };
   }, [lines, open, coupon, ready, addBag, addBox, setQty, clear, removeCoupon]);
 

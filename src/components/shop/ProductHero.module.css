@@ -132,9 +132,9 @@
   .facts { width: 86%; }
 
   .dock {
-    position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 30; display: flex; align-items: center; gap: 12px;
+    position: fixed; left: 12px; right: 12px; bottom: calc(var(--tabbar-h, 0px) + var(--tabbar-lift, 0px) + 12px); z-index: 30; display: flex; align-items: center; gap: 12px;
     padding: 8px 8px 8px 16px; border-radius: 999px; background: var(--black); color: var(--white);
-    box-shadow: 0 18px 40px -12px rgb(0 0 0 / .5); translate: 0 140%; transition: translate .35s cubic-bezier(.3, 1.2, .5, 1);
+    box-shadow: 0 18px 40px -12px rgb(0 0 0 / .5); translate: 0 calc(140% + var(--tabbar-h, 0px)); transition: translate .35s cubic-bezier(.3, 1.2, .5, 1);
   }
   .dock[data-on] { translate: 0 0; }
   .dockText { display: grid; min-width: 0; font-size: .875rem; line-height: 1.25; }

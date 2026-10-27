@@ -31,7 +31,8 @@ export const metadata: Metadata = {
   description: "Roasted makhana built around familiar dishes: Rasam, Sweet Tamarind, Mac & Cheese and Tiramisu. No preservatives, no artificial colours or flavours.",
 };
 
-export const viewport: Viewport = { themeColor: "#ffffff" };
+// `cover` lets the phone tab bar reach the screen's foot and pad itself clear of the home indicator.
+export const viewport: Viewport = { themeColor: "#ffffff", viewportFit: "cover" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

@@ -15,13 +15,13 @@ import ui from "./ui.module.css";
 import styles from "./Header.module.css";
 
 /** The header carries the purchase path and the story; help and legal live in the footer (sitemap). Build a box is reached from the shop, not the bar. */
-const LINKS = [
+export const LINKS = [
   { href: "/about", label: "Our story" },
   { href: "/journal", label: "Journal" },
 ];
 
 /** Ways to buy, beside the flavours in the Shop menu. */
-const WAYS = [
+export const WAYS = [
   { href: "/shop", label: "All flavours", note: "The whole range, by taste" },
   { href: "/build-a-box#subscribe", label: "Subscribe and save", note: `${SUB_OFF}% off every delivery` },
   { href: "/build-a-box#gifting", label: "Gifting and hampers", note: "Ready-made boxes, with a note" },
@@ -37,12 +37,9 @@ export function Header() {
   const { user } = useStore();
   const path = usePathname();
   const [shopAt, setShopAt] = useState<string | null>(null);
-  const [sheetAt, setSheetAt] = useState<string | null>(null);
-  const [sheetShop, setSheetShop] = useState(false);
   const shop = shopAt === path;
-  const sheet = sheetAt === path;
   const account = user ? { href: "/account", label: `Your account, ${user.name.split(" ")[0]}` } : { href: "/login", label: "Sign in" };
-  const close = () => { setShopAt(null); setSheetAt(null); };
+  const close = () => setShopAt(null);
 
   // The notice's height, as --notice-h, so a full-screen banner can end exactly at the screen's foot.
   const notice = useRef<HTMLDivElement>(null);
@@ -75,8 +72,8 @@ export function Header() {
     window.addEventListener("resize", check);
     return () => { cancelAnimationFrame(frame); window.removeEventListener("scroll", check); window.removeEventListener("resize", check); };
   }, [path]);
-  // The Shop menu is its own white card, so the bar stays clear behind it; the phone sheet needs a solid bar.
-  const clear = overHero && !sheet;
+  // The Shop menu is its own white card, so the bar stays clear behind it.
+  const clear = overHero;
 
   return (
     <>
@@ -134,34 +131,8 @@ export function Header() {
             </svg>
             <span className={styles.count} data-on={count > 0 || undefined}>{count}</span>
           </button>
-          <button type="button" className={styles.menuBtn} aria-expanded={sheet} aria-controls="mobile-menu"
-            aria-label={sheet ? "Close menu" : "Open menu"} onClick={() => setSheetAt(sheet ? null : path)}>
-            <svg viewBox="0 0 32 32" aria-hidden="true" className={styles.bagIcon}>
-              {sheet ? <path d="M9 9l14 14M23 9L9 23" /> : <path d="M6 11h20M6 21h20" />}
-            </svg>
-          </button>
         </div>
 
-        {/* ---------- Phones: one sheet with everything ---------- */}
-        <div id="mobile-menu" className={styles.sheet} hidden={!sheet}>
-          <button type="button" className={styles.sheetLink} aria-expanded={sheetShop} onClick={() => setSheetShop((x) => !x)}>
-            Shop <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.caret}><path d="M6 9l6 6 6-6" /></svg>
-          </button>
-          {sheetShop && (
-            <div className={styles.sheetShop}>
-              <ul className={styles.sheetWays}>
-                {WAYS.map((w) => <li key={w.href}><Link href={w.href} onClick={close}>{w.label}</Link></li>)}
-              </ul>
-            </div>
-          )}
-          {LINKS.map((l) => <Link key={l.href} href={l.href} className={styles.sheetLink} onClick={close}>{l.label}</Link>)}
-          <div className={styles.sheetSmall}>
-            <Link href={account.href} onClick={close}>{user ? "Your account" : "Sign in"}</Link>
-            <Link href="/track" onClick={close}>Track an order</Link>
-            <Link href="/faq" onClick={close}>Help</Link>
-            <Link href="/contact" onClick={close}>Contact</Link>
-          </div>
-        </div>
       </header>
       {/* Outside the header: its backdrop blur would otherwise trap a fixed layer inside it. */}
       {shop && <button type="button" className={styles.scrim} aria-label="Close menu" tabIndex={-1} onClick={close} />}
