@@ -84,7 +84,6 @@ async function cutOpenPack() {
   // Soften the rim against the white it was cut from.
   for (let p = 0; p < w * h; p++) {
     const i = p * 4; if (bg[p]) continue;
-    const x = p % w, y = (p / w) | 0;
     const nearBg = bg[p - 1] || bg[p + 1] || bg[p - w] || bg[p + w];
     if (!nearBg) continue;
     const m = Math.min(data[i], data[i + 1], data[i + 2]);
