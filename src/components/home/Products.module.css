@@ -42,39 +42,60 @@
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(72px, 7vw, 96px) clamp(16px, 2vw, 28px); margin-top: clamp(32px, 4vw, 56px); padding-top: 64px; }
 
 /*
- * One white card per flavour, Bucks-style. At rest: only the pack, big. On hover the pack
- * steps back and up, two pieces of the flavour's ingredient slide out from behind it, and
- * the panel (name, price, calls) rises from the bottom. The card clips everything: nothing
- * spills out of it.
+ * One white card per flavour. At rest: only the pack, big. When the card opens (hover,
+ * keyboard focus, in the bag, or in front of you on touch) three things happen, all flat,
+ * all on one gentle curve:
+ *   1. the pack glides up, hardly shrinking, past the card's top edge;
+ *   2. the flavour's ingredient and a makhana fade in, drifting a short way in towards it;
+ *   3. the name, price and buttons rise in underneath, once the pack is clear of them.
+ * No 3D, no tilt, no spring: only translate, scale and opacity, so nothing swings sideways.
  */
-/*
- * The card is a white container the pack lifts out of. Nothing clips it: when it opens the
- * pack rises towards you, past the card's top edge, at its own depth (translateZ), with the
- * flavour's ingredient behind it on both sides.
- */
-.item { position: relative; display: block; aspect-ratio: 3 / 4.25; border-radius: 28px; background: var(--white); box-shadow: 0 1px 0 rgb(0 0 0 / .04); }
-.shot { position: absolute; inset: 0; display: block; perspective: 900px; perspective-origin: 50% 30%; }
-/* The pack and its ingredient share one 3D stage: it lifts when the card opens and turns a few degrees towards the pointer (--rx, --ry). */
+.item { position: relative; display: block; aspect-ratio: 3 / 4.25; border-radius: 28px; background: var(--white); box-shadow: 0 1px 0 rgb(0 0 0 / .04); --glide: cubic-bezier(.4, 0, .2, 1); --open: .6s; }
+/* A size container, so the pieces can be placed in cqw (hundredths of the card's width). */
+.shot { position: absolute; inset: 0; display: block; container-type: size; }
+/* The pack and its pieces move up as one. */
 .stagePack {
   --lift: 0%;
-  position: absolute; inset: 0; display: grid; place-items: center; transform-style: preserve-3d;
-  transform: translateY(var(--lift)) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg));
-  transition: transform .55s cubic-bezier(.3, 1.25, .5, 1);
+  position: absolute; inset: 0; display: grid; place-items: center;
+  translate: 0 var(--lift); transition: translate var(--open) var(--glide); will-change: translate;
 }
-.item:hover .stagePack { transition-duration: .3s; transition-timing-function: ease-out; }
-/* Scoped under .stagePack so it always beats the Pack component's own .pack, whatever order the files load in. */
-.stagePack .pack { position: relative; z-index: 1; width: 68%; transform: translateZ(0); transition: scale .55s cubic-bezier(.3, 1.25, .5, 1), rotate .55s cubic-bezier(.3, 1.25, .5, 1), transform .55s cubic-bezier(.3, 1.25, .5, 1); }
-.floor { position: absolute; left: 26%; right: 26%; top: 84%; height: 5%; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 0 0 / .22), rgb(0 0 0 / 0)); transform: translateZ(-30px); transition: transform .55s, opacity .55s; }
+/*
+ * Scoped under .stagePack so it always beats the Pack component's own .pack, whatever order the
+ * files load in. No drop-shadow filter here: a filter on an element that scales is repainted
+ * every frame, which makes the lift judder. The floor below does the grounding.
+ */
+.stagePack .pack { position: relative; z-index: 1; width: 68%; filter: none; rotate: none; will-change: scale; transition: scale var(--open) var(--glide); }
+.floor { position: absolute; left: 26%; right: 26%; top: 84%; height: 5%; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 0 0 / .22), rgb(0 0 0 / 0)); transition: translate var(--open) var(--glide), scale var(--open) var(--glide), opacity var(--open) var(--glide); }
 
-/* The ingredient, waiting behind the pack; it comes out one piece either side, in front of its corners. */
-.pop { position: absolute; left: 50%; top: 40%; z-index: 2; width: 24%; translate: -50% -50%; scale: .4; opacity: 0; transform: translateZ(-60px); transition: left .65s cubic-bezier(.3, 1.3, .5, 1), transform .65s cubic-bezier(.3, 1.4, .5, 1), scale .65s cubic-bezier(.3, 1.4, .5, 1), opacity .25s; pointer-events: none; }
-.pop svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 12px 12px rgb(0 0 0 / .25)); }
-/* Kept inside the card (its own corners, never the next card's) and above the name and buttons. */
-.pop[data-at="0"] { --x: 15%; --to: translateZ(60px) translateY(30%) rotate(-24deg); }
-.pop[data-at="1"] { --x: 80%; --to: translateZ(50px) translateY(-70%) rotate(156deg); transition-delay: .05s; }
+/*
+ * The pieces (lib/ingredients sets --x, --y, --w and --r for each). They sit over the pack,
+ * overlapping its edges a little. Closed, each waits a little further out, invisible;
+ * opening, it fades in and drifts that short distance in towards the pack.
+ * --k pulls the spots closer on small cards, where the open pack is smaller.
+ */
+.pop {
+  --k: 1;
+  position: absolute; left: 50%; top: 50%; z-index: 2; width: var(--w); rotate: var(--r);
+  translate: calc(-50% + var(--x) * var(--k) * 1.28) calc(-50% + var(--y) * var(--k) * 1.28); opacity: 0;
+  transition: translate var(--open) var(--glide), opacity calc(var(--open) * .6) var(--glide);
+  pointer-events: none; will-change: translate, opacity;
+}
+/*
+ * Once out, each piece keeps floating: a slow, small bob and turn on the picture inside, so it
+ * never fights the drift on .pop itself. Paused (not removed) while the card is closed, so a
+ * piece fades out from wherever it is instead of jumping back first. The two pieces run at
+ * different speeds so they never move in step.
+ */
+.pop img, .pop svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 6px 6px rgb(0 0 0 / .2)); user-select: none; animation: float 3.6s ease-in-out infinite paused; will-change: translate, rotate; }
+.pop[data-at="1"] > * { animation-duration: 4.4s; animation-delay: -1.3s; }
+.item:is(:hover, :focus-within, [data-active]) .pop > * { animation-play-state: running; }
+@keyframes float {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  50% { translate: 0 -1.6cqw; rotate: 3deg; }
+}
 
 /* The panel at the bottom: name and price, then Add to cart over Buy now. */
-.panel { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2; display: grid; gap: 10px; transition: transform .45s cubic-bezier(.3, 1.2, .5, 1), opacity .25s; }
+.panel { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2; display: grid; gap: 10px; transition: transform var(--open) var(--glide), opacity .15s ease-out; }
 .meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-inline: 6px; }
 .name { font-size: clamp(1.375rem, 1.1rem + .7vw, 1.875rem); letter-spacing: .02em; line-height: 1.02; }
 .name a { text-decoration: none; border-radius: 4px; background: linear-gradient(var(--paprika) 0 0) left bottom / 0 3px no-repeat; transition: background-size .25s; }
@@ -85,14 +106,26 @@
 
 /* The open state: hovered, focused from the keyboard, or already in the bag. */
 .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -30%; }
-.item:is(:hover, :focus-within, [data-in], [data-active]) .pack { transform: translateZ(60px) scale(.86); }
-.item:is(:hover, :focus-within, [data-in], [data-active]) .floor { transform: translateZ(-30px) translateY(30%) scale(.8); opacity: .55; }
-.item:is(:hover, :focus-within, [data-active]) .pop { left: var(--x); transform: var(--to); scale: 1; opacity: 1; }
-.item:hover .pack { rotate: -3deg; }
+/* The pack keeps nearly its full size as it rises: only a slight step back. */
+.item:is(:hover, :focus-within, [data-in], [data-active]) .pack { scale: .9; }
+.item:is(:hover, :focus-within, [data-in], [data-active]) .floor { translate: 0 30%; scale: .8; opacity: .55; }
+/* The pieces come in once the pack is on its way up. */
+.item:is(:hover, :focus-within, [data-active]) .pop { translate: calc(-50% + var(--x) * var(--k)) calc(-50% + var(--y) * var(--k)); opacity: 1; transition-delay: .14s; }
 /* The panel waits below until the card opens: hovered, focused, in the bag, or (on touch) in front of you. */
 .panel { transform: translateY(24px); opacity: 0; pointer-events: none; }
 .item:is(:hover, :focus-within, [data-in], [data-active]) .panel { transform: none; opacity: 1; pointer-events: auto; }
-@media (prefers-reduced-motion: reduce) { .stagePack, .pack, .floor, .pop, .panel { transition: none; } .stagePack { transform: translateY(var(--lift)); } }
+/* Opening: the panel waits until the pack has risen clear of it, so the words never show through the pack. Closing: it goes first. */
+.item:is(:hover, :focus-within, [data-active]) .panel { transition: transform var(--open) var(--glide) .16s, opacity .35s var(--glide) .16s; }
+/*
+ * Narrow cards have less room between the pack and the name under it, so there the pack steps
+ * back a touch more and the pieces sit a touch closer in. Keyed to the card's own width.
+ */
+@container (max-width: 270px) {
+  .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -34%; }
+  .item:is(:hover, :focus-within, [data-in], [data-active]) .pack { scale: .78; }
+  .pop { --k: .9; }
+}
+@media (prefers-reduced-motion: reduce) { .stagePack, .pack, .floor, .pop, .panel { transition: none; } .pop > * { animation: none; } }
 
 .addBtn, .stepper, .nowBtn { display: flex; align-items: center; justify-content: center; width: 100%; height: 42px; border-radius: 999px; font-family: var(--font-text), sans-serif; font-size: .875rem; font-weight: 700; }
 .addBtn { border: 2px solid var(--paprika); background: var(--paprika); color: var(--black); transition: background-color .2s, border-color .2s, color .2s; }
@@ -137,8 +170,8 @@
   .grid .item { border-radius: 22px; }
   /* Small cards: the pack lifts higher and smaller, so the panel has the lower half to itself. */
   .grid .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -36%; }
-  .grid .item:is(:hover, :focus-within, [data-in], [data-active]) .pack { transform: translateZ(40px) scale(.64); }
-  .grid .pop { width: 22%; }
+  .grid .item:is(:hover, :focus-within, [data-in], [data-active]) .pack { scale: .7; }
+  .grid .pop { --k: .8; }
   .grid .panel { left: 8px; right: 8px; bottom: 8px; gap: 8px; }
   .grid .actions { gap: 6px; }
   .grid .name { font-size: 1.25rem; }

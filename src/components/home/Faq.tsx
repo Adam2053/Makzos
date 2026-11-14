@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { BAG_PRICE, BOX_PRICE, BOX_SIZE, FLAVOURS, WEIGHT, inr } from "@/lib/products";
 import ui from "./ui.module.css";
@@ -61,6 +62,9 @@ export function Faq({ as: Heading = "h2" }: { as?: "h1" | "h2" }) {
           <p className={`${ui.lede} ${styles.lede}`}>
             Something else? <Link href="/contact" className={ui.link}>Write to us</Link>
           </p>
+          {/* What the questions are about: an open bag, full to the top. */}
+          <Image src="/brand/scenes/open-bag.webp" alt="An open bag of Makzo's, full of roasted makhana" width={900} height={691}
+            sizes="(max-width: 960px) 60vw, 30vw" className={styles.bag} />
         </header>
         <div className={styles.list}>
           {QUESTIONS.map((x) => (

@@ -35,6 +35,8 @@ export type Flavour = {
     /** Where the coloured food sits in the photo, as fractions of its width and height. */
     spot: [number, number];
   };
+  /** The bag opened among its ingredients, for the product gallery. Only where we have the shot. */
+  open?: { src: string; width: number; height: number };
 };
 
 export const FLAVOURS: Flavour[] = [
@@ -50,7 +52,8 @@ export const FLAVOURS: Flavour[] = [
     story: "Rasam is the thin, peppery broth that turns up at almost every South Indian meal, and the one people miss most when they leave home. We built this one to taste like the bowl, not the idea of it: pepper first, the tang right behind, and a warmth that stays.",
     field: "#9B1F21",
     ink: "#ffffff",
-    pack: "/brand/packs/rasam.webp",
+    pack: "/brand/packs/rasam-3d.webp",
+    open: { src: "/brand/scenes/rasam-open-scene.webp", width: 1600, height: 900 },
     dish: { src: "/brand/dishes/rasam.webp", width: 1402, height: 1122, spot: [0.55, 0.74] },
   },
   {
@@ -65,7 +68,7 @@ export const FLAVOURS: Flavour[] = [
     story: "Sweet tamarind chutney is the brown one in the chaat plate, the one you ask for extra of. This bag is that chutney’s sweet and sour, held on a roasted seed instead of a samosa.",
     field: "#CD5D27",
     ink: "#000000",
-    pack: "/brand/packs/sweet-tamarind.webp",
+    pack: "/brand/packs/sweet-tamarind-3d.webp",
     dish: { src: "/brand/dishes/sweet-tamarind.webp", width: 1390, height: 1132, spot: [0.74, 0.24] },
   },
   {
@@ -80,7 +83,7 @@ export const FLAVOURS: Flavour[] = [
     story: "Baked mac and cheese is comfort with a crust. This is the cheesy, buttery part of it, minus the wait for the oven, with a crunch the pasta never had.",
     field: "#F8F6B9",
     ink: "#000000",
-    pack: "/brand/packs/mac-cheese.webp",
+    pack: "/brand/packs/mac-cheese-3d.webp",
     dish: { src: "/brand/dishes/mac-cheese.webp", width: 1920, height: 1440, spot: [0.52, 0.66] },
   },
   {
@@ -95,7 +98,7 @@ export const FLAVOURS: Flavour[] = [
     story: "Tiramisu means “pick me up”, and it does: coffee, cocoa and something creamy, layered. This is the dessert as a snack, sweet enough to end a meal and light enough to start the afternoon.",
     field: "#5A3B35",
     ink: "#ffffff",
-    pack: "/brand/packs/tiramisu.webp",
+    pack: "/brand/packs/tiramisu-3d.webp",
     dish: { src: "/brand/dishes/tiramisu.webp", width: 1448, height: 1086, spot: [0.6, 0.8] },
   },
   {
@@ -110,7 +113,7 @@ export const FLAVOURS: Flavour[] = [
     story: "Nothing smells like a tadka when curry leaves hit hot oil. This flavour is built around that moment: green, savoury and fragrant, the way the top of a good dal is.",
     field: "#24633A",
     ink: "#ffffff",
-    pack: "/brand/packs/curry-leaves.webp",
+    pack: "/brand/packs/curry-leaves-3d.webp",
     dish: { src: "/brand/dishes/curry-leaves.webp", width: 1448, height: 1086, spot: [0.7, 0.26] },
   },
   {
@@ -125,7 +128,7 @@ export const FLAVOURS: Flavour[] = [
     story: "Chettinad cooking is known for heat with depth: pepper and whole spices, roasted until they’re dark and fragrant. This is the boldest bag in the range, and it builds as you go.",
     field: "#2E1C11",
     ink: "#ffffff",
-    pack: "/brand/packs/chettinadu.webp",
+    pack: "/brand/packs/chettinadu-3d.webp",
     dish: { src: "/brand/dishes/chettinadu.webp", width: 1920, height: 1439, spot: [0.75, 0.58] },
   },
   {
@@ -140,7 +143,7 @@ export const FLAVOURS: Flavour[] = [
     story: "Sweet chilli sauce does two things at once: sticky sweet, then a real kick. This bag does both, in that order, and leaves you reaching for the next handful.",
     field: "#511348",
     ink: "#ffffff",
-    pack: "/brand/packs/thai-chilli.webp",
+    pack: "/brand/packs/thai-chilli-3d.webp",
     dish: { src: "/brand/dishes/thai-chilli.webp", width: 1620, height: 1220, spot: [0.46, 0.68] },
   },
 ];
@@ -160,9 +163,9 @@ export const TASTES: { id: Taste; label: string }[] = [
   { id: "tangy", label: "Tangy" },
 ];
 
-/** Pack fronts are 960 × 1279. */
+/** 3D pack renders (scripts/prep-packs.mjs) are 960 × 1414 on transparent. */
 export const PACK_W = 960;
-export const PACK_H = 1279;
+export const PACK_H = 1414;
 
 /** Placeholders. The guide says "real numbers or none": replace with approved prices before launch. */
 export const BAG_PRICE = 60;

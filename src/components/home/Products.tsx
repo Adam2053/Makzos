@@ -7,7 +7,9 @@ import { useActiveCard } from "@/lib/useActiveCard";
 import { BAG_PRICE, BOX_PRICE, BOX_SIZE, FLAVOURS, byId, inr, productHref } from "@/lib/products";
 import { bagKey, useCart } from "@/lib/cart";
 import { Makhana } from "./Makhana";
-import { INSIDE, IngredientArt } from "./Ingredients";
+import Image from "next/image";
+import { pieces } from "@/lib/ingredients";
+import { IngredientArt } from "./Ingredients";
 import { Pack } from "@/components/shop/Pack";
 import { Checkpoint } from "./Checkpoint";
 import ui from "./ui.module.css";
@@ -79,41 +81,31 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
     el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: smooth ? "smooth" : "auto" });
   };
 
-  /*
-   * Depth, the way Feastables and Bucks do it: the card turns a few degrees towards the
-   * pointer, and the layers inside it sit at different depths, so the pack and whatever is
-   * bursting out of it part as it turns. Written straight to the card's style: no re-render.
-   */
-  const tilt = (e: React.PointerEvent<HTMLLIElement>) => {
-    if (e.pointerType !== "mouse") return;
-    const el = e.currentTarget, r = el.getBoundingClientRect();
-    el.style.setProperty("--rx", `${((e.clientX - r.left) / r.width - 0.5) * 16}deg`);
-    el.style.setProperty("--ry", `${((e.clientY - r.top) / r.height - 0.5) * -12}deg`);
-  };
-  const untilt = (e: React.PointerEvent<HTMLLIElement>) => {
-    e.currentTarget.style.removeProperty("--rx");
-    e.currentTarget.style.removeProperty("--ry");
-  };
-
   const lede = <>{inr(BAG_PRICE)} a bag. Every four you pick count as a box, {inr(BOX_PRICE)}.</>;
 
   /*
-   * The card, Bucks-style: at rest it's only the pack, big. On hover (or keyboard focus) the
-   * pack lifts out of the white card towards you, breaking past its top edge, the flavour's
-   * ingredient comes out from behind it on both sides, and the name, price and the two calls
-   * rise from the bottom. On a touch screen the card in front of you opens the same way. Everything stays inside the
-   * card. Once it's in the bag, or on a touch screen, the bottom half simply stays up.
+   * The card: at rest it's only the pack, big. On hover (or keyboard focus) the pack glides up
+   * past the card's top edge, the flavour's ingredient and a makhana drift in beside it, and
+   * the name, price and the two calls rise from the bottom. On a touch screen the card in front
+   * of you opens the same way. Once it's in the bag the bottom half simply stays up.
    */
   const cards = flavours.map((f) => {
     const n = inBag(f.id);
-    const kind = INSIDE[f.id];
+    const bits = pieces(f.id);
     return (
-      <li key={f.id} className={styles.item} data-in={n > 0 || undefined} onPointerMove={tilt} onPointerLeave={untilt}>
+      <li key={f.id} className={styles.item} data-in={n > 0 || undefined}>
         {/* The picture links too, but only the name is announced and tabbed to. */}
         <Link href={productHref(f.id)} className={styles.shot} tabIndex={-1} aria-hidden="true">
           <span className={styles.stagePack}>
-            {/* Behind the pack, one either side: the flavour's ingredient. */}
-            {kind && [0, 1].map((i) => <span key={i} className={styles.pop} data-at={i}><IngredientArt kind={kind} /></span>)}
+            {/* Over the pack's edges: the flavour's ingredient and a makhana, drifting in when the card opens. */}
+            {bits.map((b, i) => (
+              <span key={i} className={styles.pop} data-at={i}
+                style={{ "--x": `${b.x}cqw`, "--y": `${b.y}cqw`, "--w": `${b.w}cqw`, "--r": `${b.r}deg` } as React.CSSProperties}>
+                {b.kind === "photo"
+                  ? <Image src={b.src} alt="" width={b.width} height={b.height} sizes="240px" draggable={false} />
+                  : <IngredientArt kind={b.art} />}
+              </span>
+            ))}
             <Pack id={f.id} sizes="(max-width: 700px) 60vw, 240px" className={styles.pack} alt="" />
             <span className={styles.floor} />
           </span>

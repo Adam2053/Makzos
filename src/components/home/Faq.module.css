@@ -3,6 +3,7 @@
 .head { grid-column: 1 / 5; }
 .title { font-size: var(--t-h2); }
 .lede { margin-top: 20px; }
+.bag { display: block; width: min(100%, 360px); height: auto; margin-top: clamp(28px, 4vw, 56px); rotate: -4deg; filter: drop-shadow(0 24px 22px rgb(0 0 0 / .18)); }
 
 .list { grid-column: 6 / 13; display: grid; gap: 10px; }
 .item { border-radius: 28px; background: var(--mist); transition: background-color .2s; }
@@ -16,5 +17,6 @@
 
 @media (max-width: 960px) {
   .head, .list { grid-column: 1 / -1; }
+  .bag { width: min(56%, 240px); margin-top: 20px; }
 }
 @media (prefers-reduced-motion: reduce) { .item svg { transition: none; } }

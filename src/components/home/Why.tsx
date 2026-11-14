@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { PACK_H, PACK_W, byId } from "@/lib/products";
 import ui from "./ui.module.css";
 import styles from "./Why.module.css";
 
@@ -17,9 +16,6 @@ const ROWS: { label: string; us: string; them: string }[] = [
   { label: "Additives", us: "No INS-coded additives.", them: "Often a row of INS numbers." },
   { label: "The ingredient list", us: "Nothing we wouldn't explain.", them: "Worth a second read." },
 ];
-
-/** The pack standing on our column: a launch flavour (guide p.37). */
-const PACK = byId("rasam");
 
 export function Why() {
   return (
@@ -51,7 +47,8 @@ export function Why() {
               {/* Ours on the right: the column the eye lands on last, and the one that wins. */}
               <th scope="col" className={styles.us}>
                 <span className={styles.vs} aria-hidden="true">vs</span>
-                <Image src={PACK.pack} alt="" width={PACK_W} height={PACK_H} sizes="120px" className={styles.pack} />
+                {/* Our pack, a launch flavour (guide p.37), with the makhana bursting out of it. */}
+                <Image src="/brand/scenes/rasam-popout.webp" alt="" width={532} height={720} sizes="160px" className={styles.pack} />
                 <Image src="/brand/logo-dark.png" alt="Makzo's" width={1200} height={296} className={styles.logo} />
               </th>
             </tr>

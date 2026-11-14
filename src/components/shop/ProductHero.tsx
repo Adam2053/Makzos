@@ -18,7 +18,7 @@ import { Heat, VegMark } from "./marks";
 import { Makhana } from "@/components/home/Makhana";
 import styles from "./ProductHero.module.css";
 
-type View = "pack" | "studio" | "dish" | "facts";
+type View = "pack" | "open" | "studio" | "dish" | "facts";
 
 /** Where the seeds fall around the pack, as percentages of the stage: kept clear of its middle. */
 const SPILL = [
@@ -92,6 +92,7 @@ export function ProductHero({ id }: { id: string }) {
 
   const VIEWS: { id: View; label: string }[] = [
     { id: "pack", label: "The pack" },
+    ...(f.open ? [{ id: "open" as const, label: "Opened, with what goes in it" }] : []),
     { id: "studio", label: "Close up" },
     { id: "dish", label: "The dish" },
     { id: "facts", label: "At a glance" },
@@ -109,6 +110,7 @@ export function ProductHero({ id }: { id: string }) {
             {VIEWS.map((v) => (
               <button key={v.id} type="button" className={styles.thumb} data-v={v.id} aria-pressed={view === v.id} onClick={() => setView(v.id)} aria-label={v.label}>
                 {v.id === "pack" && <PackThumb id={id} size={30} />}
+                {v.id === "open" && f.open && <Image src={f.open.src} alt="" fill sizes="80px" className={styles.thumbOpen} />}
                 {v.id === "studio" && <Image src={f.pack} alt="" fill sizes="80px" className={styles.thumbCrop} />}
                 {v.id === "dish" && <Image src={f.dish.src} alt="" fill sizes="80px" style={{ objectPosition: `${f.dish.spot[0] * 100}% ${f.dish.spot[1] * 100}%` }} />}
                 {v.id === "facts" && <span className={styles.thumbFacts}>250<small>kcal</small></span>}
@@ -132,6 +134,9 @@ export function ProductHero({ id }: { id: string }) {
             )}
             {view === "studio" && (
               <Image src={f.pack} alt={`The front of the ${f.name} pack, close up`} fill sizes="(max-width: 900px) 100vw, 50vw" className={styles.studio} />
+            )}
+            {view === "open" && f.open && (
+              <Image src={f.open.src} alt={`An open ${f.name} pack full of roasted makhana, with the ingredients around it`} fill sizes="(max-width: 900px) 100vw, 50vw" className={styles.open} />
             )}
             {view === "dish" && (
               <>

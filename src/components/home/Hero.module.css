@@ -46,7 +46,7 @@
 .packs { position: absolute; right: 0; bottom: 0; z-index: 2; display: grid; width: 42%; filter: drop-shadow(0 26px 24px rgb(0 0 0 / .28)); pointer-events: none; }
 .pack { grid-area: 1 / 1; }
 .pack:not(:first-child) { visibility: hidden; opacity: 0; }
-.pack img { width: 100%; height: auto; border-radius: 10px; rotate: 6deg; }
+.pack img { width: 100%; height: auto; rotate: 6deg; }
 .hint { position: absolute; left: 6%; bottom: 4%; font-size: .875rem; font-weight: 600; color: var(--quiet); }
 .hint::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--paprika); vertical-align: middle; animation: ping 1.6s ease-out infinite; }
 @keyframes ping { 0% { box-shadow: 0 0 0 0 rgb(234 75 43 / .6); } 100% { box-shadow: 0 0 0 10px rgb(234 75 43 / 0); } }

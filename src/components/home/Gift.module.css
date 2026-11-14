@@ -4,7 +4,7 @@
 /* ---------- The sleeve ---------- */
 .preview { grid-column: 1 / 7; position: relative; justify-self: center; width: min(100%, 500px); padding-top: 26%; }
 .packs { position: absolute; left: 50%; top: 0; width: 70%; height: 46%; translate: -50% 0; }
-.packs img { position: absolute; left: 50%; bottom: 0; width: 34%; height: auto; border-radius: 6px; translate: -50% 0; transform-origin: 50% 250%; rotate: calc(var(--i) * 9deg); box-shadow: 0 10px 20px -8px rgb(0 0 0 / .5); }
+.packs img { position: absolute; left: 50%; bottom: 0; width: 34%; height: auto; translate: -50% 0; transform-origin: 50% 250%; rotate: calc(var(--i) * 9deg); filter: drop-shadow(0 8px 8px rgb(0 0 0 / .45)); }
 .sleeve { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12% 10% 10%; border-radius: 28px 28px 36px 36px; background: var(--paprika); color: var(--black); box-shadow: 0 30px 50px -24px rgb(0 0 0 / .45); text-align: center; }
 .sleeveLogo { width: 70%; height: auto; }
 .sleeveLine { font-weight: 600; }

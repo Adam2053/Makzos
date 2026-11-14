@@ -5,21 +5,9 @@ import { useId } from "react";
 /**
  * One ingredient per flavour, drawn to read as a real object rather than a cartoon: no ink
  * outlines, light from the top left, a glossy highlight and shading into the shadow side.
- * On a product card two pieces of it slide out from behind the pack on hover. Illustrative
- * only: they show what the flavour is built around, not an ingredient list.
+ * Used on the product cards (lib/ingredients) for the flavours we have no photo of yet.
  */
 export type Ingredient = "pepper" | "tamarind" | "cheese" | "coffee" | "curryLeaf" | "starAnise" | "chilli";
-
-/** The one ingredient each flavour is built around (its first taste note). */
-export const INSIDE: Record<string, Ingredient> = {
-  rasam: "pepper",
-  "sweet-tamarind": "tamarind",
-  "mac-cheese": "cheese",
-  tiramisu: "coffee",
-  "curry-leaves": "curryLeaf",
-  chettinadu: "starAnise",
-  "thai-chilli": "chilli",
-};
 
 export function IngredientArt({ kind, className }: { kind: Ingredient; className?: string }) {
   // Gradient ids must be unique per drawing: many cards share the page.

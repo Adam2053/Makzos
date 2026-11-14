@@ -26,7 +26,8 @@
 
 /* Both bags stand half out of the top of their column. */
 .pack, .bag { display: block; width: clamp(72px, 7vw, 104px); height: auto; margin: -56px 0 16px; }
-.pack { border-radius: 6px; rotate: -6deg; box-shadow: 0 16px 22px -10px rgb(0 0 0 / .5); }
+/* Ours is the pack with makhana bursting from it: bigger, and standing higher out of the column. */
+.pack { width: clamp(104px, 10vw, 150px); margin: -120px 0 12px -8px; filter: drop-shadow(0 12px 10px rgb(0 0 0 / .35)); }
 .bag { rotate: 5deg; fill: #d9d9d9; stroke: #a9a9a9; stroke-width: 3; stroke-linejoin: round; }
 .bag circle { fill: #c6c6c6; stroke: none; }
 .logo { width: min(100%, 176px); height: auto; }
@@ -66,6 +67,7 @@
   .table thead .us, .table thead .them { border-radius: 22px 22px 0 0; }
   .table tbody tr:last-child .us, .table tbody tr:last-child .them { border-radius: 0 0 22px 22px; }
   .pack, .bag { width: 48px; margin: -38px 0 14px; }
+  .pack { width: 72px; margin: -64px 0 10px -4px; }
   /* Room either side of the seam for the badge. */
   .logo { width: calc(100% - 12px); }
   .table thead .us { padding-left: 24px; }
