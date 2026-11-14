@@ -109,8 +109,8 @@
   will-change: opacity, scale;
 }
 .swap img { display: block; width: 100%; height: auto; user-select: none; }
-.item[data-swap] .stagePack .pack { transition: scale var(--open) var(--glide), opacity calc(var(--open) * .8) var(--glide); }
-.item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .stagePack .pack { opacity: 0; }
+.item[data-swap] .stagePack .pack { transition: scale var(--open) var(--glide), rotate var(--open) var(--glide), opacity calc(var(--open) * .8) var(--glide); }
+.item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .stagePack .pack { opacity: 0; rotate: var(--st, 0deg); }
 .item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .swap { opacity: 1; }
 
 /* The panel at the bottom: name and price, then Add to cart over Buy now. */
@@ -124,9 +124,9 @@
 .actions { display: grid; gap: 8px; }
 
 /* The open state: hovered, focused from the keyboard, or already in the bag. */
-.item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -30%; }
+.item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: var(--sl, -30%); }
 /* The pack keeps nearly its full size as it rises: only a slight step back. Its hover shot, if it has one, scales with it. */
-.item:is(:hover, :focus-within, [data-in], [data-active]) :is(.pack, .swap) { scale: .9; }
+.item:is(:hover, :focus-within, [data-in], [data-active]) :is(.pack, .swap) { scale: var(--ss, .9); }
 .item:is(:hover, :focus-within, [data-in], [data-active]) .floor { translate: 0 30%; scale: .8; opacity: .55; }
 /* The pieces come in once the pack is on its way up. */
 .item:is(:hover, :focus-within, [data-active]) .pop { translate: calc(-50% + var(--x) * var(--k)) calc(-50% + var(--y) * var(--k)); opacity: 1; transition-delay: .14s; }
@@ -140,8 +140,8 @@
  * back a touch more and the pieces sit a touch closer in. Keyed to the card's own width.
  */
 @container (max-width: 270px) {
-  .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -34%; }
-  .item:is(:hover, :focus-within, [data-in], [data-active]) :is(.pack, .swap) { scale: .78; }
+  .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: calc(var(--sl, -30%) - 4%); }
+  .item:is(:hover, :focus-within, [data-in], [data-active]) :is(.pack, .swap) { scale: calc(var(--ss, .9) * .867); }
   .pop { --k: .9; }
 }
 @media (prefers-reduced-motion: reduce) { .stagePack, .pack, .floor, .pop, .panel, .swap, .item[data-swap] .stagePack .pack { transition: none; } .pop > * { animation: none; } }
@@ -188,9 +188,11 @@
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px 12px; padding-top: 48px; }
   .grid .item { border-radius: 22px; }
   /* Small cards: the pack lifts higher and smaller, so the panel has the lower half to itself. */
-  .grid .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -36%; }
-  .grid .item:is(:hover, :focus-within, [data-in], [data-active]) :is(.pack, .swap) { scale: .7; }
+  .grid .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: calc(var(--sl, -30%) - 6%); }
+  .grid .item:is(:hover, :focus-within, [data-in], [data-active]) :is(.pack, .swap) { scale: calc(var(--ss, .9) * .78); }
   .grid .pop { --k: .8; }
+  /* A card with a hover shot rises a little higher here: the shot reaches lower than the pack alone. */
+  .grid .item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: calc(var(--sl, -30%) - 14%); }
   .grid .panel { left: 8px; right: 8px; bottom: 8px; gap: 8px; }
   .grid .actions { gap: 6px; }
   .grid .name { font-size: 1.25rem; }

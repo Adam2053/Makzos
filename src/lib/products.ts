@@ -42,7 +42,7 @@ export type Flavour = {
    * the shot. It is sized and placed so the pack inside the shot lands exactly on the pack it
    * replaces: `w` is the shot's width on the card and `dx`/`dy` nudge it, all in cqw.
    */
-  hover?: { src: string; width: number; height: number; w: number; dx: number; dy: number };
+  hover?: { src: string; width: number; height: number; w: number; dx: number; dy: number; /** How far the pack and the shot step back together when the card opens (default .9), for a shot that needs more room around the pack. */ scale?: number; /** How far up the card the pack rises (default -30%), for a shot that needs the room above it. */ lift?: number; /** The pack turns to this angle as it fades, to meet a shot whose pack is tilted. */ tilt?: number };
 };
 
 export const FLAVOURS: Flavour[] = [
@@ -60,8 +60,11 @@ export const FLAVOURS: Flavour[] = [
     ink: "#ffffff",
     pack: "/brand/packs/rasam-3d.webp",
     open: { src: "/brand/scenes/rasam-open-scene.webp", width: 1600, height: 900 },
-    // The tilted bag with its spray of makhana: as large as the card can hold with the spray inside it.
-    hover: { src: "/brand/scenes/rasam-popout.webp", width: 532, height: 720, w: 78, dx: 0, dy: -8 },
+    // The bag in this shot leans 12° and has a spray of makhana above it. Sized and nudged so
+    // the bag lands exactly on the real pack, which turns to the same angle as it fades: the
+    // same packet, tipping and bursting. Both step back to 58% and rise less, which is what
+    // keeps the spray from shooting far above the card.
+    hover: { src: "/brand/scenes/rasam-popout.webp", width: 532, height: 720, w: 128, dx: 10.6, dy: -25.1, scale: .58, lift: -10, tilt: 12.3 },
     dish: { src: "/brand/dishes/rasam.webp", width: 1402, height: 1122, spot: [0.55, 0.74] },
   },
   {
