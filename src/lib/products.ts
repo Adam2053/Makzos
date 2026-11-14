@@ -37,8 +37,12 @@ export type Flavour = {
   };
   /** The bag opened among its ingredients, for the product gallery. Only where we have the shot. */
   open?: { src: string; width: number; height: number };
-  /** What the pack turns into on a product card's hover, Feastables-style. Only where we have the shot. */
-  hover?: { src: string; width: number; height: number; /** Its width on the card, in cqw. */ w: number };
+  /**
+   * What the pack turns into on a product card's hover, Feastables-style. Only where we have
+   * the shot. It is sized and placed so the pack inside the shot lands exactly on the pack it
+   * replaces: `w` is the shot's width on the card and `dx`/`dy` nudge it, all in cqw.
+   */
+  hover?: { src: string; width: number; height: number; w: number; dx: number; dy: number };
 };
 
 export const FLAVOURS: Flavour[] = [
@@ -56,7 +60,8 @@ export const FLAVOURS: Flavour[] = [
     ink: "#ffffff",
     pack: "/brand/packs/rasam-3d.webp",
     open: { src: "/brand/scenes/rasam-open-scene.webp", width: 1600, height: 900 },
-    hover: { src: "/brand/scenes/rasam-popout.webp", width: 532, height: 720, w: 70 },
+    // The tilted bag with its spray of makhana: as large as the card can hold with the spray inside it.
+    hover: { src: "/brand/scenes/rasam-popout.webp", width: 532, height: 720, w: 78, dx: 0, dy: -8 },
     dish: { src: "/brand/dishes/rasam.webp", width: 1402, height: 1122, spot: [0.55, 0.74] },
   },
   {

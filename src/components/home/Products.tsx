@@ -108,9 +108,9 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
               </span>
             ))}
             <Pack id={f.id} sizes="(max-width: 700px) 60vw, 240px" className={styles.pack} alt="" />
-            {/* Feastables-style: on hover the pack fades into its hover shot. */}
+            {/* Feastables-style: on hover the pack fades into its hover shot, same size, same spot. */}
             {f.hover && (
-              <span className={styles.swap} style={{ "--sw": `${f.hover.w}cqw` } as React.CSSProperties}>
+              <span className={styles.swap} style={{ "--sw": `${f.hover.w}cqw`, "--sx": `${f.hover.dx}cqw`, "--sy": `${f.hover.dy}cqw` } as React.CSSProperties}>
                 <Image src={f.hover.src} alt="" width={f.hover.width} height={f.hover.height} sizes="(max-width: 700px) 70vw, 320px" draggable={false} />
               </span>
             )}
