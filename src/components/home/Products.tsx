@@ -95,7 +95,7 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
     const bits = f.hover ? [] : pieces(f.id);
     return (
       <li key={f.id} className={styles.item} data-in={n > 0 || undefined} data-swap={f.hover ? "" : undefined}
-        style={f.hover ? ({ "--ss": f.hover.scale, "--sl": f.hover.lift === undefined ? undefined : `${f.hover.lift}%`, "--st": f.hover.tilt === undefined ? undefined : `${f.hover.tilt}deg` } as React.CSSProperties) : undefined}>
+        style={f.hover ? ({ "--ss": f.hover.scale, "--sl": f.hover.lift === undefined ? undefined : `${f.hover.lift}%`, "--st": f.hover.tilt === undefined ? undefined : `${f.hover.tilt}deg`, "--sw": `${f.hover.w}cqw`, "--sx": `${f.hover.dx}cqw`, "--sy": `${f.hover.dy}cqw` } as React.CSSProperties) : undefined}>
         {/* The picture links too, but only the name is announced and tabbed to. */}
         <Link href={productHref(f.id)} className={styles.shot} tabIndex={-1} aria-hidden="true">
           <span className={styles.stagePack}>
@@ -111,7 +111,7 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
             <Pack id={f.id} sizes="(max-width: 700px) 60vw, 240px" className={styles.pack} alt="" />
             {/* Feastables-style: on hover the pack fades into its hover shot, same size, same spot. */}
             {f.hover && (
-              <span className={styles.swap} style={{ "--sw": `${f.hover.w}cqw`, "--sx": `${f.hover.dx}cqw`, "--sy": `${f.hover.dy}cqw` } as React.CSSProperties}>
+              <span className={styles.swap}>
                 <Image src={f.hover.src} alt="" width={f.hover.width} height={f.hover.height} sizes="(max-width: 700px) 70vw, 320px" draggable={false} />
               </span>
             )}

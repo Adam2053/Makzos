@@ -64,7 +64,7 @@ export const FLAVOURS: Flavour[] = [
     // the bag lands exactly on the real pack, which turns to the same angle as it fades: the
     // same packet, tipping and bursting. Both step back to 58% and rise less, which is what
     // keeps the spray from shooting far above the card.
-    hover: { src: "/brand/scenes/rasam-popout.webp", width: 532, height: 720, w: 128, dx: 10.6, dy: -25.1, scale: .58, lift: -10, tilt: 12.3 },
+    hover: { src: "/brand/scenes/rasam-popout.webp", width: 532, height: 720, w: 122.9, dx: 5.2, dy: -22.2, scale: .58, lift: -12, tilt: 12.3 },
     dish: { src: "/brand/dishes/rasam.webp", width: 1402, height: 1122, spot: [0.55, 0.74] },
   },
   {

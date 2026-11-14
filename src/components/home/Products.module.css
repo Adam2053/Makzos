@@ -100,18 +100,21 @@
  * pack inside it sits exactly on the real pack, and it takes the very same scale as the pack
  * at every moment (see the open-state rules below). So nothing changes size or jumps: it
  * reads as the same packet, opened.
+ * Both turn and shrink around one shared point, the shot's centre, so the pack and the bag in
+ * the shot stay locked together through the whole fade instead of drifting apart. If the
+ * shot's bag leans (--st), the shot starts turned back upright and tips over with the pack.
  */
 .swap {
   position: absolute; left: 50%; top: 50%; z-index: 1; width: var(--sw);
   translate: calc(-50% + var(--sx, 0cqw)) calc(-50% + var(--sy, 0cqw));
-  opacity: 0; pointer-events: none;
-  transition: opacity calc(var(--open) * .8) var(--glide), scale var(--open) var(--glide);
-  will-change: opacity, scale;
+  opacity: 0; pointer-events: none; rotate: calc(-1 * var(--st, 0deg));
+  transition: opacity calc(var(--open) * .8) var(--glide), scale var(--open) var(--glide), rotate var(--open) var(--glide);
+  will-change: opacity, scale, rotate;
 }
 .swap img { display: block; width: 100%; height: auto; user-select: none; }
-.item[data-swap] .stagePack .pack { transition: scale var(--open) var(--glide), rotate var(--open) var(--glide), opacity calc(var(--open) * .8) var(--glide); }
+.item[data-swap] .stagePack .pack { transform-origin: calc(50% + var(--sx, 0cqw)) calc(50% + var(--sy, 0cqw)); transition: scale var(--open) var(--glide), rotate var(--open) var(--glide), opacity calc(var(--open) * .8) var(--glide); }
 .item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .stagePack .pack { opacity: 0; rotate: var(--st, 0deg); }
-.item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .swap { opacity: 1; }
+.item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .swap { opacity: 1; rotate: 0deg; }
 
 /* The panel at the bottom: name and price, then Add to cart over Buy now. */
 .panel { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2; display: grid; gap: 10px; transition: transform var(--open) var(--glide), opacity .15s ease-out; }
