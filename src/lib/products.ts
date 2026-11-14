@@ -38,7 +38,7 @@ export type Flavour = {
   /** The bag opened among its ingredients, for the product gallery. Only where we have the shot. */
   open?: { src: string; width: number; height: number };
   /** What the pack turns into on a product card's hover, Feastables-style. Only where we have the shot. */
-  hover?: { src: string; width: number; height: number };
+  hover?: { src: string; width: number; height: number; /** Its width on the card, in cqw. */ w: number };
 };
 
 export const FLAVOURS: Flavour[] = [
@@ -56,7 +56,7 @@ export const FLAVOURS: Flavour[] = [
     ink: "#ffffff",
     pack: "/brand/packs/rasam-3d.webp",
     open: { src: "/brand/scenes/rasam-open-scene.webp", width: 1600, height: 900 },
-    hover: { src: "/brand/scenes/open-bag.webp", width: 900, height: 691 },
+    hover: { src: "/brand/scenes/rasam-popout.webp", width: 532, height: 720, w: 70 },
     dish: { src: "/brand/dishes/rasam.webp", width: 1402, height: 1122, spot: [0.55, 0.74] },
   },
   {
