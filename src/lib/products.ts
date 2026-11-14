@@ -60,8 +60,9 @@ export const FLAVOURS: Flavour[] = [
     ink: "#ffffff",
     pack: "/brand/packs/rasam-3d.webp",
     open: { src: "/brand/scenes/rasam-open-scene.webp", width: 1600, height: 900 },
-    // The bag is as wide as the pack it was: it reads as the same packet, opened.
-    hover: { src: "/brand/scenes/open-bag.webp", width: 900, height: 691, w: 70, dx: 0, dy: 4 },
+    // The open bag among its ingredients. Sized so the bag is as wide as the pack it was (it reads
+    // as the same packet, opened), with the tomatoes, leaves and chillies spilling out around it.
+    hover: { src: "/brand/scenes/rasam-open-ingredients.webp", width: 1082, height: 821, w: 84, dx: .8, dy: 4.4 },
     dish: { src: "/brand/dishes/rasam.webp", width: 1402, height: 1122, spot: [0.55, 0.74] },
   },
   {
