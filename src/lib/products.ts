@@ -37,8 +37,12 @@ export type Flavour = {
   };
   /** The bag opened among its ingredients, for the product gallery. Only where we have the shot. */
   open?: { src: string; width: number; height: number };
-  /** What the pack turns into on a product card's hover, Feastables-style. Only where we have the shot. */
-  hover?: { src: string; width: number; height: number; /** Its width on the card, in cqw. */ w: number };
+  /**
+   * What the pack turns into on a product card's hover, Feastables-style. Only where we have
+   * the shot. It is sized and placed so the pack inside the shot lands exactly on the pack it
+   * replaces: `w` is the shot's width on the card and `dx`/`dy` nudge it, all in cqw.
+   */
+  hover?: { src: string; width: number; height: number; w: number; dx: number; dy: number; /** How far the pack and the shot step back together when the card opens (default .9), for a shot that needs more room around the pack. */ scale?: number };
 };
 
 export const FLAVOURS: Flavour[] = [
@@ -56,7 +60,9 @@ export const FLAVOURS: Flavour[] = [
     ink: "#ffffff",
     pack: "/brand/packs/rasam-3d.webp",
     open: { src: "/brand/scenes/rasam-open-scene.webp", width: 1600, height: 900 },
-    hover: { src: "/brand/scenes/rasam-ingredients.webp", width: 745, height: 783, w: 84 },
+    // The pack in this shot is 82% of its height and sits a touch right of centre: sized and
+    // nudged so it lands exactly on the real pack, with the ingredients around it.
+    hover: { src: "/brand/scenes/rasam-ingredients.webp", width: 745, height: 783, w: 115.5, dx: -3.7, dy: -2.3, scale: .8 },
     dish: { src: "/brand/dishes/rasam.webp", width: 1402, height: 1122, spot: [0.55, 0.74] },
   },
   {

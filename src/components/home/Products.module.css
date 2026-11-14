@@ -96,19 +96,22 @@
 
 /*
  * The swap, Feastables-style: on a card with its own hover shot, the pack cross-fades into it
- * as the card opens. Both sit in the same spot; the shot starts a touch small and settles to
- * full size while the pack fades out, so it reads as one thing changing, not a slide show.
+ * as the card opens. The shot is sized and placed (--sw, --sx, --sy from lib/products) so the
+ * pack inside it sits exactly on the real pack, and it takes the very same scale as the pack
+ * at every moment (see the open-state rules below). So nothing changes size or jumps: it
+ * reads as the same packet, opened.
  */
 .swap {
-  position: absolute; left: 50%; top: 50%; z-index: 1; width: var(--sw, 86cqw); translate: -50% -46%;
-  opacity: 0; scale: .9; pointer-events: none;
+  position: absolute; left: 50%; top: 50%; z-index: 1; width: var(--sw);
+  translate: calc(-50% + var(--sx, 0cqw)) calc(-50% + var(--sy, 0cqw));
+  opacity: 0; pointer-events: none;
   transition: opacity calc(var(--open) * .8) var(--glide), scale var(--open) var(--glide);
   will-change: opacity, scale;
 }
-.swap img { display: block; width: 100%; height: auto; filter: drop-shadow(0 18px 18px rgb(0 0 0 / .18)); user-select: none; }
+.swap img { display: block; width: 100%; height: auto; user-select: none; }
 .item[data-swap] .stagePack .pack { transition: scale var(--open) var(--glide), opacity calc(var(--open) * .8) var(--glide); }
 .item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .stagePack .pack { opacity: 0; }
-.item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .swap { opacity: 1; scale: 1; }
+.item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .swap { opacity: 1; }
 
 /* The panel at the bottom: name and price, then Add to cart over Buy now. */
 .panel { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2; display: grid; gap: 10px; transition: transform var(--open) var(--glide), opacity .15s ease-out; }
@@ -122,8 +125,8 @@
 
 /* The open state: hovered, focused from the keyboard, or already in the bag. */
 .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -30%; }
-/* The pack keeps nearly its full size as it rises: only a slight step back. */
-.item:is(:hover, :focus-within, [data-in], [data-active]) .pack { scale: .9; }
+/* The pack keeps nearly its full size as it rises: only a slight step back. Its hover shot, if it has one, scales with it. */
+.item:is(:hover, :focus-within, [data-in], [data-active]) :is(.pack, .swap) { scale: var(--ss, .9); }
 .item:is(:hover, :focus-within, [data-in], [data-active]) .floor { translate: 0 30%; scale: .8; opacity: .55; }
 /* The pieces come in once the pack is on its way up. */
 .item:is(:hover, :focus-within, [data-active]) .pop { translate: calc(-50% + var(--x) * var(--k)) calc(-50% + var(--y) * var(--k)); opacity: 1; transition-delay: .14s; }
@@ -138,9 +141,8 @@
  */
 @container (max-width: 270px) {
   .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -34%; }
-  .item:is(:hover, :focus-within, [data-in], [data-active]) .pack { scale: .78; }
+  .item:is(:hover, :focus-within, [data-in], [data-active]) :is(.pack, .swap) { scale: calc(var(--ss, .9) * .867); }
   .pop { --k: .9; }
-  .swap { width: calc(var(--sw, 86cqw) * .8); translate: -50% -54%; }
 }
 @media (prefers-reduced-motion: reduce) { .stagePack, .pack, .floor, .pop, .panel, .swap, .item[data-swap] .stagePack .pack { transition: none; } .pop > * { animation: none; } }
 
@@ -187,9 +189,10 @@
   .grid .item { border-radius: 22px; }
   /* Small cards: the pack lifts higher and smaller, so the panel has the lower half to itself. */
   .grid .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -36%; }
-  .grid .item:is(:hover, :focus-within, [data-in], [data-active]) .pack { scale: .7; }
+  .grid .item:is(:hover, :focus-within, [data-in], [data-active]) :is(.pack, .swap) { scale: calc(var(--ss, .9) * .78); }
   .grid .pop { --k: .8; }
-  .grid .swap { translate: -50% -62%; }
+  /* A card with a hover shot rises a little higher here: the shot reaches lower than the pack alone. */
+  .grid .item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -41%; }
   .grid .panel { left: 8px; right: 8px; bottom: 8px; gap: 8px; }
   .grid .actions { gap: 6px; }
   .grid .name { font-size: 1.25rem; }
