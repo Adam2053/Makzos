@@ -60,11 +60,9 @@ export const FLAVOURS: Flavour[] = [
     ink: "#ffffff",
     pack: "/brand/packs/rasam-3d.webp",
     open: { src: "/brand/scenes/rasam-open-scene.webp", width: 1600, height: 900 },
-    // The bag in this shot leans 12° and has a spray of makhana above it. Sized and nudged so
-    // the bag lands exactly on the real pack, which turns to the same angle as it fades: the
-    // same packet, tipping and bursting. Both step back to 58% and rise less, which is what
-    // keeps the spray from shooting far above the card.
-    hover: { src: "/brand/scenes/rasam-popout.webp", width: 532, height: 720, w: 122.9, dx: 5.2, dy: -22.2, scale: .58, lift: -12, tilt: 12.3 },
+    // The open pack with makhana bursting out of its mouth. Sized and placed so the pack in it
+    // lands on the real pack: the same packet, opened, at the same size.
+    hover: { src: "/brand/scenes/rasam-burst.webp", width: 567, height: 825, w: 85.6, dx: 10.9, dy: -15.7, lift: -20 },
     dish: { src: "/brand/dishes/rasam.webp", width: 1402, height: 1122, spot: [0.55, 0.74] },
   },
   {
