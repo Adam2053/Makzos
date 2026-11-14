@@ -100,7 +100,7 @@
  * full size while the pack fades out, so it reads as one thing changing, not a slide show.
  */
 .swap {
-  position: absolute; left: 50%; top: 50%; z-index: 1; width: 86%; translate: -50% -46%;
+  position: absolute; left: 50%; top: 50%; z-index: 1; width: var(--sw, 86cqw); translate: -50% -46%;
   opacity: 0; scale: .9; pointer-events: none;
   transition: opacity calc(var(--open) * .8) var(--glide), scale var(--open) var(--glide);
   will-change: opacity, scale;
@@ -140,6 +140,7 @@
   .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -34%; }
   .item:is(:hover, :focus-within, [data-in], [data-active]) .pack { scale: .78; }
   .pop { --k: .9; }
+  .swap { width: calc(var(--sw, 86cqw) * .8); translate: -50% -54%; }
 }
 @media (prefers-reduced-motion: reduce) { .stagePack, .pack, .floor, .pop, .panel, .swap, .item[data-swap] .stagePack .pack { transition: none; } .pop > * { animation: none; } }
 
@@ -188,6 +189,7 @@
   .grid .item:is(:hover, :focus-within, [data-in], [data-active]) .stagePack { --lift: -36%; }
   .grid .item:is(:hover, :focus-within, [data-in], [data-active]) .pack { scale: .7; }
   .grid .pop { --k: .8; }
+  .grid .swap { translate: -50% -62%; }
   .grid .panel { left: 8px; right: 8px; bottom: 8px; gap: 8px; }
   .grid .actions { gap: 6px; }
   .grid .name { font-size: 1.25rem; }
