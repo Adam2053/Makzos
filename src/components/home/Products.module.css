@@ -94,6 +94,22 @@
   50% { translate: 0 -1.6cqw; rotate: 3deg; }
 }
 
+/*
+ * The swap, Feastables-style: on a card with its own hover shot, the pack cross-fades into it
+ * as the card opens. Both sit in the same spot; the shot starts a touch small and settles to
+ * full size while the pack fades out, so it reads as one thing changing, not a slide show.
+ */
+.swap {
+  position: absolute; left: 50%; top: 50%; z-index: 1; width: 86%; translate: -50% -46%;
+  opacity: 0; scale: .9; pointer-events: none;
+  transition: opacity calc(var(--open) * .8) var(--glide), scale var(--open) var(--glide);
+  will-change: opacity, scale;
+}
+.swap img { display: block; width: 100%; height: auto; filter: drop-shadow(0 18px 18px rgb(0 0 0 / .18)); user-select: none; }
+.item[data-swap] .stagePack .pack { transition: scale var(--open) var(--glide), opacity calc(var(--open) * .8) var(--glide); }
+.item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .stagePack .pack { opacity: 0; }
+.item[data-swap]:is(:hover, :focus-within, [data-in], [data-active]) .swap { opacity: 1; scale: 1; }
+
 /* The panel at the bottom: name and price, then Add to cart over Buy now. */
 .panel { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2; display: grid; gap: 10px; transition: transform var(--open) var(--glide), opacity .15s ease-out; }
 .meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-inline: 6px; }
@@ -125,7 +141,7 @@
   .item:is(:hover, :focus-within, [data-in], [data-active]) .pack { scale: .78; }
   .pop { --k: .9; }
 }
-@media (prefers-reduced-motion: reduce) { .stagePack, .pack, .floor, .pop, .panel { transition: none; } .pop > * { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .stagePack, .pack, .floor, .pop, .panel, .swap, .item[data-swap] .stagePack .pack { transition: none; } .pop > * { animation: none; } }
 
 .addBtn, .stepper, .nowBtn { display: flex; align-items: center; justify-content: center; width: 100%; height: 42px; border-radius: 999px; font-family: var(--font-text), sans-serif; font-size: .875rem; font-weight: 700; }
 .addBtn { border: 2px solid var(--paprika); background: var(--paprika); color: var(--black); transition: background-color .2s, border-color .2s, color .2s; }

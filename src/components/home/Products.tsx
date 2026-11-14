@@ -91,9 +91,10 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
    */
   const cards = flavours.map((f) => {
     const n = inBag(f.id);
-    const bits = pieces(f.id);
+    // A card with its own hover shot turns into it; the others get the floating ingredients.
+    const bits = f.hover ? [] : pieces(f.id);
     return (
-      <li key={f.id} className={styles.item} data-in={n > 0 || undefined}>
+      <li key={f.id} className={styles.item} data-in={n > 0 || undefined} data-swap={f.hover ? "" : undefined}>
         {/* The picture links too, but only the name is announced and tabbed to. */}
         <Link href={productHref(f.id)} className={styles.shot} tabIndex={-1} aria-hidden="true">
           <span className={styles.stagePack}>
@@ -107,6 +108,12 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
               </span>
             ))}
             <Pack id={f.id} sizes="(max-width: 700px) 60vw, 240px" className={styles.pack} alt="" />
+            {/* Feastables-style: on hover the pack fades into the bag, opened. */}
+            {f.hover && (
+              <span className={styles.swap}>
+                <Image src={f.hover.src} alt="" width={f.hover.width} height={f.hover.height} sizes="(max-width: 700px) 70vw, 320px" draggable={false} />
+              </span>
+            )}
             <span className={styles.floor} />
           </span>
         </Link>
