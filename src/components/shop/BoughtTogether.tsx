@@ -12,9 +12,9 @@ import styles from "./BoughtTogether.module.css";
 const PAIRS: Record<string, [string, string]> = {
   rasam: ["sweet-tamarind", "curry-leaves"],
   "sweet-tamarind": ["rasam", "chettinadu"],
-  "mac-cheese": ["thai-chilli", "tiramisu"],
-  tiramisu: ["mac-cheese", "sweet-tamarind"],
-  "curry-leaves": ["rasam", "tiramisu"],
+  "mac-cheese": ["thai-chilli", /* "tiramisu" */ "sweet-tamarind"],
+  // tiramisu: ["mac-cheese", "sweet-tamarind"],
+  "curry-leaves": ["rasam", /* "tiramisu" */ "chettinadu"],
   chettinadu: ["sweet-tamarind", "mac-cheese"],
   "thai-chilli": ["mac-cheese", "curry-leaves"],
 };

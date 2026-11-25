@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { BOX_SIZE, FLAVOURS, inr } from "@/lib/products";
-import { useCart } from "@/lib/cart";
-import { FREE_FROM, totals } from "@/lib/pricing";
+import { useCart, useQuote } from "@/lib/cart";
+import { FREE_FROM, deliveryFee, totals } from "@/lib/pricing";
 import { Makhana } from "@/components/home/Makhana";
 import { Products } from "@/components/home/Products";
 import { CouponField, LineList, TotalsTable } from "@/components/shop/Summary";
@@ -16,8 +16,14 @@ import styles from "./cart.module.css";
  * The nudges say exactly how far each saving is: the next box price, free delivery.
  */
 export function CartView() {
-  const { lines, bags, saving, subtotal, coupon, ready, count } = useCart();
-  const t = totals(subtotal, coupon, "standard");
+  const { lines, bags, saving, subtotal, coupon, ready, count, removeCoupon } = useCart();
+  const { quote, error } = useQuote();
+  // Shopify's numbers once they arrive; the bag's own estimate until then.
+  const t = quote
+    ? { subtotal: quote.subtotal, discount: quote.discount, delivery: deliveryFee("standard", quote.subtotal - quote.discount), total: 0 }
+    : totals(subtotal, coupon, "standard");
+  if (quote) t.total = t.subtotal - t.discount + t.delivery;
+  const codeLapsed = quote && coupon && quote.code && !quote.code.applicable;
   const loose = bags % BOX_SIZE;
   const toBox = loose === 0 ? 0 : BOX_SIZE - loose;
   const toFree = Math.max(0, FREE_FROM - (subtotal - t.discount));
@@ -57,6 +63,7 @@ export function CartView() {
               <div className={styles.meter} aria-hidden="true"><span style={{ width: `${Math.min(100, ((subtotal - t.discount) / FREE_FROM) * 100)}%` }} /></div>
             </div>
           )}
+          {error && <p className={styles.nudges} role="alert">{error}</p>}
           <LineList lines={lines} editable />
           <Link href="/shop" className={`${ui.link} ${styles.keep}`}>Keep shopping</Link>
         </div>
@@ -64,6 +71,9 @@ export function CartView() {
         <aside className={styles.side} aria-label="Order summary">
           <h2 className={`${ui.display} ${styles.sideTitle}`}>Summary</h2>
           <TotalsTable saving={saving} totals={t} coupon={coupon?.code} estimate />
+          {codeLapsed && (
+            <p role="status">{coupon.code} no longer applies to this bag. <button type="button" className={ui.link} onClick={removeCoupon}>Remove it</button></p>
+          )}
           <CouponField />
           <Link href="/checkout" className={`${ui.btnPaprika} ${styles.go}`}>Check out, {inr(t.total)}</Link>
           <p className={styles.pay}>UPI, cards, net banking or cash on delivery. Delivery is confirmed at checkout.</p>

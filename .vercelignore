@@ -2,3 +2,6 @@
 makzosmockups/
 *.pdf
 Notes.txt
+mockup_hover/
+animation.txt
+.env*.local

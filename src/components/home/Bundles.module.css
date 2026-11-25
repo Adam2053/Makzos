@@ -6,7 +6,12 @@
  * The box stands in the middle of the card with its packs in it, tops well clear of the wall.
  * The stage scales down a little when the card opens, so the panel never covers the box.
  */
-.section .stage { display: block; transform: translateY(var(--lift)) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg)) scale(var(--s, 1)); }
+/*
+ * The lift itself comes from the shared card style (translate: 0 var(--lift)); don't repeat it
+ * in the transform here, or the box rises twice as far. Only the tilt and the step back live here,
+ * and the step back eases in with the lift.
+ */
+.section .stage { display: block; transform: rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg)); scale: var(--s, 1); transition: translate var(--open) var(--glide), scale var(--open) var(--glide); }
 /* Scoped under .stage: BoxFront brings its own base styles, and which file loads last varies by browser. */
 .stage .front { position: absolute; left: 13%; right: 13%; bottom: 20%; z-index: 2; aspect-ratio: 1.45; border-radius: 4px 4px 10px 10px; transform: translateZ(20px); box-shadow: 0 28px 30px -22px rgb(0 0 0 / .55); }
 

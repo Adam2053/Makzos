@@ -34,10 +34,11 @@ export function Subscribe() {
 }
 
 const HAMPERS: { id: string; name: string; dek: string; ids: string[] }[] = [
-  { id: "taster", name: "The taster", dek: "One of every flavour. The best first order.", ids: ["rasam", "sweet-tamarind", "mac-cheese", "tiramisu", "curry-leaves", "chettinadu", "thai-chilli"] },
+  { id: "taster", name: "The taster", dek: "One of every flavour. The best first order.", ids: ["rasam", "sweet-tamarind", "mac-cheese", /* "tiramisu", */ "curry-leaves", "chettinadu", "thai-chilli"] },
   { id: "south", name: "Southern classics", dek: "Rasam, curry leaves, Chettinadu and tamarind.", ids: ["rasam", "curry-leaves", "chettinadu", "sweet-tamarind"] },
-  { id: "sweet", name: "The sweet side", dek: "Two Tiramisu, two Sweet Tamarind.", ids: ["tiramisu", "tiramisu", "sweet-tamarind", "sweet-tamarind"] },
-  { id: "comfort", name: "Comfort food", dek: "Mac & Cheese, Tiramisu, Rasam, and a little heat.", ids: ["mac-cheese", "tiramisu", "rasam", "thai-chilli", "mac-cheese"] },
+  // Tiramisu is off the site for now; this hamper comes back with it.
+  // { id: "sweet", name: "The sweet side", dek: "Two Tiramisu, two Sweet Tamarind.", ids: ["tiramisu", "tiramisu", "sweet-tamarind", "sweet-tamarind"] },
+  { id: "comfort", name: "Comfort food", dek: "Mac & Cheese, Curry Leaves, Rasam, and a little heat.", ids: ["mac-cheese", /* "tiramisu" */ "curry-leaves", "rasam", "thai-chilli", "mac-cheese"] },
 ];
 
 /** Ready-made boxes, each one a gift with a note if you want it to be. */

@@ -3,8 +3,7 @@ import { notFound } from "next/navigation";
 import { FLAVOURS, bySlug } from "@/lib/products";
 import { PromoStrip } from "@/components/shop/PromoStrip";
 import { ProductHero } from "@/components/shop/ProductHero";
-import { ProductStory } from "@/components/shop/ProductStory";
-import { ProductSpecs } from "@/components/shop/ProductSpecs";
+import { ProductDeck } from "@/components/shop/ProductDeck";
 import { BoughtTogether } from "@/components/shop/BoughtTogether";
 import { Creators } from "@/components/shop/Creators";
 import { Recipes } from "@/components/shop/Recipes";
@@ -23,7 +22,7 @@ export async function generateMetadata({ params }: PageProps<"/products/[slug]">
 
 /**
  * One template, seven flavours (sitemap: Flavour product pages). In order: the offers, buy it, read its
- * story, see exactly what's in it, add what goes with it, watch creators eat it, cook with it,
+ * story and see exactly what's in it (one scene, dealt as three cards), add what goes with it, watch creators eat it, cook with it,
  * read reviews, get answers, then the rest of the range.
  */
 export default async function ProductPage({ params }: PageProps<"/products/[slug]">) {
@@ -33,8 +32,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
     <>
       <PromoStrip />
       <ProductHero id={f.id} />
-      <ProductStory id={f.id} />
-      <ProductSpecs id={f.id} />
+      <ProductDeck id={f.id} />
       <BoughtTogether id={f.id} />
       <Creators id={f.id} />
       <Recipes id={f.id} />

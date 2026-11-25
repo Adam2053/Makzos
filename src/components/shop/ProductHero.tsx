@@ -10,6 +10,7 @@ import { COUPONS, FREE_FROM, serviceFor } from "@/lib/pricing";
 import { HEADLINE } from "@/lib/nutrition";
 import { ratingFor } from "@/lib/ugc";
 import { useStore } from "@/lib/store";
+import { useAvailable } from "@/lib/catalog";
 import ui from "@/components/home/ui.module.css";
 import forms from "./forms.module.css";
 import { Crumbs, SampleTag, Stars } from "./bits";
@@ -45,6 +46,7 @@ export function ProductHero({ id }: { id: string }) {
   const f = byId(id);
   const router = useRouter();
   const { addBag, addBox, setOpen, subtotal } = useCart();
+  const available = useAvailable();
   const { saved, toggleSaved } = useStore();
   const [view, setView] = useState<View>("pack");
   const [format, setFormat] = useState<Format>("bag");
@@ -83,6 +85,8 @@ export function ProductHero({ id }: { id: string }) {
   };
 
   const buyNow = () => { add(true); router.push("/checkout"); };
+  /** Shopify's stock for the chosen format: out of stock can't be added. */
+  const inStock = available(id, format === "multi" ? MULTI_SIZE : 1);
 
   const FORMATS: { id: Format; label: string; note: string; price: number; save?: number }[] = [
     { id: "bag", label: "1 bag", note: WEIGHT, price: BAG_PRICE },
@@ -228,8 +232,8 @@ export function ProductHero({ id }: { id: string }) {
               <output aria-live="polite">{qty}</output>
               <button type="button" onClick={() => setQty((q) => Math.min(24, q + 1))} aria-label="One more">+</button>
             </span>
-            <button type="button" className={`${ui.btnPaprika} ${styles.add}`} onClick={() => add()}>Add to bag, {inr(total)}</button>
-            <button type="button" className={`${ui.btnLine} ${styles.now}`} onClick={buyNow}>Buy now</button>
+            <button type="button" className={`${ui.btnPaprika} ${styles.add}`} onClick={() => add()} disabled={!inStock}>{inStock ? `Add to bag, ${inr(total)}` : "Sold out"}</button>
+            <button type="button" className={`${ui.btnLine} ${styles.now}`} onClick={buyNow} disabled={!inStock}>Buy now</button>
           </div>
           <p className={styles.added} role="status">
             {added && <>{added} <button type="button" className={`${ui.link} ${forms.textBtn}`} onClick={() => setOpen(true)}>View bag</button></>}
@@ -278,7 +282,7 @@ export function ProductHero({ id }: { id: string }) {
       <div className={styles.dock} data-on={docked || undefined} aria-hidden={!docked}>
         <PackThumb id={id} size={30} />
         <span className={styles.dockText}><strong>{f.name}</strong><span>{FORMATS.find((x) => x.id === format)!.label}{every ? `, every ${every} weeks` : ""}</span></span>
-        <button type="button" className={ui.btnPaprika} onClick={() => add()} tabIndex={docked ? undefined : -1}>Add, {inr(total)}</button>
+        <button type="button" className={ui.btnPaprika} onClick={() => add()} tabIndex={docked ? undefined : -1} disabled={!inStock}>{inStock ? `Add, ${inr(total)}` : "Sold out"}</button>
       </div>
     </section>
   );

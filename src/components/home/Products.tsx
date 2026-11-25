@@ -95,7 +95,7 @@ export function Products({ layout = "grid", ids, title, as: Heading = "h2", chil
     const bits = f.hover ? [] : pieces(f.id);
     return (
       <li key={f.id} className={styles.item} data-in={n > 0 || undefined} data-swap={f.hover ? "" : undefined}
-        style={f.hover ? ({ "--ss": f.hover.scale, "--sl": f.hover.lift === undefined ? undefined : `${f.hover.lift}%`, "--st": f.hover.tilt === undefined ? undefined : `${f.hover.tilt}deg`, "--sw": `${f.hover.w}cqw`, "--sx": `${f.hover.dx}cqw`, "--sy": `${f.hover.dy}cqw` } as React.CSSProperties) : undefined}>
+        style={f.hover ? ({ "--ss": f.hover.scale, "--sl": f.hover.lift === undefined ? undefined : `${f.hover.lift}%`, "--st": f.hover.tilt === undefined ? undefined : `${f.hover.tilt}deg`, "--sr": f.hover.lean === undefined ? undefined : `${f.hover.lean}deg`, "--sw": `${f.hover.w}cqw`, "--sx": `${f.hover.dx}cqw`, "--sy": `${f.hover.dy}cqw` } as React.CSSProperties) : undefined}>
         {/* The picture links too, but only the name is announced and tabbed to. */}
         <Link href={productHref(f.id)} className={styles.shot} tabIndex={-1} aria-hidden="true">
           <span className={styles.stagePack}>

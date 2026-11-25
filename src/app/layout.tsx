@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Archivo, Manrope } from "next/font/google";
 import { Providers } from "@/components/Providers";
+import { applyCatalog } from "@/lib/products";
+import { getCatalog } from "@/lib/shopify/catalog";
 import "./globals.css";
 
 /*
@@ -28,16 +30,22 @@ const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-
 
 export const metadata: Metadata = {
   title: "Makzo's — Roasted makhana in flavours you already know",
-  description: "Roasted makhana built around familiar dishes: Rasam, Sweet Tamarind, Mac & Cheese and Tiramisu. No preservatives, no artificial colours or flavours.",
+  description: "Roasted makhana built around familiar dishes: Rasam, Sweet Tamarind, Mac & Cheese and Curry Leaves. No preservatives, no artificial colours or flavours.",
 };
 
 export const viewport: Viewport = { themeColor: "#ffffff" };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+/**
+ * Shopify's catalogue is read here, once, and handed to every page: live prices and the variant
+ * each choice buys. The read is cached until a product webhook expires it, so pages stay static.
+ */
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const catalog = await getCatalog();
+  applyCatalog(catalog);
   return (
     <html lang="en">
       <body className={`${display.variable} ${label.variable} ${play.variable} ${text.variable} ${archivo.variable}`}>
-        <Providers>{children}</Providers>
+        <Providers catalog={catalog}>{children}</Providers>
       </body>
     </html>
   );

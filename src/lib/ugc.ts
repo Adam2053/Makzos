@@ -55,8 +55,9 @@ export const STORY_CLIP: Clip = { id: "story", flavour: "rasam", sample: true, .
 export const REVIEWS: Review[] = [
   { id: "sample-1", flavour: "rasam", rating: 5, sample: true, name: "Ananya", city: "Hyderabad",
     quote: "It actually tastes like rasam. Pepper first, then the tang. The bag was gone before my tea was." },
-  { id: "sample-2", flavour: "tiramisu", rating: 5, sample: true, name: "Rohan", city: "Bengaluru",
-    quote: "I ordered the Tiramisu as a joke. I'm now hiding it from my flatmates." },
+  // Tiramisu is off the site for now.
+  // { id: "sample-2", flavour: "tiramisu", rating: 5, sample: true, name: "Rohan", city: "Bengaluru",
+  //   quote: "I ordered the Tiramisu as a joke. I'm now hiding it from my flatmates." },
   { id: "sample-3", flavour: "sweet-tamarind", rating: 4, sample: true, name: "Meera", city: "Hyderabad",
     quote: "Sweet Tamarind is the one. Tastes like the chutney I'd finish before the samosa." },
   { id: "sample-4", flavour: "mac-cheese", rating: 5, sample: true, name: "Kabir", city: "Hyderabad",

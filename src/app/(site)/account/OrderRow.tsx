@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { inr } from "@/lib/products";
 import { PackThumb } from "@/components/shop/Pack";
-import { STEPS, fmtDate, type Order } from "@/lib/store";
+import { STEPS, fmtDate, type Order } from "@/lib/account";
 import styles from "./account.module.css";
 
 const statusLabel = (o: Order) => (o.status === "cancelled" ? "Cancelled" : STEPS.find((s) => s.id === o.status)!.label);
@@ -9,7 +9,7 @@ const statusLabel = (o: Order) => (o.status === "cancelled" ? "Cancelled" : STEP
 /** One order in a list: its packs fanned out, what and when, the total and where it is. */
 export function OrderRow({ o }: { o: Order }) {
   const ids = [...new Set(o.lines.flatMap((l) => (l.kind === "bag" ? [l.id] : l.ids)))];
-  const items = o.lines.reduce((n, l) => n + l.qty, 0);
+  const items = o.lines.reduce((n, l) => n + l.qty, 0) + o.others.reduce((n, x) => n + x.qty, 0);
   return (
     <Link href={`/orders/${o.id}`} className={styles.order}>
       <span className={styles.packs} aria-hidden="true">
@@ -18,8 +18,8 @@ export function OrderRow({ o }: { o: Order }) {
         ))}
       </span>
       <span className={styles.orderText}>
-        <strong>Order {o.id}</strong>
-        <span>{fmtDate(o.placedAt)}. {items} {items === 1 ? "item" : "items"}{o.sample ? ". Sample order" : ""}</span>
+        <strong>Order {o.number}</strong>
+        <span>{fmtDate(o.placedAt)}. {items} {items === 1 ? "item" : "items"}</span>
       </span>
       <span className={styles.orderSide}>
         {inr(o.totals.total)}

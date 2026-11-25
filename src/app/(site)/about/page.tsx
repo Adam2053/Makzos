@@ -5,8 +5,9 @@ import { FLAVOURS, byId } from "@/lib/products";
 import { LAB_TESTS } from "@/lib/nutrition";
 import { CLAIMS } from "@/components/home/About";
 import { Community } from "@/components/home/Community";
-import { Makhana } from "@/components/home/Makhana";
 import { Belief, Roast, StoryHero } from "./Story";
+import { Conveyor } from "./Conveyor";
+import { NameBuild } from "./NameBuild";
 import ui from "@/components/home/ui.module.css";
 import styles from "./about.module.css";
 
@@ -14,20 +15,6 @@ export const metadata: Metadata = {
   title: "Our story — Makzo's",
   description: "What Makzo's believes, what the name means, and how our makhana is graded, roasted, seasoned, packed and tested.",
 };
-
-/** The name, read the way the guide reads it (D4, logo meaning). */
-const NAME = [
-  { lead: "MAK", rest: "hana", d: "The hero ingredient, and the base of everything we make." },
-  { lead: "Z", rest: "er", lead2: "O", rest2: " guilt", d: "Indulgence with nothing artificial or unnecessary." },
-  { lead: "", rest: "your", lead2: "’S", rest2: "", d: "A snack people can proudly call their own." },
-];
-
-/** Purpose, vision and mission, shortened from the guide (D4, brand overview). Founders to approve. */
-const PILLARS = [
-  { t: "Purpose", d: "Unlock what makhana can be: value-added snacks, cookies and beyond, aspirational to enjoy and accessible to all, in the flavours India loves." },
-  { t: "Vision", d: "Makhana as familiar as nachos, in every city and every country, with a flavour on the shelf for every state." },
-  { t: "Mission", d: "A complete range people choose for taste and trust for what's inside. Never trading taste or quality for a shortcut." },
-];
 
 /**
  * Our story and how we roast, merged into one flow (review notes): what we believe, what the
@@ -40,30 +27,10 @@ export default function AboutPage() {
     <>
       <StoryHero />
       <Belief />
+      <Conveyor />
 
       <section className={styles.name} aria-labelledby="name-title">
-        <div className={ui.shell}>
-          <h2 id="name-title" className={`${ui.display} ${styles.h2}`}>What&rsquo;s in <span>the name.</span></h2>
-          <ul className={styles.nameRow}>
-            {NAME.map((n, i) => (
-              <li key={i} className={styles.nameItem}>
-                <p className={`${ui.display} ${styles.word}`} aria-hidden="true">
-                  <b>{n.lead}</b>{n.rest}{n.lead2 && <b>{n.lead2}</b>}{n.rest2}
-                </p>
-                <p>{n.d}</p>
-              </li>
-            ))}
-          </ul>
-          <ul className={styles.pillars}>
-            {PILLARS.map((p) => (
-              <li key={p.t}>
-                <Makhana variant="fill" className={styles.pillarSeed} />
-                <h3 className={`${ui.label} ${styles.pillarTitle}`}>{p.t}</h3>
-                <p>{p.d}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <NameBuild />
       </section>
 
       <Roast />

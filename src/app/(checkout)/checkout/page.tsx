@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { CheckoutView } from "./CheckoutView";
+import { HandOff } from "./HandOff";
 
-export const metadata: Metadata = { title: "Checkout — Makzo's" };
+export const metadata: Metadata = { title: "Checkout — Makzo's", robots: { index: false } };
 
 export default function CheckoutPage() {
-  return <CheckoutView />;
+  return <HandOff />;
 }

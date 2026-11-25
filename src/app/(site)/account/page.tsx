@@ -48,7 +48,7 @@ export default function AccountOverview() {
         </div>
         {home ? (
           <div className={styles.card}>
-            <strong>{home.label}</strong>
+            <strong>Default</strong>
             <span>{home.name}</span>
             {addressLines(home).map((l) => <span key={l}>{l}</span>)}
           </div>

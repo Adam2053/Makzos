@@ -98,8 +98,8 @@ export function Header() {
             </svg>
           </button>
           <Link href="/" className={styles.brand} aria-label="Makzo's, home">
-            <Image src="/brand/logo-dark.png" alt="" width={1200} height={296} preload className={`${styles.logo} ${styles.logoDark}`} />
-            <Image src="/brand/logo-light.png" alt="" width={1200} height={296} preload className={`${styles.logo} ${styles.logoLight}`} />
+            <Image src="/brand/logo-dark-outline.png" alt="" width={1200} height={296} preload className={`${styles.logo} ${styles.logoDark}`} />
+            <Image src="/brand/logo-light-outline.png" alt="" width={1200} height={296} preload className={`${styles.logo} ${styles.logoLight}`} />
           </Link>
 
           <nav aria-label="Primary" className={styles.nav}>

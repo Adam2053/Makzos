@@ -1,0 +1,164 @@
+/*
+ * The dish, then the back of the pack, dealt as a hand of three cards (ProductDeck.tsx).
+ * The resting state here is the end of the scene: cards face up and fanned. The script
+ * rewinds it to the wide print and plays it back on scroll.
+ */
+.section {
+  background: var(--black); color: var(--white); font-family: var(--font-text), sans-serif;
+  padding-block: clamp(28px, 3vw, 44px) clamp(24px, 3vw, 48px);
+  border-radius: clamp(28px, 4vw, 56px);
+  scroll-margin-top: var(--header-h);
+  overflow: clip;
+}
+
+/* ---------- The heading: small, centred over the stage ---------- */
+.head { padding-block: clamp(12px, 1.6vw, 24px) clamp(12px, 1.6vw, 24px); text-align: center; }
+.title { font-size: clamp(1.5rem, 1rem + 1.3vw, 2.5rem); }
+
+/* ---------- The stage: where the photo plays and the cards land ---------- */
+/* Heading and stage share one pinned screen. */
+/* The paprika light lives on this screen-sized box, not the section: pinning makes the section
+   several screens tall, which would push a section-wide gradient out of view. */
+.pin {
+  position: relative; isolation: isolate;
+  display: grid; grid-template-rows: auto minmax(0, 1fr); height: calc(100svh - var(--header-h));
+  background: radial-gradient(70% 60% at 50% 60%, rgb(234 75 43 / .28), transparent 75%);
+}
+.head, .stage { position: relative; z-index: 1; }
+.stage { display: grid; place-items: center; overflow: hidden; container-type: size; }
+
+/*
+ * The light itself: four soft blobs of paprika, ember and chilli red, heavily blurred and
+ * drifting on long, out-of-step loops, so the glow behind the cards is always slowly moving.
+ */
+.glow { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.blob {
+  position: absolute; left: 50%; top: 55%; border-radius: 50%;
+  translate: -50% -50%; filter: blur(70px); will-change: transform;
+  animation: var(--move) var(--dur) ease-in-out infinite alternate;
+}
+.blob:nth-child(1) { --move: driftA; --dur: 16s; width: min(62vw, 860px); aspect-ratio: 1.3; background: radial-gradient(closest-side, rgb(234 75 43 / .95), rgb(234 75 43 / .35) 55%, transparent); }
+.blob:nth-child(2) { --move: driftB; --dur: 21s; width: min(46vw, 640px); aspect-ratio: 1; background: radial-gradient(closest-side, rgb(184 53 26 / .9), transparent); }
+.blob:nth-child(3) { --move: driftC; --dur: 13s; width: min(34vw, 460px); aspect-ratio: 1.2; background: radial-gradient(closest-side, rgb(255 138 72 / .85), transparent); }
+.blob:nth-child(4) { --move: driftD; --dur: 25s; width: min(52vw, 720px); aspect-ratio: 1.6; background: radial-gradient(closest-side, rgb(155 31 33 / .8), transparent); }
+@keyframes driftA { 0% { transform: translate(-18%, -10%) scale(1); } 50% { transform: translate(14%, 6%) scale(1.15); } 100% { transform: translate(-4%, 14%) scale(.92); } }
+@keyframes driftB { 0% { transform: translate(30%, 12%) scale(.9); } 50% { transform: translate(-26%, -8%) scale(1.1); } 100% { transform: translate(10%, -18%) scale(1); } }
+@keyframes driftC { 0% { transform: translate(-30%, 20%) scale(1); } 50% { transform: translate(22%, -14%) scale(1.25); } 100% { transform: translate(34%, 18%) scale(.85); } }
+@keyframes driftD { 0% { transform: translate(0%, 30%) scale(1.1) rotate(0deg); } 50% { transform: translate(-30%, 10%) scale(.9) rotate(20deg); } 100% { transform: translate(26%, -10%) scale(1.05) rotate(-15deg); } }
+/* The table the cards are dealt on: one card's footprint, as large as the stage allows, in a playing card's proportions. */
+.table { --cw: min(300px, 50cqw, 54cqh); position: relative; width: var(--cw); height: calc(var(--cw) * 1.4); margin-bottom: 9cqh; }
+.deck, .cards { position: absolute; inset: 0; }
+
+.card {
+  position: absolute; inset: 0; z-index: calc(var(--i) + 1);
+  container-type: inline-size;
+  /* Turned about a point well below the hand, as cards held in one hand are. */
+  transform-origin: 50% 150%;
+  transform: translateX(calc((var(--i) - 1) * var(--cw) * .16)) rotate(calc((var(--i) - 1) * 13deg));
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Lifts the card off the hand; kept apart from the card so the scene's transforms are untouched. */
+.lift { position: absolute; inset: 0; perspective: 1600px; transform-origin: 50% 100%; transition: translate .3s cubic-bezier(.2, .7, .2, 1); }
+.flip { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateY(180deg); }
+
+.face {
+  position: absolute; inset: 0; overflow: hidden; border-radius: 7.5cqi;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+}
+
+/* Elevation: a long, soft shadow under each piece, set against the paprika light behind. */
+.back { box-shadow: 0 46px 70px -34px rgb(0 0 0 / .95), 0 18px 30px -18px rgb(0 0 0 / .8); transition: box-shadow .4s; }
+/* While the photo is whole, one shadow sits under the whole print (the pieces' own shadows
+   would darken each other's edges and show the seams). The script hands over at the split. */
+.print { position: absolute; top: 0; bottom: 0; left: -100%; right: -100%; border-radius: calc(var(--cw) * .075); box-shadow: 0 60px 90px -40px rgb(0 0 0 / .95), 0 24px 40px -24px rgb(0 0 0 / .8); opacity: 0; pointer-events: none; }
+
+/* Face down: one third of the dish photo, sized as the whole so the three line up. */
+.front { background: #1a1a1a; }
+.slice { position: absolute; top: 0; height: 100%; width: 300%; transform-origin: 50% 50%; }
+.slice img { object-fit: cover; }
+
+/* ---------- Face up: the back of the pack, one part per card ---------- */
+.back {
+  transform: rotateY(180deg);
+  display: flex; flex-direction: column; gap: 3.6cqi;
+  padding: 7cqi 7cqi 6cqi;
+  font-size: clamp(11px, 4.7cqi, 14px); line-height: 1.35;
+}
+.cardTitle { font-size: 14cqi; line-height: .9; }
+.card[data-kind="nutrition"] .back { background: var(--white); color: var(--black); }
+.card[data-kind="ingredients"] .back { background: var(--field); color: var(--ink); }
+/* Black on black needs an edge: a hairline rim, lit from the top. */
+.card[data-kind="specification"] .back { background: linear-gradient(180deg, #1f1f1f, var(--black) 45%); color: var(--white); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .14), 0 46px 70px -34px rgb(0 0 0 / .95), 0 18px 30px -18px rgb(0 0 0 / .8); }
+
+/* Nutrition: the label's black rules, at card size. */
+.sub { margin-top: -1.5cqi; font-weight: 700; color: var(--quiet); }
+.panel { width: 100%; border-collapse: collapse; border-top: 5px solid var(--black); border-bottom: 3px solid var(--black); font-variant-numeric: tabular-nums; }
+.panel th, .panel td { padding: .32em 0; border-bottom: 1px solid var(--line); }
+.panel tr:last-child th, .panel tr:last-child td { border-bottom: 0; }
+.panel th { text-align: left; font-weight: 800; }
+.panel td { text-align: right; font-weight: 800; white-space: nowrap; }
+.panel tr[data-sub] th { padding-left: 1em; font-weight: 500; color: #3a3a3a; }
+.panel tr[data-sub] td { font-weight: 500; }
+.star { color: var(--paprika-ink); font-weight: 800; margin-left: 1px; }
+.note { margin-top: auto; font-size: .82em; color: var(--quiet); }
+
+/* Ingredients: on the flavour's own colour. */
+.lead { font-weight: 700; font-size: 1.08em; line-height: 1.3; }
+.group { display: grid; gap: 1.6cqi; }
+.h4 { font-size: .82em; font-weight: 800; opacity: .75; }
+.pills { display: flex; flex-wrap: wrap; gap: 4px; }
+.pills li { padding: .3em .8em; border-radius: 999px; background: var(--ink); color: var(--field); font-size: .9em; font-weight: 800; }
+.free { display: grid; gap: .3em; font-weight: 700; }
+.free li { display: flex; align-items: center; gap: .55em; }
+.free li::before { content: ""; flex: none; width: .75em; height: 2px; background: currentColor; rotate: -45deg; }
+
+/* Specification: white on black, like the lab-report card it replaces. */
+.spec { display: grid; margin: 0; }
+.spec > div { display: grid; grid-template-columns: minmax(0, 4.6fr) minmax(0, 5.4fr); gap: 3cqi; padding: .5em 0; border-bottom: 1px solid rgb(255 255 255 / .16); }
+.spec > div:last-child { border-bottom: 0; }
+.spec dt { color: #a8a8a8; font-weight: 600; }
+.spec dd { margin: 0; font-weight: 700; }
+.veg { display: inline-flex; align-items: center; gap: 5px; }
+.veg svg { flex: none; background: var(--white); border-radius: 2px; }
+
+/* ---------- Once the hand is dealt: a card drawn from it comes forward, the rest goes out of focus ---------- */
+.section[data-fanned] .card { cursor: pointer; }
+.card { transition: filter .4s ease; }
+.card[data-focus], .card[data-returning] { z-index: 10; }
+/* Hover (or keyboard focus) only lifts a card a little out of the hand, along its own tilt. */
+.section[data-fanned]:not([data-focus]) .card:is(:hover, :focus-visible) .lift { translate: 0 -7%; }
+.head, .hint, .glow { transition: filter .4s ease, opacity .4s ease; }
+.section[data-focus] .card:not([data-focus]):not([data-returning]),
+.section[data-focus] .head,
+.section[data-focus] .hint { filter: blur(6px) brightness(.45); }
+.section[data-focus] .glow { filter: brightness(.6); }
+/* Drawn, the card sits higher, so its shadow falls further. */
+.card[data-focus] .back { box-shadow: 0 80px 110px -40px rgb(0 0 0 / 1), 0 30px 50px -24px rgb(0 0 0 / .9); }
+.card[data-focus][data-kind="specification"] .back { box-shadow: inset 0 0 0 1px rgb(255 255 255 / .14), 0 80px 110px -40px rgb(0 0 0 / 1), 0 30px 50px -24px rgb(0 0 0 / .9); }
+.card:focus-visible .back { outline: 3px solid var(--paprika); outline-offset: 3px; }
+
+.hint { position: absolute; left: 50%; top: calc(100% + var(--cw) * .2); width: max-content; max-width: 90vw; translate: -50% 0; text-align: center; font-size: .875rem; font-weight: 700; color: rgb(255 255 255 / .72); }
+
+/* ---------- Phones: smaller cards, heading and hand centred together on the screen ---------- */
+@media (max-width: 599px) {
+  .section { padding-block: 16px; }
+  .pin { grid-template-rows: auto auto; align-content: center; }
+  .head { padding-block: 0 4px; }
+  .stage { height: clamp(340px, 54svh, 460px); }
+  .table { --cw: min(300px, 45cqw, 52cqh); margin-bottom: 12cqh; }
+  .hint { top: calc(100% + var(--cw) * .24); font-size: .8125rem; }
+}
+/* A small card: tighter type and rows, so each card's facts still fit. */
+@container (max-width: 210px) {
+  .back { font-size: 10.5px; padding: 6.5cqi 6.5cqi 5.5cqi; gap: 3cqi; line-height: 1.3; }
+  .cardTitle { font-size: 13cqi; }
+  .panel th, .panel td { padding: .24em 0; }
+  .spec > div { padding: .36em 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .head, .hint, .glow, .lift { transition: none; }
+  .blob { animation: none; }
+}

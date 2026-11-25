@@ -5,6 +5,8 @@
  * All seven are on sale. The guide's release list (p.37) holds Chettinadu, Curry
  * Leaves and Sweet Thai Chilli; the hero still leads with the other four.
  */
+import type { Catalog } from "./commerce";
+
 export type Taste = "savoury" | "spicy" | "sweet" | "tangy";
 
 export type Flavour = {
@@ -42,7 +44,7 @@ export type Flavour = {
    * the shot. It is sized and placed so the pack inside the shot lands exactly on the pack it
    * replaces: `w` is the shot's width on the card and `dx`/`dy` nudge it, all in cqw.
    */
-  hover?: { src: string; width: number; height: number; w: number; dx: number; dy: number; /** How far the pack and the shot step back together when the card opens (default .9), for a shot that needs more room around the pack. */ scale?: number; /** How far up the card the pack rises (default -30%), for a shot that needs the room above it. */ lift?: number; /** The pack turns to this angle as it fades, to meet a shot whose pack is tilted. */ tilt?: number };
+  hover?: { src: string; width: number; height: number; w: number; dx: number; dy: number; /** How far the pack and the shot step back together when the card opens (default .9), for a shot that needs more room around the pack. */ scale?: number; /** How far up the card the pack rises (default -30%), for a shot that needs the room above it. */ lift?: number; /** The pack turns to this angle as it fades, to meet a shot whose pack is tilted. */ tilt?: number; /** The pack and the shot lean this far together as the card opens, so the shot sits tilted. */ lean?: number };
 };
 
 export const FLAVOURS: Flavour[] = [
@@ -61,8 +63,8 @@ export const FLAVOURS: Flavour[] = [
     pack: "/brand/packs/rasam-3d.webp",
     open: { src: "/brand/scenes/rasam-open-scene.webp", width: 1600, height: 900 },
     // The open pack with makhana bursting out of its mouth. Sized and placed so the pack in it
-    // lands on the real pack: the same packet, opened, at the same size.
-    hover: { src: "/brand/scenes/rasam-burst.webp", width: 567, height: 825, w: 85.6, dx: 10.9, dy: -15.7, lift: -20 },
+    // lands on the real pack: the same packet, opened, at the same size. It leans a little as it opens.
+    hover: { src: "/brand/scenes/rasam-burst.webp", width: 567, height: 825, w: 85.6, dx: 10.9, dy: -15.7, lift: -20, lean: 16 },
     dish: { src: "/brand/dishes/rasam.webp", width: 1402, height: 1122, spot: [0.55, 0.74] },
   },
   {
@@ -95,21 +97,22 @@ export const FLAVOURS: Flavour[] = [
     pack: "/brand/packs/mac-cheese-3d.webp",
     dish: { src: "/brand/dishes/mac-cheese.webp", width: 1920, height: 1440, spot: [0.52, 0.66] },
   },
-  {
-    id: "tiramisu",
-    slug: "tiramisu",
-    name: "Tiramisu",
-    line: "Worth fighting over.",
-    inspired: "Inspired by the layered Italian dessert.",
-    taste: ["sweet"],
-    heat: 0,
-    notes: ["Cocoa", "Coffee", "Creamy sweet"],
-    story: "Tiramisu means “pick me up”, and it does: coffee, cocoa and something creamy, layered. This is the dessert as a snack, sweet enough to end a meal and light enough to start the afternoon.",
-    field: "#5A3B35",
-    ink: "#ffffff",
-    pack: "/brand/packs/tiramisu-3d.webp",
-    dish: { src: "/brand/dishes/tiramisu.webp", width: 1448, height: 1086, spot: [0.6, 0.8] },
-  },
+  // Tiramisu is off the site for now. Uncomment to bring it back everywhere.
+  // {
+  //   id: "tiramisu",
+  //   slug: "tiramisu",
+  //   name: "Tiramisu",
+  //   line: "Worth fighting over.",
+  //   inspired: "Inspired by the layered Italian dessert.",
+  //   taste: ["sweet"],
+  //   heat: 0,
+  //   notes: ["Cocoa", "Coffee", "Creamy sweet"],
+  //   story: "Tiramisu means “pick me up”, and it does: coffee, cocoa and something creamy, layered. This is the dessert as a snack, sweet enough to end a meal and light enough to start the afternoon.",
+  //   field: "#5A3B35",
+  //   ink: "#ffffff",
+  //   pack: "/brand/packs/tiramisu-3d.webp",
+  //   dish: { src: "/brand/dishes/tiramisu.webp", width: 1448, height: 1086, spot: [0.6, 0.8] },
+  // },
   {
     id: "curry-leaves",
     slug: "curry-leaves",
@@ -158,7 +161,7 @@ export const FLAVOURS: Flavour[] = [
 ];
 
 /** The four the hero leads with. */
-export const FEATURED = ["rasam", "sweet-tamarind", "mac-cheese", "tiramisu"].map((id) => FLAVOURS.find((f) => f.id === id)!);
+export const FEATURED = ["rasam", "sweet-tamarind", "mac-cheese", /* "tiramisu", */ "curry-leaves"].map((id) => FLAVOURS.find((f) => f.id === id)!);
 export const byId = (id: string) => FLAVOURS.find((f) => f.id === id)!;
 /** For routes: a slug that isn't a flavour gets `undefined`, not a crash. */
 export const findFlavour = (id: string) => FLAVOURS.find((f) => f.id === id);
@@ -176,25 +179,46 @@ export const TASTES: { id: Taste; label: string }[] = [
 export const PACK_W = 960;
 export const PACK_H = 1414;
 
-/** Placeholders. The guide says "real numbers or none": replace with approved prices before launch. */
-export const BAG_PRICE = 60;
+/**
+ * Prices. These are the placeholders the site starts with; once Shopify's catalogue loads,
+ * `applyCatalog` replaces them with the prices set in Shopify admin. They're `let` exports on
+ * purpose: ES modules share live bindings, so every component that imports BAG_PRICE reads the
+ * Shopify price without being rewritten. The whole site sells at one price per format, so the
+ * cheapest live variant of each format is the one shown.
+ */
+export let BAG_PRICE = 149;
 export const WEIGHT = "55 g";
 export const GRAMS = 55;
 
 /** Build a box: any mix, 4 to 7 bags (requirements form). Each extra bag saves a little more. */
 export const BOX_SIZE = 4;
 export const BOX_MAX = 7;
-const BOX_PRICES: Record<number, number> = { 4: 220, 5: 270, 6: 315, 7: 360 };
+const BOX_PRICES: Record<number, number> = { 4: 549, 5: 669, 6: 779, 7: 899 };
 export const boxPrice = (n: number) => BOX_PRICES[n] ?? n * BAG_PRICE;
-export const BOX_PRICE = boxPrice(BOX_SIZE);
+export let BOX_PRICE = boxPrice(BOX_SIZE);
 
 /** The multipack: three of one flavour. */
 export const MULTI_SIZE = 3;
-export const MULTI_PRICE = 170;
+export let MULTI_PRICE = 419;
 
 /** Subscribe & save: a discount on every delivery, on a schedule you can pause or skip. */
-export const SUB_OFF = 10;
+export let SUB_OFF = 10;
 export const SUB_EVERY = [2, 4, 6] as const;
 export type Every = (typeof SUB_EVERY)[number];
+
+/** Takes the live prices from Shopify's catalogue. Runs on the server and in the browser before anything renders. */
+export function applyCatalog(c: Catalog | null) {
+  if (!c) return;
+  const lowest = (xs: (number | undefined)[]) => {
+    const ok = xs.filter((x): x is number => typeof x === "number" && x > 0);
+    return ok.length ? Math.min(...ok) : undefined;
+  };
+  const flavours = Object.values(c.flavours);
+  BAG_PRICE = lowest(flavours.map((f) => f.single?.price)) ?? BAG_PRICE;
+  MULTI_PRICE = lowest(flavours.map((f) => f.multi?.price)) ?? MULTI_PRICE;
+  for (const [n, v] of Object.entries(c.box)) if (v.price > 0) BOX_PRICES[Number(n)] = v.price;
+  BOX_PRICE = boxPrice(BOX_SIZE);
+  if (c.subOff) SUB_OFF = c.subOff;
+}
 
 export const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;

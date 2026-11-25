@@ -1,54 +1,53 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BAG_PRICE, BOX_PRICE, BOX_SIZE, FLAVOURS, WEIGHT, inr } from "@/lib/products";
 import ui from "./ui.module.css";
 import styles from "./Faq.module.css";
 
 /**
- * Answers use only what the brand guide clears: the approved claims and the allergen note
- * (p.9), the launch order (p.5). Weight and prices come from lib/products, so they change
- * in one place. Vegetarian, vegan, gluten and nutrition questions stay out until cleared.
+ * The founders' FAQ copy (makzosmockups/FAQs.docx), word for word. Each answer is written to
+ * answer a search people actually make (makhana calories, INS 635, maltodextrin, MSG...).
  */
 const QUESTIONS: { q: string; a: React.ReactNode }[] = [
   {
-    q: "What is makhana?",
-    a: "The puffed seed of a water lily, also called fox nut. We roast it, then flavour it around a dish.",
+    q: "What is makhana, and why is it a good snack?",
+    a: "Makhana is the popped seed of the Euryale ferox water lily. It's also called fox nuts. Makzo's uses only phool makhana, the big 5- and 6-suta pops from the top grades. Most of India's makhana grows in the ponds of Bihar. Plain popped makhana has about 9 g of protein and under 1 g of fat per 100 g, and Makzo's carries 13.5 g of fibre in every 100 g. It's light, turns crunchy when roasted, and takes on whatever flavour you give it. We give it dishes.",
   },
   {
-    q: "Which flavours are there?",
-    a: `${FLAVOURS.length}: ${FLAVOURS.map((f) => f.name).join(", ")}. Each one is built around a dish you already know.`,
+    q: "How is roasted makhana different from ragi chips, jowar puffs and other chips?",
+    a: "Ragi chips, jowar puffs and veggie chips usually start as flour or thin slices that are fried, baked or puffed through a machine, then dusted with flavouring. Makzo's is the whole makhana seed, roasted in rice bran oil, not fried. It has 13.5 g of fibre in every 100 g, and the seasoning is made from spices you can name. Nothing artificial. Nothing unnecessary.",
   },
   {
-    q: "What's in a bag?",
-    a: "Roasted makhana and its seasoning. No preservatives, no artificial colours or flavours, and no INS-coded additives. The full ingredient list is printed on every pack.",
+    q: "How many calories are in a pouch of Makzo's?",
+    a: "A 50 g pouch of Makzo's roasted makhana has 203.7 kcal, 4.56 g of protein and 6.75 g of fibre. Per 100 g, that's 407.45 kcal, 9.12 g of makhana protein and 13.5 g of fibre. The full makhana nutrition table is on the back of every pack and on each flavour page.",
   },
   {
-    q: "What about allergens?",
-    a: "Milk, groundnut and soya are present across the range. Check the allergen statement on the pack of the flavour you're buying.",
+    q: "What flavours does Makzo's come in, and which should I try first?",
+    a: <>Six flavoured makhanas, each named after a dish: Chettinad, Rasam, Curry Leaves, Sweet Tamarind, Sweet Thai Chilli and Mac &amp; Cheese. New to us? Start with Curry Leaves, the one our tasting panel most wanted to buy. Can&rsquo;t decide? <Link href="/build-a-box" className={ui.link}>Build a box</Link> of four to seven pouches and try them all.</>,
   },
   {
-    q: "How big is a bag, and what does it cost?",
-    a: `Each bag is ${WEIGHT} and costs ${inr(BAG_PRICE)}. Any ${BOX_SIZE} bags are priced as a box, ${inr(BOX_PRICE)}.`,
+    q: "What is INS 635 (flavour enhancer 635)?",
+    a: "INS 635 is disodium 5'-ribonucleotides, a flavour enhancer often paired with MSG to make packaged seasoning taste stronger. You'll find it on many chips and instant noodles. Makzo's doesn't use it. Our flavour comes from spices, tamarind and curry leaves.",
   },
   {
-    q: "Can I choose what goes in my box?",
-    a: <>Yes. Pick any {BOX_SIZE}, doubles included. <Link href="/build-a-box" className={ui.link}>Build a box</Link></>,
+    q: "What is maltodextrin, and why is it in snacks?",
+    a: "Maltodextrin is a starch powder, usually made from corn, that bulks up seasoning and helps it flow and stick. It digests fast and can raise blood sugar quickly, which some people feel as a slump later. Makzo's seasonings contain no maltodextrin and no dextrose.",
   },
   {
-    q: "How do I track my order?",
-    a: <>Every order has its own page with live tracking. Find it in <Link href="/account/orders" className={ui.link}>your orders</Link>, or <Link href="/track" className={ui.link}>track it</Link> with the order number and your phone.</>,
+    q: "What is MSG, and where does Makzo's get its savoury taste?",
+    a: "MSG (monosodium glutamate, INS 621) is a flavour enhancer that adds a savoury, umami kick. Makzo's gets its savoury taste from the dish itself: tomato, tamarind, cheese, curry leaves and yeast extract. These contain natural glutamates, just like a good rasam does.",
   },
   {
-    q: "Can I cancel an order?",
-    a: "Yes, until it's packed and shipped. Open the order and choose Cancel order. Online payments are refunded in 5 to 7 working days.",
+    q: "Is Makzo's vegetarian?",
+    a: "Yes, all six flavours are vegetarian. Not all are vegan: Mac & Cheese and Chettinad contain milk. Mac & Cheese also contains groundnut, and Chettinad and Sweet Thai Chilli contain soya. Every pack lists its allergens.",
   },
   {
-    q: "How do I pay?",
-    a: "UPI, debit and credit cards, net banking, or cash on delivery for smaller orders.",
+    q: "Do you make corporate gift hampers?",
+    // The doc leaves the contact as "[email or WhatsApp]"; until it's filled in, this points to the contact page.
+    a: <>Yes. Pick four to seven pouches in any mix with <Link href="/build-a-box" className={ui.link}>Build-a-Box</Link>, and you&rsquo;ve got a gift that starts conversations. For corporate orders, Diwali hampers or custom boxes, <Link href="/contact" className={ui.link}>write to us</Link> and we&rsquo;ll send you a quote.</>,
   },
   {
-    q: "Where do you deliver?",
-    a: <>Hyderabad first, then Bengaluru. <Link href="/#community" className={ui.link}>Join the list</Link> and we&rsquo;ll email you when your city opens.</>,
+    q: "Where can I buy Makzo's, and how much is it?",
+    a: "Order on www.makzos.com, with free shipping on orders above ₹500. A 50 g pouch is ₹149. You'll also find us in select stores in Hyderabad, Bengaluru and Chennai.",
   },
 ];
 

@@ -1,15 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import type { Address } from "@/lib/store";
-import { BLOCKED_PINCODE, serviceFor } from "@/lib/pricing";
+import type { Address } from "@/lib/account";
+import { serviceFor } from "@/lib/pricing";
 import ui from "@/components/home/ui.module.css";
 import forms from "./forms.module.css";
 
 type Draft = Omit<Address, "id"> & { id?: string };
 type Errors = Partial<Record<keyof Draft, string>>;
-
-const LABELS: Address["label"][] = ["Home", "Work", "Other"];
 
 /** The cities we know from a pincode's first three digits. */
 const CITY_BY_PREFIX: [RegExp, string, string][] = [
@@ -17,7 +15,7 @@ const CITY_BY_PREFIX: [RegExp, string, string][] = [
   [/^56[0-2]/, "Bengaluru", "Karnataka"],
 ];
 
-export const blankAddress = (name = "", phone = ""): Draft => ({ label: "Home", name, phone, line1: "", line2: "", landmark: "", city: "", state: "", pincode: "" });
+export const blankAddress = (name = "", phone = ""): Draft => ({ name, phone, line1: "", line2: "", landmark: "", city: "", state: "", pincode: "" });
 
 function validate(a: Draft, requireService: boolean): Errors {
   const e: Errors = {};
@@ -36,8 +34,8 @@ function validate(a: Draft, requireService: boolean): Errors {
  * One address, new or being edited. The pincode fills in the city and state where it can,
  * and checkout refuses pincodes we don't deliver to yet, saying why.
  */
-export function AddressForm({ initial, onSave, onCancel, submitLabel = "Save address", requireService = false, showDefault = true, submitClass }: {
-  initial: Draft; onSave: (a: Draft) => void; onCancel?: () => void; submitLabel?: string; requireService?: boolean; showDefault?: boolean;
+export function AddressForm({ initial, onSave, onCancel, submitLabel = "Save address", requireService = false, showDefault = true, submitClass, busy = false }: {
+  initial: Draft; onSave: (a: Draft) => void; busy?: boolean; onCancel?: () => void; submitLabel?: string; requireService?: boolean; showDefault?: boolean;
   /** Lets checkout give the submit button its own, full-width style. */
   submitClass?: string;
 }) {
@@ -72,12 +70,6 @@ export function AddressForm({ initial, onSave, onCancel, submitLabel = "Save add
 
   return (
     <form className={forms.form} onSubmit={submit} noValidate>
-      <div className={forms.field}>
-        <span className={forms.label} id="ad-label">Save as</span>
-        <div className={forms.segments} role="group" aria-labelledby="ad-label">
-          {LABELS.map((l) => <button key={l} type="button" className={forms.segment} aria-pressed={a.label === l} onClick={() => set("label", l)}>{l}</button>)}
-        </div>
-      </div>
       <div className={forms.row}>
         {field("name", "Full name", { autoComplete: "name" })}
         <div className={forms.field}>
@@ -91,7 +83,7 @@ export function AddressForm({ initial, onSave, onCancel, submitLabel = "Save add
         <label className={forms.label} htmlFor="ad-pincode">Pincode</label>
         <input id="ad-pincode" className={`${forms.input} ${forms.short}`} inputMode="numeric" autoComplete="postal-code" maxLength={6} value={a.pincode} onChange={(e) => pin(e.target.value)}
           aria-invalid={errors.pincode ? true : undefined} aria-describedby="ad-pincode-e" />
-        {errors.pincode ? <p id="ad-pincode-e" className={forms.error}>{errors.pincode}</p> : <p id="ad-pincode-e" className={forms.hint}>We fill in the city where we can. Demo: {BLOCKED_PINCODE} shows a pincode we can&rsquo;t deliver to.</p>}
+        {errors.pincode ? <p id="ad-pincode-e" className={forms.error}>{errors.pincode}</p> : <p id="ad-pincode-e" className={forms.hint}>We fill in the city where we can.</p>}
       </div>
       {field("line1", "Flat, house number, building", { autoComplete: "address-line1", placeholder: "Flat 402, Lakeview Residency" })}
       {field("line2", "Street and area", { autoComplete: "address-line2", placeholder: "Road No. 12, Banjara Hills" })}
@@ -107,7 +99,7 @@ export function AddressForm({ initial, onSave, onCancel, submitLabel = "Save add
         </label>
       )}
       <div className={forms.actions}>
-        <button type="submit" className={submitClass ?? ui.btn}>{submitLabel}</button>
+        <button type="submit" className={submitClass ?? ui.btn} disabled={busy}>{busy ? "Saving…" : submitLabel}</button>
         {onCancel && <button type="button" className={`${ui.link} ${forms.textBtn}`} onClick={onCancel}>Cancel</button>}
       </div>
     </form>

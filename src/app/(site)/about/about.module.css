@@ -28,18 +28,24 @@
 .beliefWord { transition: opacity .2s; }
 
 /* ---------- The name, and what we're for ---------- */
-.name { padding-block: clamp(72px, 10vw, 128px); background: var(--white); }
-.nameRow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); margin-top: clamp(32px, 4vw, 56px); border-top: 2px solid var(--black); }
+.name { background: var(--white); }
+/* The breaker: pinned while the name builds itself out of the sentence (NameBuild). */
+.nameStage { min-height: 100svh; display: flex; align-items: center; padding-block: clamp(56px, 8vw, 104px); background: var(--white); }
+.build { position: relative; }
+.nameTitle { margin-bottom: clamp(32px, 4vw, 56px); }
+.rule { display: block; height: 2px; background: var(--black); transform-origin: 50% 50%; }
+.nameRow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); }
 .nameItem { display: grid; align-content: start; gap: 12px; padding-top: 24px; }
-.nameItem p:last-child { max-width: 22em; font-size: 1.0625rem; line-height: 1.55; color: var(--quiet); }
-.word { font-size: clamp(3rem, 1.5rem + 4vw, 6rem); line-height: .9; color: rgb(0 0 0 / .22); }
-.word b { font-weight: inherit; color: var(--paprika); }
-.pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 20px); margin-top: clamp(48px, 6vw, 80px); }
-.pillars li { display: grid; align-content: start; gap: 12px; padding: clamp(24px, 2.6vw, 36px); border-radius: 28px; background: var(--mist); transition: transform .35s cubic-bezier(.3, 1.4, .5, 1); }
-.pillars li:hover { transform: translateY(-6px) rotate(-.6deg); }
-.pillarSeed { width: 48px; height: auto; }
-.pillarTitle { font-size: 1.5rem; }
-.pillars p { font-size: 1rem; line-height: 1.55; }
+.desc { max-width: 22em; font-size: 1.0625rem; line-height: 1.55; color: var(--quiet); }
+.word { font-size: clamp(3rem, 1.5rem + 4vw, 6rem); line-height: .9; color: rgb(0 0 0 / .22); white-space: nowrap; }
+.wordChunk { display: inline-block; }
+.ch { display: inline-block; }
+.ch[data-lead] { position: relative; z-index: 1; color: var(--paprika); }
+.pop { display: inline-block; }
+.target { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(12px, 2vw, 24px); pointer-events: none; }
+.targetWord { font-size: clamp(4.5rem, 1rem + 13vw, 13rem); line-height: .86; white-space: nowrap; visibility: hidden; }
+.targetCh { display: inline-block; }
+.targetLine { font-size: clamp(1.5rem, 1rem + 1.6vw, 2.5rem); color: rgb(0 0 0 / .4); visibility: hidden; }
 
 /* ---------- How we roast: pinned, the steps slide past sideways ---------- */
 .roast { background: var(--paprika); border-radius: clamp(28px, 4vw, 56px); overflow: clip; }
@@ -105,14 +111,14 @@
   .bar { display: none; }
 }
 @media (max-width: 800px) {
-  .nameRow, .pillars { grid-template-columns: minmax(0, 1fr); }
-  .lab { grid-template-columns: minmax(0, 1fr); }
+  .nameRow,   .lab { grid-template-columns: minmax(0, 1fr); }
   .heroSeed:nth-of-type(1), .heroSeed:nth-of-type(2) { display: none; }
 }
 @media (max-width: 700px) { .dishGrid { grid-template-columns: minmax(0, 1fr); } }
 @media (prefers-reduced-motion: reduce) {
   .scrollCue span { animation: none; }
   .pin { min-height: 0; }
+  .nameStage { min-height: 0; }
   .track { flex-wrap: wrap; width: auto; }
   .steps { flex-wrap: wrap; }
 }

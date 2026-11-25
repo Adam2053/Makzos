@@ -1,0 +1,32 @@
+/* The line: a 3D conveyor on Paprika. On wide screens the copy sits in the loop's hollow,
+   at the box the scene hands over as --hx/--hy/--hw/--hh; on phones it stacks above. */
+.line {
+  position: relative; overflow: clip; height: clamp(620px, 100svh, 940px);
+  margin-top: clamp(16px, 2vw, 24px); border-radius: clamp(28px, 4vw, 56px);
+  background: var(--paprika); color: var(--black); font-family: var(--font-text), sans-serif;
+}
+.stage { position: absolute; inset: 0; }
+.copy {
+  position: absolute; left: var(--hx, 30%); top: var(--hy, 22%); width: var(--hw, 60%); height: var(--hh, 56%);
+  display: grid; align-content: center; justify-items: start; gap: 18px;
+  padding-inline: clamp(12px, 3vw, 56px); pointer-events: none;
+}
+.eyebrow { font-size: 1rem; }
+.title { font-size: clamp(3rem, 1.4rem + 4vw, 6.5rem); line-height: .9; max-width: 9em; }
+.title span { display: block; color: var(--white); }
+.lede { max-width: 34em; font-size: var(--t-lede); line-height: 1.5; color: rgb(0 0 0 / .74); }
+
+.tag {
+  position: absolute; left: 0; top: 0; z-index: 2; display: grid; gap: 2px; padding: 10px 16px;
+  border-radius: 16px; background: var(--black); color: var(--white); white-space: nowrap;
+  pointer-events: none; opacity: 0; scale: .9; transition: opacity .2s, scale .25s cubic-bezier(.3, 1.4, .5, 1);
+}
+.tag[data-on] { opacity: 1; scale: 1; }
+.tag b { font-family: var(--label); font-size: 1.25rem; text-transform: uppercase; letter-spacing: .02em; }
+.tag span { font-size: .8125rem; opacity: .8; }
+
+@media (max-width: 899px) {
+  .line { height: auto; display: flex; flex-direction: column-reverse; }
+  .copy { position: static; width: auto; height: auto; padding: clamp(48px, 10vw, 72px) var(--gutter) 0; }
+  .stage { position: relative; inset: auto; aspect-ratio: 4 / 5; max-height: 820px; }
+}

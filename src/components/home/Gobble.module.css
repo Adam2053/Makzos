@@ -1,0 +1,51 @@
+/*
+ * The "Nothing artificial" break: a black band lit by blurred Paprika light, the eaten words in
+ * white with Paprika pellets between them, then the brand's answer in white and a Paprika
+ * outline, with the flip card under it. The words and the answer share one grid cell, so the
+ * answer rises exactly where the words were eaten.
+ */
+.section { position: relative; overflow: clip; background: var(--black); color: var(--white); font-family: var(--font-text), sans-serif; padding-block: clamp(88px, 12vw, 160px); text-align: center; }
+.glow {
+  position: absolute; inset: -15%; pointer-events: none;
+  background:
+    radial-gradient(38% 46% at 18% 28%, rgb(234 75 43 / .75), transparent 70%),
+    radial-gradient(42% 50% at 84% 78%, rgb(234 75 43 / .65), transparent 70%),
+    radial-gradient(30% 34% at 62% 12%, rgb(255 138 76 / .45), transparent 70%),
+    radial-gradient(26% 30% at 30% 92%, rgb(184 53 26 / .55), transparent 70%);
+  filter: blur(60px);
+}
+.stage { position: relative; display: grid; place-items: center; font-size: clamp(3.5rem, 1rem + 7vw, 8.5rem); }
+.fake, .real { grid-area: 1 / 1; margin: 0; }
+
+/* Hidden until the script takes over, so without it the page shows the end state. */
+.fake { visibility: hidden; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; column-gap: .22em; row-gap: .12em; max-width: 11em; font-size: .62em; line-height: .95; }
+.fakeWord { display: inline-flex; white-space: nowrap; }
+.fakeWord > span { display: inline-block; white-space: pre; color: var(--white); }
+.pellet { display: inline-block; width: .2em; height: .2em; border-radius: 50%; background: var(--paprika); }
+
+.real { position: relative; display: flex; flex-direction: column; align-items: center; }
+.title { position: relative; display: flex; flex-direction: column; align-items: center; margin: 0; font-size: 1em; line-height: .9; }
+.line { display: block; }
+.outline { position: relative; color: transparent; -webkit-text-stroke: max(2px, .016em) var(--paprika); }
+/* The makhana that stays, perched on the full stop. */
+.seat { position: absolute; right: -.34em; top: -.22em; width: .46em; height: auto; rotate: 12deg; }
+
+/* The flip card: one Paprika card, the good things stacked in it and flipped over one at a time. Sized to the longest. */
+.card { display: grid; margin: clamp(24px, 3.5vw, 44px) 0 0; padding: .55em 1.1em; border-radius: 10px; background: var(--paprika); color: var(--white); font-family: var(--font-label), "Arial Narrow", sans-serif; font-size: clamp(1.125rem, .7rem + 1.4vw, 2rem); line-height: 1.05; text-transform: uppercase; perspective: 600px; box-shadow: 0 18px 40px -18px rgb(234 75 43 / .8); }
+.good { grid-area: 1 / 1; backface-visibility: hidden; transform-origin: 50% 50%; }
+/* Without the script, the card shows the first. */
+.good:not(:first-child) { visibility: hidden; }
+
+.muncher { position: absolute; left: 0; top: 0; z-index: 2; width: .8em; height: auto; overflow: visible; pointer-events: none; visibility: hidden; }
+.part { transform-box: fill-box; transform-origin: 50% 50%; }
+.piece { transform-origin: 0% 100%; }
+.burst path { transform-box: fill-box; transform-origin: 50% 100%; }
+.crumb { position: absolute; z-index: 1; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50% 40% 55% 45%; pointer-events: none; }
+
+@media (max-width: 600px) {
+  .section { padding-block: 72px 80px; }
+  .fake { font-size: .7em; max-width: 7em; }
+  .outline { -webkit-text-stroke-width: 1.5px; }
+  .seat { right: -.26em; top: -.28em; width: .4em; }
+  .card { font-size: 1rem; }
+}

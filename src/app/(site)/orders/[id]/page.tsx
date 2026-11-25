@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { OrderView } from "./OrderView";
+import { getOrder } from "@/lib/shopify/account";
+import { OrderMissing, OrderView } from "./OrderView";
 
-export async function generateMetadata({ params }: PageProps<"/orders/[id]">): Promise<Metadata> {
-  return { title: `Order ${(await params).id} — Makzo's` };
-}
+export const metadata: Metadata = { title: "Your order — Makzo's", robots: { index: false } };
 
-/** `?placed=1` is checkout's hand-off: the page opens with the thank-you. */
-export default async function OrderPage({ params, searchParams }: PageProps<"/orders/[id]">) {
-  const [{ id }, { placed }] = await Promise.all([params, searchParams]);
-  return <OrderView id={id} placed={placed === "1"} />;
+/** A signed-in customer's order, read from Shopify each visit so tracking is current. */
+export default async function OrderPage({ params }: PageProps<"/orders/[id]">) {
+  const { id } = await params;
+  const { order, signedIn } = await getOrder(id).catch((e) => {
+    console.error("[shopify] order", e);
+    return { order: null, signedIn: true };
+  });
+  return order ? <OrderView o={order} /> : <OrderMissing id={id} signedIn={signedIn} />;
 }

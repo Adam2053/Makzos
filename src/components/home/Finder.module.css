@@ -1,0 +1,97 @@
+/*
+ * A short Paprika band on the white page, one of the key moments the guide gives Paprika to.
+ * Black type and black controls on it (guide p.19, 5.5:1); white option pills read as things
+ * to press. Desktop: the title and progress on the left, the question on the right, so the
+ * band stays short. Phone: stacked, with the options in a tight two-up grid.
+ */
+.section { padding: clamp(8px, 2vw, 24px) 0 clamp(24px, 4vw, 48px); background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; scroll-margin-top: var(--header-h); }
+
+.room {
+  display: grid; grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); align-items: center; gap: clamp(24px, 4vw, 64px);
+  padding: clamp(28px, 3.6vw, 48px) clamp(24px, 4vw, 56px); border-radius: clamp(24px, 3vw, 40px);
+  background: var(--paprika);
+}
+
+.title { margin: 0; font-size: clamp(2.25rem, 1.5rem + 2.4vw, 3.75rem); }
+
+/* Three steps, numbered because they genuinely are a sequence. */
+.steps { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 20px 0 0; padding: 0; list-style: none; font-size: .8125rem; font-weight: 600; color: rgb(0 0 0 / .55); }
+.stepDot { display: inline-flex; align-items: center; gap: 6px; }
+.stepDot span { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 2px solid currentColor; font-size: .75rem; }
+.stepDot[data-on] { color: var(--black); }
+.stepDot[data-on] span { border-color: var(--black); background: var(--black); color: var(--white); }
+
+/* Held at one height across the steps, so the page below never jumps. */
+.stage { min-height: 196px; display: flex; flex-direction: column; justify-content: center; }
+.question { margin: 0; font-size: 1.125rem; font-weight: 700; }
+.options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.option {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 18px 6px 8px;
+  border: 2px solid var(--black); border-radius: 999px; background: var(--white); color: var(--black);
+  font: 600 .9375rem/1.2 var(--font-text), sans-serif; text-align: left; cursor: pointer;
+  transition: background-color .2s, color .2s;
+}
+.option:hover { background: var(--black); color: var(--white); }
+.option:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
+.optionPacks { display: flex; flex: none; }
+.optionPacks > span + span { margin-left: -10px; rotate: 10deg; }
+.optionPacks > span:first-child { rotate: -8deg; }
+.optionSeed { flex: none; width: 30px; height: auto; }
+.back { align-self: flex-start; margin-top: 12px; padding: 0; border: 0; background: none; color: var(--black); font: 600 .875rem/1.2 var(--font-text), sans-serif; cursor: pointer; }
+.back:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
+
+/* ---------- The answer: the pack beside the words ---------- */
+.result { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: clamp(16px, 3vw, 36px); }
+.resultPair { position: relative; width: clamp(130px, 15vw, 200px); aspect-ratio: 1.05; }
+.pairLead { position: absolute; left: 0; bottom: 0; z-index: 1; width: 72%; rotate: -6deg; }
+.pairNext { position: absolute; right: 0; top: 0; width: 56%; rotate: 9deg; }
+.resultFan { position: relative; width: clamp(130px, 15vw, 200px); aspect-ratio: 1.2; }
+.fanSlot { position: absolute; left: 50%; bottom: 4%; width: 44%; translate: -50% 0; transform-origin: 50% 240%; rotate: calc((var(--i) - 1.5) * 12deg); }
+.resultText { display: flex; flex-direction: column; }
+.resultKicker { margin: 0; font-size: .875rem; font-weight: 700; }
+.resultName { margin: 6px 0 0; font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem); }
+.resultNames { font-size: clamp(1.125rem, 1rem + .6vw, 1.5rem); line-height: 1.15; }
+.resultLine { margin: 6px 0 0; font-size: .9375rem; line-height: 1.45; }
+.resultCtas { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+/* On Paprika the site's Paprika hover would vanish, so these turn white instead. */
+.cta, .ctaLine {
+  display: inline-flex; align-items: center; justify-content: center; gap: .35em; min-height: 44px; padding: 0 18px;
+  border: 2px solid var(--black); border-radius: 999px; font: 600 .9375rem/1 var(--font-text), sans-serif;
+  white-space: nowrap; cursor: pointer; transition: background-color .2s, color .2s, border-color .2s;
+}
+.cta { background: var(--black); color: var(--white); }
+.cta:hover { background: var(--white); border-color: var(--white); color: var(--black); }
+.cta:disabled { cursor: not-allowed; background: transparent; color: var(--black); opacity: .7; }
+.ctaLine { background: transparent; color: var(--black); }
+.ctaLine:hover { background: var(--black); color: var(--white); }
+.cta:focus-visible, .ctaLine:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
+
+/* ---------- Phone ---------- */
+@media (max-width: 760px) {
+  .room { grid-template-columns: minmax(0, 1fr); gap: 18px; padding: 24px 16px 20px; }
+  .head { text-align: center; }
+  .title { font-size: clamp(2rem, 1.4rem + 3vw, 2.5rem); }
+  .steps { justify-content: center; margin-top: 12px; }
+  .stage { min-height: 0; }
+  .question { text-align: center; font-size: 1rem; }
+  /* Two up, full width: every answer is a big, easy thumb target. The odd one out spans the row. */
+  .options { display: grid; grid-template-columns: 1fr 1fr; margin-top: 12px; }
+  .option { min-height: 52px; padding: 6px 10px 6px 6px; gap: 8px; font-size: .875rem; }
+  .option:last-child:nth-child(odd) { grid-column: 1 / -1; justify-content: center; }
+  .optionsTwo .option { justify-content: center; font-size: 1rem; }
+  .back { align-self: center; }
+  /* The packs beside the words, then the buttons full width underneath, so nothing is squeezed. */
+  .result { grid-template-columns: 112px minmax(0, 1fr); gap: 0 14px; }
+  .resultText { display: contents; }
+  .resultPair, .resultFan { grid-row: 1 / span 3; width: 112px; }
+  .resultKicker, .resultName, .resultLine { grid-column: 2; }
+  .resultName { font-size: 1.625rem; }
+  .resultNames { font-size: 1.0625rem; }
+  .resultLine { font-size: .875rem; }
+  .resultCtas { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr; margin-top: 16px; }
+  .cta, .ctaLine { width: 100%; padding: 0 12px; }
+  .resultText .back { grid-column: 1 / -1; justify-self: center; }
+}
+
+@media (prefers-reduced-motion: reduce) { .option { transition: none; } }

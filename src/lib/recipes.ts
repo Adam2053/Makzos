@@ -74,25 +74,26 @@ export const RECIPES: Record<string, { recipes: Recipe[]; pairings: Pairing[] }>
       { name: "A long film", why: "It outlasts the trailers." },
     ],
   },
-  tiramisu: {
-    recipes: [
-      {
-        id: "tiramisu-parfait", title: "Tiramisu parfait", dek: "Layers of cream, coffee and crunch in a glass.", minutes: 10, serves: 2,
-        ingredients: ["1 bag Makzo's Tiramisu", "1 cup hung curd or whipped cream", "2 tbsp cold strong coffee", "1 tsp sugar", "Cocoa for dusting"],
-        steps: ["Sweeten the curd or cream with the sugar.", "Spoon a layer into each glass, drizzle with coffee, add a layer of makhana.", "Repeat, finishing with cream and a dusting of cocoa. Add the top layer of makhana just before serving."],
-      },
-      {
-        id: "tiramisu-affogato", title: "Affogato, with crunch", dek: "Ice cream, a shot of coffee and a handful on top.", minutes: 2, serves: 1,
-        ingredients: ["2 scoops vanilla ice cream", "1 hot espresso or strong coffee", "A handful of Makzo's Tiramisu"],
-        steps: ["Scoop the ice cream into a cup.", "Pour the hot coffee over it.", "Throw the makhana on top and eat it fast."],
-      },
-    ],
-    pairings: [
-      { name: "Espresso", why: "It finishes the dessert the flavour started." },
-      { name: "Cold coffee", why: "For when it's too hot for anything else." },
-      { name: "Vanilla ice cream", why: "The plain scoop it was waiting for." },
-    ],
-  },
+  // Tiramisu is off the site for now. Uncomment with its entry in lib/products.
+  // tiramisu: {
+  //   recipes: [
+  //     {
+  //       id: "tiramisu-parfait", title: "Tiramisu parfait", dek: "Layers of cream, coffee and crunch in a glass.", minutes: 10, serves: 2,
+  //       ingredients: ["1 bag Makzo's Tiramisu", "1 cup hung curd or whipped cream", "2 tbsp cold strong coffee", "1 tsp sugar", "Cocoa for dusting"],
+  //       steps: ["Sweeten the curd or cream with the sugar.", "Spoon a layer into each glass, drizzle with coffee, add a layer of makhana.", "Repeat, finishing with cream and a dusting of cocoa. Add the top layer of makhana just before serving."],
+  //     },
+  //     {
+  //       id: "tiramisu-affogato", title: "Affogato, with crunch", dek: "Ice cream, a shot of coffee and a handful on top.", minutes: 2, serves: 1,
+  //       ingredients: ["2 scoops vanilla ice cream", "1 hot espresso or strong coffee", "A handful of Makzo's Tiramisu"],
+  //       steps: ["Scoop the ice cream into a cup.", "Pour the hot coffee over it.", "Throw the makhana on top and eat it fast."],
+  //     },
+  //   ],
+  //   pairings: [
+  //     { name: "Espresso", why: "It finishes the dessert the flavour started." },
+  //     { name: "Cold coffee", why: "For when it's too hot for anything else." },
+  //     { name: "Vanilla ice cream", why: "The plain scoop it was waiting for." },
+  //   ],
+  // },
   "curry-leaves": {
     recipes: [
       {

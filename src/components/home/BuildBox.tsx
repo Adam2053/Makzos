@@ -1,15 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { BAG_PRICE, BOX_MAX, BOX_SIZE, FLAVOURS, PACK_H, PACK_W, SUB_EVERY, SUB_OFF, boxPrice, byId, inr, type Every } from "@/lib/products";
+import { BAG_PRICE, BOX_MAX, BOX_SIZE, FLAVOURS, SUB_EVERY, SUB_OFF, boxPrice, byId, inr, type Every } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { BUNDLES as COMBOS } from "@/lib/bundles";
-import { MOTION_OK, gsap } from "@/lib/motion";
+import { MOTION_OK } from "@/lib/motion";
 import { Pack } from "@/components/shop/Pack";
-import { Makhana, makhanaImage } from "./Makhana";
-import { BoxFront } from "./BoxFront";
+import { BoxScene, type BoxSceneHandle } from "./BoxScene";
 import ui from "./ui.module.css";
 import forms from "@/components/shop/forms.module.css";
 import styles from "./BuildBox.module.css";
@@ -18,10 +16,10 @@ const NOTE_MAX = 120;
 
 /**
  * The box: 4 to 7 bags, any mix, doubles welcome (requirements form). It reads top to bottom:
- * the flavours, then a Makzo's box standing open with its lid propped up behind it. Tap a
+ * the flavours, then a Makzo's mailer box standing open, its lid hinged back. Tap a
  * flavour and its pack drops into the next slot; tap a pack in the box to take it out. Pack
- * it, and the packs settle, the lid flips shut, a sticker goes on and the closed box flies
- * into the bag; a fresh empty box slides in. Ready-made combos close the section.
+ * it, and the packs lie down, the lid swings shut, a seal goes on and the closed box flies
+ * into the bag; a fresh empty box slides in. The box is a three.js scene (BoxScene). Ready-made combos close the section.
  * On its own page (`full`) the box can also be a subscription or a gift with a note.
  */
 export function BuildBox({ full = false, as: Heading = "h2" }: { full?: boolean; as?: "h1" | "h2" }) {
@@ -33,6 +31,7 @@ export function BuildBox({ full = false, as: Heading = "h2" }: { full?: boolean;
   const [note, setNote] = useState("");
   const { addBox, setOpen } = useCart();
   const stage = useRef<HTMLDivElement>(null);
+  const scene = useRef<BoxSceneHandle>(null);
 
   const n = picks.length;
   const ready = n >= BOX_SIZE;
@@ -50,33 +49,10 @@ export function BuildBox({ full = false, as: Heading = "h2" }: { full?: boolean;
     const giftNote = gift && note.trim() ? note.trim() : undefined;
     const sub = every ?? undefined;
     const finish = () => { setPicks([]); setNote(""); setAdded(true); setPacking(false); };
-    const el = stage.current;
-    if (!el || !window.matchMedia(MOTION_OK).matches) { addBox(ids, null, giftNote, sub); finish(); return; }
-
-    const q = gsap.utils.selector(el);
-    const box = q(`.${styles.box}`)[0] as HTMLElement;
-    const packs = q(`.${styles.pack}`);
-    const lid = q(`.${styles.lid}`)[0] as HTMLElement;
-    const cq = el.clientWidth / 100; // one container unit, in px: the lid's moves are measured in them
-    const parts = [box, lid, ...packs, ...q(`.${styles.slots}, .${styles.sticker}`)];
+    if (!scene.current || !window.matchMedia(MOTION_OK).matches) { addBox(ids, null, giftNote, sub); finish(); return; }
     setPacking(true);
-    gsap.timeline()
-      // The deck settles down into the box, front card first.
-      .to([...packs].reverse(), { yPercent: 38, autoAlpha: 0, duration: 0.32, stagger: 0.04, ease: "power2.in" })
-      .set(q(`.${styles.slots}`), { autoAlpha: 0 })
-      // The lid lifts off its prop and comes down square onto the box.
-      .fromTo(lid, { y: -29 * cq, z: -52 * cq, rotationX: -60 }, { y: -12 * cq, z: -6 * cq, rotationX: -8, duration: 0.45, ease: "power2.inOut" }, "-=0.15")
-      .to(lid, { y: 0, z: 0, rotationX: 0, duration: 0.3, ease: "power3.in" })
-      .to(box, { y: 7, duration: 0.08, yoyo: true, repeat: 1, ease: "power1.out" })
-      // The seal goes on.
-      .fromTo(q(`.${styles.sticker}`), { scale: 2.2, autoAlpha: 0, rotation: -40 }, { scale: 1, autoAlpha: 1, rotation: -10, duration: 0.38, ease: "back.out(2.2)", immediateRender: false })
-      .to({}, { duration: 0.35 })
-      // Into the bag: the cart flies a copy of the closed box to the bag button.
-      .call(() => { addBox(ids, box, giftNote, sub); gsap.set(box, { autoAlpha: 0 }); })
-      .to({}, { duration: 0.75 })
-      // A fresh, open box slides in.
-      .call(() => { gsap.set(parts, { clearProps: "all" }); finish(); })
-      .fromTo(box, { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out", clearProps: "all", immediateRender: false });
+    // The scene lays the packs down, shuts the lid, seals it, and hands over a picture of the box to fly.
+    scene.current.pack((shot) => addBox(ids, shot, giftNote, sub), finish);
   };
 
   /** A combo fills the box; "Pack and add" then closes it once the packs have landed. */
@@ -104,66 +80,15 @@ export function BuildBox({ full = false, as: Heading = "h2" }: { full?: boolean;
 
         {/* ---------- 2. The box, and what it costs ---------- */}
         <div className={styles.packing}>
-          {/*
-            * The Makzo's box in 3D, printed like the packaging (guide D4): Paprika board with the
-            * wordmark, the slanted tagline ribbon and the checkerboard edge; black inside, lined with
-            * the checkerboard tissue; the lid in the makhana gift-wrap repeat, propped open behind it. The packs stand in it one behind another like a deck of
-            * cards, the first one picked at the back. Packing lays them down, swings the lid
-            * shut, stamps it, and the closed box flies into the bag.
-            */}
-          <div ref={stage} className={styles.stage} style={{ "--seed": makhanaImage("ink", 70) } as React.CSSProperties}>
-            <div className={styles.box}>
-              <span className={styles.ground} aria-hidden="true" />
-              <div className={styles.cube}>
-                <span className={styles.floor} aria-hidden="true" />
-                {(["wBack", "wLeft", "wRight"] as const).map((w) => (
-                  <span key={w} className={`${styles.wall} ${styles[w]}`} aria-hidden="true">
-                    {/* The sides carry the brand pattern and the tagline, like the pack's back panel. */}
-                    <span className={styles.out}>{w !== "wBack" && <span className={`${ui.label} ${styles.sideLine}`}>Nothing artificial. Nothing unnecessary.</span>}</span>
-                    <span className={styles.in} />
-                  </span>
-                ))}
-                <ol className={styles.slots} aria-label={`Your box, ${n} of ${BOX_MAX}`}>
-                  {picks.map((id, i) => {
-                    const f = byId(id);
-                    // Back to front, like cards in a deck: the first pick stands at the back.
-                    return (
-                      <li key={i} className={styles.slot} style={{ "--z": `${-19 + i * 6.2}cqw` } as React.CSSProperties}>
-                        <button type="button" className={styles.pack} onClick={() => drop(i)} aria-label={`Take ${f.name} out of the box`}>
-                          <Image src={f.pack} alt="" width={PACK_W} height={PACK_H} sizes="160px" />
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ol>
-                <span className={`${styles.wall} ${styles.wFront}`} aria-hidden="true">
-                  <span className={styles.out}>
-                    {/* Printed like the packs: Paprika, the wordmark in white, the tagline on a slanted ribbon. */}
-                    <BoxFront className={styles.print} label={n > 0 ? `Box of ${n}` : "Your box"}>
-                      <span className={styles.sticker}>
-                        <Makhana variant="fill" className={styles.stickerSeed} />
-                        <strong>Packed</strong>
-                      </span>
-                    </BoxFront>
-                  </span>
-                  <span className={styles.in} />
-                </span>
-                {/* The lid: a shallow black box of its own, propped open behind until packing. */}
-                <span className={styles.lid} aria-hidden="true">
-                  <span className={`${styles.lidFace} ${styles.lidTop}`}>
-                    <span className={styles.out}>
-                      <span className={styles.lidBadge}>
-                        <Image src="/brand/logo-light.png" alt="" width={1200} height={296} className={styles.lidLogo} />
-                      </span>
-                    </span>
-                    <span className={styles.in} />
-                  </span>
-                  {(["lidFront", "lidBack", "lidLeft", "lidRight"] as const).map((r) => (
-                    <span key={r} className={`${styles.lidFace} ${styles.rim} ${styles[r]}`}><span className={styles.out} /><span className={styles.in} /></span>
-                  ))}
-                </span>
-              </div>
-            </div>
+          {/* The Makzo's mailer box, in three.js: see BoxScene. */}
+          <div ref={stage} className={styles.stage}>
+            <BoxScene ref={scene} picks={picks} onDrop={drop} locked={packing} label={n > 0 ? `Box of ${n}` : "Your box"} />
+            {/* The same packs as buttons, for keyboards and screen readers. */}
+            <ol className={ui.sr} aria-label={`Your box, ${n} of ${BOX_MAX}`}>
+              {picks.map((id, i) => (
+                <li key={i}><button type="button" onClick={() => drop(i)} disabled={packing}>Take {byId(id).name} out of the box</button></li>
+              ))}
+            </ol>
           </div>
 
           <div className={styles.controls}>
@@ -220,7 +145,7 @@ export function BuildBox({ full = false, as: Heading = "h2" }: { full?: boolean;
                   {gift && (
                     <div className={forms.field}>
                       <label className={ui.sr} htmlFor="gift-note">Gift note</label>
-                      <textarea id="gift-note" className={forms.input} rows={3} maxLength={NOTE_MAX} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Happy birthday. Save me the Tiramisu." />
+                      <textarea id="gift-note" className={forms.input} rows={3} maxLength={NOTE_MAX} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Happy birthday. Save me the Rasam." />
                       <p className={forms.hint}>{NOTE_MAX - note.length} characters left</p>
                     </div>
                   )}

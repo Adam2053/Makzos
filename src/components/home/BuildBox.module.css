@@ -28,99 +28,9 @@
 /* ---------- 2. The box ---------- */
 /* The box on the left, everything you do on the right: flavours, price, pack. One screen. */
 .packing { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(24px, 3vw, 48px); align-items: center; margin-top: clamp(20px, 2.5vw, 36px); }
-/*
- * The Makzo's box, built in 3D from its faces. Sizes are container units, so it scales as one
- * object: --w wide, --d deep, --h tall. A long perspective keeps it solid rather than
- * stretched. Each face has an outside and an inside; the lid is a shallow box of its own.
- */
+/* The box is a three.js canvas (BoxScene) filling the stage. */
 .stage { position: relative; width: 100%; max-width: min(540px, 64svh); margin-inline: auto; aspect-ratio: 1; }
-/* The box is its own size container, so the copy that flies to the bag keeps its proportions. */
-.box { position: absolute; inset: 0; container-type: inline-size; perspective: 2600px; perspective-origin: 50% 10%; }
-.ground { position: absolute; left: 12%; right: 12%; top: 87%; height: 13%; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 0 0 / .34), rgb(0 0 0 / 0)); filter: blur(5px); }
-.cube { --w: 36cqw; --d: 52cqw; --h: 21cqw; --pw: 28cqw; --ph: 37cqw; position: absolute; left: 50%; top: 73%; width: 0; height: 0; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(-34deg); }
-
-.wall, .lidFace { position: absolute; transform-style: preserve-3d; }
-.out, .in { position: absolute; inset: 0; backface-visibility: hidden; }
-.in { transform: rotateY(180deg); }
-/*
- * Paprika board printed with the brand pattern (guide D4): the makhana repeated on a
- * half-drop, the way the gift wrap does it, and the checkerboard along the top edge.
- * Inside it's black. --seed is the makhana as an image, set on the stage.
- */
-.wall > .out {
-  background:
-    var(--seed, none) 0 0 / 7cqw 7.6cqw,
-    var(--seed, none) 3.5cqw 3.8cqw / 7cqw 7.6cqw,
-    linear-gradient(#f2563a, #d63d1f);
-  background-repeat: repeat;
-  box-shadow: inset 0 0 0 1px rgb(0 0 0 / .12);
-}
-.wall > .out::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1.3cqw; background: repeating-conic-gradient(#181818 0 25%, #fff 0 50%) 0 0 / 2.6cqw 2.6cqw; }
-.wall > .out::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgb(255 255 255 / .08), rgb(0 0 0 / .1)); pointer-events: none; }
-.wall > .in { background: linear-gradient(#262626, #121212); }
-/* The right side is turned from the light. */
-.wRight > .out::after { background: rgb(0 0 0 / .26); }
-.sideLine { position: absolute; left: 0; right: 0; bottom: 1.6cqw; z-index: 1; padding: .7cqw 0; background: #181818; color: var(--white); font-size: 1.7cqw; text-align: center; white-space: nowrap; }
-.wFront, .wBack { left: calc(var(--w) / -2); top: calc(var(--h) / -2); width: var(--w); height: var(--h); }
-.wLeft, .wRight { left: calc(var(--d) / -2); top: calc(var(--h) / -2); width: var(--d); height: var(--h); }
-.wFront { transform: translateZ(calc(var(--d) / 2)); }
-.wBack { transform: rotateY(180deg) translateZ(calc(var(--d) / 2)); }
-.wLeft { transform: rotateY(-90deg) translateZ(calc(var(--w) / 2)); }
-.wRight { transform: rotateY(90deg) translateZ(calc(var(--w) / 2)); }
-/* The floor is lined with the checkerboard tissue from the guide's pattern page, crumpled a little. */
-.floor {
-  position: absolute; left: calc(var(--w) / -2); top: calc(var(--d) / -2); width: var(--w); height: var(--d);
-  background:
-    radial-gradient(60% 40% at 30% 30%, rgb(255 255 255 / .14), transparent 70%),
-    radial-gradient(50% 40% at 75% 70%, rgb(0 0 0 / .35), transparent 70%),
-    repeating-conic-gradient(#181818 0 25%, var(--paprika) 0 50%) 0 0 / 6cqw 6cqw;
-  transform: rotateX(90deg) translateZ(calc(var(--h) / -2));
-}
-
-/* The print on the front is the box face (BoxFront), filling the wall. */
-.wFront .print { position: absolute; inset: 0; }
-.wFront > .out { background: none; }
-.wFront > .out::before, .wFront > .out::after { content: none; }
-/* Measured in the box's units (cqw of .box): the face itself is no longer a size container. */
-.sticker { position: absolute; right: 1.8cqw; bottom: 1.1cqw; z-index: 2; display: grid; place-content: center; justify-items: center; gap: .2cqw; width: 9.4cqw; aspect-ratio: 1; border: .36cqw solid #181818; border-radius: 50%; background: var(--white); color: #181818; box-shadow: 0 .6cqw 1.1cqw rgb(0 0 0 / .3); visibility: hidden; }
-.sticker strong { font-family: var(--font-play), sans-serif; font-weight: 400; font-size: 1.8cqw; line-height: 1; }
-.stickerSeed { width: 3.6cqw; height: auto; }
-
-/* The packs, standing front to back like cards in a deck, each leaning back a touch. */
-.slots { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
-.slot { position: absolute; left: calc(var(--pw) / -2); top: calc(var(--ph) / -2); width: var(--pw); height: var(--ph); transform-style: preserve-3d; transform: translate3d(0, calc(var(--h) / 2 - var(--ph) / 2), var(--z)) rotateX(9deg); }
-.pack { position: absolute; inset: 0; padding: 0; border: 0; background: none; transform-origin: 50% 100%; animation: drop .55s cubic-bezier(.3, 1.3, .5, 1); }
-.pack img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; filter: drop-shadow(0 -.4cqw 1.2cqw rgb(0 0 0 / .45)); }
-/* Hover a pack and it rises out of the deck, like a card being pulled; tap takes it out. */
-/* The button itself moves: a button clips what's drawn outside it, so lifting the image would cut it off. */
-.pack { transition: translate .4s cubic-bezier(.3, 1.4, .5, 1); }
-.pack img { transition: filter .3s; }
-.pack:is(:hover, :focus-visible) { translate: 0 -42%; }
-.pack:is(:hover, :focus-visible) img { filter: drop-shadow(0 -.4cqw 1.2cqw rgb(0 0 0 / .45)) drop-shadow(0 2.4cqw 2.4cqw rgb(0 0 0 / .35)); }
-.pack:focus-visible { outline: 3px solid var(--white); outline-offset: 2px; border-radius: 1cqw; }
-@keyframes drop { from { translate: 0 -46cqw; opacity: 0; } 45% { opacity: 1; } }
-
-/* The lid: the makhana gift wrap on top with the wordmark on a black badge, a checkerboard rim,
-   propped open behind the box until packing. Its lower edge rests just behind the back wall,
-   so it never cuts through the packs. */
-.lid { position: absolute; left: 0; top: 0; transform-style: preserve-3d; transform: translate3d(0, -29cqw, -52cqw) rotateX(-60deg); }
-.lidFace > .out { background: repeating-conic-gradient(#181818 0 25%, #fff 0 50%) 0 0 / 2.25cqw 2.25cqw; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .2); }
-.lidFace > .in { background: #111; }
-.lidTop { --lw: calc(var(--w) + 1.2cqw); --ld: calc(var(--d) + 1.2cqw); left: calc(var(--lw) / -2); top: calc(var(--ld) / -2); width: var(--lw); height: var(--ld); transform: rotateX(90deg) translateZ(calc(var(--h) / 2 + .3cqw)); }
-.lidTop > .out {
-  display: grid; place-items: center;
-  background: var(--seed, none) 0 0 / 8cqw 8.6cqw, var(--seed, none) 4cqw 4.3cqw / 8cqw 8.6cqw, linear-gradient(135deg, #f2563a, #d63d1f);
-}
-.lidBadge { display: grid; place-items: center; width: 76%; height: 30%; border-radius: 2cqw; background: #181818; rotate: -90deg; box-shadow: 0 .6cqw 1.4cqw rgb(0 0 0 / .3); }
-.lidLogo { width: 82%; height: auto; }
-.rim { --rh: 4.5cqw; top: calc(var(--h) / -2 - .3cqw); height: var(--rh); }
-.lidFront, .lidBack { left: calc(var(--w) / -2 - .6cqw); width: calc(var(--w) + 1.2cqw); }
-.lidLeft, .lidRight { left: calc(var(--d) / -2 - .6cqw); width: calc(var(--d) + 1.2cqw); }
-.lidFront { transform: translateZ(calc(var(--d) / 2 + .6cqw)); }
-.lidBack { transform: rotateY(180deg) translateZ(calc(var(--d) / 2 + .6cqw)); }
-.lidLeft { transform: rotateY(-90deg) translateZ(calc(var(--w) / 2 + .6cqw)); }
-.lidRight { transform: rotateY(90deg) translateZ(calc(var(--w) / 2 + .6cqw)); }
-.lidRight > .out { filter: brightness(.75); }
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; }
 
 /* ---------- Price and the pack button ---------- */
 .controls { display: flex; flex-direction: column; gap: 14px; justify-content: center; }
@@ -203,4 +113,4 @@
   .options { order: 9; }
   .combos { grid-template-columns: minmax(0, 1fr); }
 }
-@media (prefers-reduced-motion: reduce) { .pack, .pack img, .flavour { animation: none; transition: none; } }
+@media (prefers-reduced-motion: reduce) { .flavour { transition: none; } }

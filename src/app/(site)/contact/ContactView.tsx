@@ -54,7 +54,7 @@ export function ContactView() {
               <div className={forms.segments} role="group" aria-labelledby="ct-topic">
                 {TOPICS.map((t) => (
                   <button key={t} type="button" className={forms.segment} aria-pressed={topic === t}
-                    onClick={() => { setTopic(t); if ((t === TOPICS[0] || t === TOPICS[1]) && !order && orders[0]) setOrder(orders[0].id); }}>{t}</button>
+                    onClick={() => { setTopic(t); if ((t === TOPICS[0] || t === TOPICS[1]) && !order && orders[0]) setOrder(orders[0].number); }}>{t}</button>
                 ))}
               </div>
             </div>
@@ -71,7 +71,7 @@ export function ContactView() {
             {aboutOrder && (
               <div className={forms.field}>
                 <label className={forms.label} htmlFor="ct-order">Order number <small>(if you have it)</small></label>
-                <input id="ct-order" className={`${forms.input} ${forms.short}`} placeholder="MKZ12345" value={order} onChange={(e) => setOrder(e.target.value.toUpperCase())} />
+                <input id="ct-order" className={`${forms.input} ${forms.short}`} placeholder="#1001" value={order} onChange={(e) => setOrder(e.target.value.toUpperCase())} />
               </div>
             )}
             <div className={forms.field}>

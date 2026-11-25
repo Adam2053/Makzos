@@ -1,79 +1,141 @@
-.section { background: var(--white); color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(32px, 4vw, 56px) clamp(72px, 10vw, 128px); scroll-margin-top: var(--header-h); }
-.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; align-items: start; }
-/* The words hold still on the left while the comparison scrolls past them. */
-.head { grid-column: 1 / 6; position: sticky; top: calc(var(--header-h) + 40px); }
-.title { font-size: var(--t-h2); }
-.title span { display: block; color: var(--paprika); }
-.lede { margin-top: 20px; color: var(--quiet); }
-.cta { margin-top: 28px; }
+/*
+ * The comparison, built to the comparison_v1 design: the words on the left, three pieces side
+ * by side on the right, on a white and light grey checkerboard.
+ */
+.section { position: relative; isolation: isolate; color: var(--black); font-family: var(--font-text), sans-serif; padding-block: clamp(32px, 2.4vw, 48px) clamp(56px, 5.5vw, 104px); scroll-margin-top: var(--header-h); }
+/* The checkerboard: grey in the top-left corner, eleven squares across the screen. */
+.section::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  --sq: calc(100vw / 11);
+  background: #fff repeating-conic-gradient(#fff 0 25%, #eee 0 50%) 0 0 / calc(var(--sq) * 2) calc(var(--sq) * 2);
+}
+
+/* Wider than the usual shell: the design runs nearly edge to edge. */
+.grid { width: min(1800px, 100% - 2 * var(--gutter)); margin-inline: auto; display: grid; grid-template-columns: minmax(0, 780fr) minmax(0, 935fr); column-gap: 3.4%; align-items: center; }
+
+/* The words: the headline fills the column, sized off the column's own width. */
+.head { container-type: inline-size; }
+/* Three lines, each held on one line: black, then the two Paprika ones. */
+.title { font-size: min(10.6cqw, 6.25rem); line-height: 1.02; text-wrap: nowrap; }
+.title span { display: block; white-space: nowrap; }
+.title span + span { color: var(--paprika); }
+.lede { margin-top: clamp(32px, 7vw, 136px); max-width: 48em; font-size: clamp(1rem, .55rem + .75vw, 1.25rem); line-height: 1.3; color: #333; text-wrap: pretty; }
+.cta { margin-top: clamp(24px, 2.9vw, 56px); min-height: clamp(46px, 3.5vw, 66px); padding-inline: clamp(1.375rem, 1.4vw, 1.625rem); font-size: clamp(.9375rem, .5rem + .6vw, 1.375rem); font-weight: 500; }
 
 /*
- * A real table, so the comparison reads row by row to everyone. Each side is one tall pill
- * laid behind its cells: ours Paprika with a pack standing on it, theirs grey and quieter.
+ * The three pieces. All measures are in cqw of this block, read off the design at 935 px wide,
+ * so the whole thing scales as one picture. The cards share one header height and one row
+ * height, which is what keeps their rows level with each other.
  */
-.table { grid-column: 6 / 13; width: 100%; margin-top: 64px; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
-.table th, .table td { padding: 16px clamp(12px, 1.6vw, 24px); text-align: left; vertical-align: middle; font-size: 1rem; line-height: 1.35; }
-.table thead td { width: 22%; }
-.table thead th { position: relative; padding-block: 0 20px; vertical-align: bottom; }
-.table tbody th { font-size: var(--t-small); font-weight: 600; color: var(--quiet); }
-.table tbody tr > * { border-top: 1px solid var(--line); }
-.table tbody tr:last-child > td { padding-bottom: 28px; }
+.compare { container-type: inline-size; }
+.stage { --head: 16.6cqw; --row: 11.58cqw; --h: calc(var(--head) + 5 * var(--row)); position: relative; height: var(--h); margin-top: 14cqw; }
+.rows { margin: 0; padding: 0; list-style: none; }
+.rows li { position: relative; display: flex; align-items: center; height: var(--row); }
 
-.us { width: 41%; background: var(--paprika); color: var(--black); font-weight: 700; border-top-color: rgb(0 0 0 / .18) !important; }
-.them { background: var(--mist); color: var(--quiet); }
-.table thead .us, .table thead .them { border-radius: 28px 28px 0 0; }
-.table tbody tr:last-child .us, .table tbody tr:last-child .them { border-radius: 0 0 28px 28px; }
+/* Others: a grey card leaning back a touch, plain white type, hairlines between rows. */
+.others { position: absolute; left: .3cqw; top: .5cqw; width: 38.5cqw; height: var(--h); rotate: -2deg; border-radius: 3cqw; background: #9a9b9a; color: var(--white); box-shadow: 0 1.2cqw 3cqw rgb(0 0 0 / .12); }
+.othersName { display: flex; align-items: flex-end; height: var(--head); margin: 0; padding: 0 0 1.4cqw 6.1cqw; font-size: 3.2cqw; font-weight: 600; line-height: 1; }
+.others .rows li { padding: 0 6.5cqw 0 6.1cqw; font-size: 2cqw; font-weight: 500; line-height: 1.3; }
+.othersName, .others .rows li:not(:last-child) { position: relative; }
+.othersName::after, .others .rows li:not(:last-child)::after { content: ""; position: absolute; left: 3.1cqw; right: 0; bottom: 0; height: 1px; background: rgb(255 255 255 / .85); }
+/* The plain packs, standing half off the top of the card. */
+.othersPacks { position: absolute; left: 10.9cqw; top: -4.9cqw; z-index: 1; width: 23.3cqw; height: auto; filter: drop-shadow(0 .8cqw .9cqw rgb(0 0 0 / .22)); }
 
-/* Both bags stand half out of the top of their column. */
-.pack, .bag { display: block; width: clamp(72px, 7vw, 104px); height: auto; margin: -56px 0 16px; }
-/* Ours is the pack with makhana bursting from it: bigger, and standing higher out of the column. */
-.pack { width: clamp(104px, 10vw, 150px); margin: -120px 0 12px -8px; filter: drop-shadow(0 12px 10px rgb(0 0 0 / .35)); }
-.bag { rotate: 5deg; fill: #d9d9d9; stroke: #a9a9a9; stroke-width: 3; stroke-linejoin: round; }
-.bag circle { fill: #c6c6c6; stroke: none; }
-.logo { width: min(100%, 176px); height: auto; }
-.others { display: block; font-size: clamp(1.75rem, 1.3rem + 1.2vw, 2.5rem); color: var(--black); }
-/* The table is read left to right, so ours, on the right, is the answer. */
-.table thead .us { padding-left: clamp(28px, 2.6vw, 40px); }
-.othersSub { display: block; margin-top: 4px; font-size: var(--t-small); font-weight: 500; }
-/* The badge sits on the seam between the two sides. */
-.vs { position: absolute; left: 0; bottom: 18px; translate: -50% 0; z-index: 1; display: grid; place-items: center; width: 48px; height: 48px; border: 3px solid var(--white); border-radius: 50%; background: var(--black); color: var(--white); font-family: var(--font-display), sans-serif; font-size: 1.25rem; font-weight: 700; line-height: 1; text-transform: lowercase; }
+/* The pill between: row names under their icons, the VS badge at the top. */
+.pill { position: absolute; left: 35cqw; top: 0; z-index: 2; width: 15.7cqw; height: var(--h); border-radius: 7.85cqw; background: var(--black); color: var(--white); }
+.pill .rows { padding-top: var(--head); }
+.pill .rows li { flex-direction: column; justify-content: center; gap: .8cqw; padding-inline: 1.6cqw; font-size: 1.45cqw; font-weight: 700; line-height: 1.15; text-align: center; text-transform: uppercase; }
+.icon { display: block; width: auto; height: 3.2cqw; }
+.vs { position: absolute; left: 50%; top: 3.55cqw; translate: -50% 0; display: grid; place-items: center; width: 7.5cqw; aspect-ratio: 1; border: .45cqw solid #c41f2f; border-radius: 50%; background: var(--paprika); color: var(--white); font-size: 3.2cqw; font-weight: 600; line-height: 1; }
 
-/* Icon and words side by side, so a second line starts under the words, not under the icon. */
-.cell { display: flex; align-items: flex-start; gap: 10px; }
-.mark, .cross { flex: none; width: 22px; height: 22px; margin-top: .05em; }
-.mark circle { fill: var(--black); }
-.mark path { fill: none; stroke: var(--white); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
-.cross circle { fill: var(--white); }
-.cross path { fill: none; stroke: #8a8a8a; stroke-width: 2.4; stroke-linecap: round; }
+/* Ours: Paprika, glowing, with three packs fanned out on top. */
+.us { position: absolute; left: 50.2cqw; top: 0; z-index: 3; width: 49.8cqw; height: var(--h); border-radius: 3cqw; background: var(--paprika); color: var(--white); box-shadow: 1cqw 2.5cqw 6cqw rgb(234 75 43 / .28); }
+.logo { position: absolute; left: 5cqw; top: 8.5cqw; width: 22.5cqw; height: auto; }
+.us .rows { padding-top: var(--head); }
+.us .rows::before { content: ""; position: absolute; left: 5cqw; right: 3.2cqw; top: var(--head); height: 1px; background: rgb(255 255 255 / .9); }
+.us .rows li { gap: 1.7cqw; padding: 0 3.6cqw 0 5cqw; font-size: 2.15cqw; font-weight: 700; line-height: 1.2; }
+.us .rows li:not(:last-child)::after { content: ""; position: absolute; left: 5cqw; right: 3.2cqw; bottom: 0; height: 1px; background: rgb(255 255 255 / .9); }
+.mark { flex: none; width: 3.9cqw; height: auto; }
 
+.fan { position: absolute; left: 9.3cqw; top: -13.9cqw; width: 33.2cqw; height: 20cqw; pointer-events: none; }
+.fanPack { position: absolute; top: 0; width: 12.2cqw; height: auto; filter: drop-shadow(0 .6cqw .8cqw rgb(0 0 0 / .3)); }
+.fanPack:nth-child(1) { left: 0; top: 1.2cqw; rotate: -6deg; }
+.fanPack:nth-child(2) { left: 10.5cqw; z-index: 1; width: 12.6cqw; rotate: 2deg; }
+.fanPack:nth-child(3) { left: 21cqw; top: 1.4cqw; rotate: 6deg; }
+.seed { position: absolute; z-index: 2; width: 2.8cqw; height: auto; filter: drop-shadow(0 .3cqw .3cqw rgb(0 0 0 / .25)); }
+.seed:nth-of-type(4) { left: .8cqw; top: 17.6cqw; }
+.seed:nth-of-type(5) { left: 9cqw; top: 16.2cqw; }
+.seed:nth-of-type(6) { left: 10.4cqw; top: 15.8cqw; width: 2.4cqw; }
+.seed:nth-of-type(7) { left: 20.5cqw; top: 15.9cqw; }
+.seed:nth-of-type(8) { left: 28.6cqw; top: 17.6cqw; width: 3.1cqw; }
+
+/* Below a laptop: the words on top, the comparison full width under them. */
 @media (max-width: 960px) {
-  .head, .table { grid-column: 1 / -1; }
+  .grid { grid-template-columns: minmax(0, 1fr); row-gap: 16px; }
+  .title { font-size: min(10.6cqw, 5.5rem); }
+  .lede { margin-top: 24px; }
 }
-@media (max-width: 960px) {
-  .head { position: static; }
-}
+
 /*
- * Phones: still a table, three columns across. The row label takes the narrow first column,
- * both answers stack their icon over the words so nothing is squeezed sideways.
+ * Phones, the words: tighter and quieter, and the Shop all button moves below the comparison,
+ * so it is the next thing to do after reading it. The header steps aside (display: contents)
+ * so its three children become grid items that can be reordered.
  */
-@media (max-width: 600px) {
-  .table { margin-top: 64px; }
-  .table thead td { width: 25%; }
-  .us { width: 38%; }
-  .table th, .table td { padding: 18px 12px; font-size: .8125rem; line-height: 1.45; }
-  .table thead th { padding: 0 12px 20px; }
-  .table tbody th { padding: 18px 10px 18px 0; font-size: .75rem; line-height: 1.35; }
-  .table tbody tr:last-child > td { padding-bottom: 24px; }
-  .table thead .us, .table thead .them { border-radius: 22px 22px 0 0; }
-  .table tbody tr:last-child .us, .table tbody tr:last-child .them { border-radius: 0 0 22px 22px; }
-  .pack, .bag { width: 48px; margin: -38px 0 14px; }
-  .pack { width: 72px; margin: -64px 0 10px -4px; }
-  /* Room either side of the seam for the badge. */
-  .logo { width: calc(100% - 12px); }
-  .table thead .us { padding-left: 24px; }
-  .others { font-size: 1.25rem; }
-  .othersSub { margin-top: 6px; font-size: .6875rem; line-height: 1.35; }
-  .cell { flex-direction: column; gap: 8px; }
-  .mark, .cross { width: 18px; height: 18px; margin-top: 0; }
-  .vs { width: 32px; height: 32px; border-width: 2px; bottom: 20px; font-size: .8125rem; }
+@media (max-width: 640px) {
+  .section { padding-block: 28px 44px; }
+  .grid { row-gap: 0; }
+  .head { display: contents; }
+  .title { font-size: min(9.6vw, 3rem); line-height: 1; }
+  .lede { margin-top: 14px; font-size: .9375rem; line-height: 1.4; }
+  .cta { order: 1; justify-self: center; margin-top: 28px; min-height: 46px; padding-inline: 2rem; font-size: 1rem; }
+}
+
+/*
+ * Phones, the comparison: the picture can't simply shrink any more, the words would be
+ * unreadable. The black strip narrows to its icons with the row names in small type under them,
+ * which hands the rest of the width to the two cards so their copy runs on two or three lines
+ * and the rows can be much shorter.
+ */
+@container (max-width: 640px) {
+  .stage { --row: 68px; --head: 60px; margin-top: 18cqw; }
+
+  .others { left: 0; top: 3px; width: 37.5cqw; rotate: -1.2deg; border-radius: 16px; }
+  .othersName { padding: 0 0 8px 4.5cqw; font-size: 1rem; }
+  .others .rows li { padding: 0 5.5cqw 0 4.5cqw; font-size: .75rem; font-weight: 500; line-height: 1.3; }
+  .othersName::after, .others .rows li:not(:last-child)::after { left: 2.5cqw; }
+  .othersPacks { left: 6cqw; top: -8cqw; width: 25cqw; }
+
+  .pill { left: 32.5cqw; width: 17.5cqw; border-radius: 999px; }
+  .pill .rows li { gap: 4px; padding-inline: 2px; }
+  .pillLabel { font-size: .5625rem; letter-spacing: .01em; line-height: 1.1; }
+  .icon { width: auto; height: auto; max-width: 22px; max-height: 18px; }
+  .vs { top: 12px; width: 34px; border-width: 2px; font-size: .8125rem; }
+
+  .us { left: 49cqw; width: 51cqw; border-radius: 16px; box-shadow: 0 10px 28px rgb(234 75 43 / .28); }
+  .logo { left: 4cqw; top: calc(var(--head) - 34px); width: min(30cqw, 130px); }
+  .us .rows::before, .us .rows li:not(:last-child)::after { left: 4cqw; right: 3cqw; }
+  .us .rows li { gap: 7px; padding: 0 3cqw 0 4cqw; font-size: .8125rem; line-height: 1.25; }
+  .mark { width: 14px; }
+
+  /* The fan: centred on the card and lifted off its top edge. */
+  .fan { left: 50%; top: -15.5cqw; width: 34cqw; height: 22cqw; translate: -50% 0; }
+  .fanPack { width: 12.4cqw; }
+  .fanPack:nth-child(1) { left: 0; top: 1.3cqw; }
+  .fanPack:nth-child(2) { left: 10.7cqw; width: 12.8cqw; }
+  .fanPack:nth-child(3) { left: 21.4cqw; top: 1.5cqw; }
+  .seed { width: 3.2cqw; }
+  .seed:nth-of-type(4) { left: .6cqw; top: 18cqw; }
+  .seed:nth-of-type(5) { left: 9cqw; top: 16.8cqw; }
+  .seed:nth-of-type(6) { left: 10.8cqw; top: 16.4cqw; width: 2.6cqw; }
+  .seed:nth-of-type(7) { left: 21cqw; top: 16.5cqw; }
+  .seed:nth-of-type(8) { left: 29.4cqw; top: 18cqw; width: 3.4cqw; }
+}
+
+/* The smallest phones (320 px): a little more height per row and a step down in size. */
+@container (max-width: 320px) {
+  .stage { --row: 76px; }
+  .pillLabel { font-size: .5rem; }
+  .others .rows li { font-size: .6875rem; }
+  .us .rows li { gap: 5px; padding-right: 2.5cqw; font-size: .75rem; line-height: 1.22; }
+  .mark { width: 12px; }
 }

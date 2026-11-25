@@ -1,50 +1,52 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useStore } from "@/lib/store";
+import { useState, useTransition } from "react";
+import { loginHref, useStore, type Order } from "@/lib/store";
+import { trackOrder } from "@/app/actions/account";
 import { PageHead, Spinner } from "@/components/shop/bits";
+import { OrderView } from "../orders/[id]/OrderView";
 import ui from "@/components/home/ui.module.css";
 import forms from "@/components/shop/forms.module.css";
 import styles from "./track.module.css";
 
-/** For guests, or anyone without their account to hand: the order number and the phone it was placed with. */
+/** For guests, or anyone without their account to hand: the order number and the email or phone it was placed with. */
 export function TrackView() {
-  const router = useRouter();
-  const { orders, user } = useStore();
+  const { user } = useStore();
   const [id, setId] = useState("");
-  const [phone, setPhone] = useState("");
+  const [contact, setContact] = useState("");
+  const [trap, setTrap] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [order, setOrder] = useState<Order | null>(null);
+  const [busy, start] = useTransition();
 
   const find = (e: React.FormEvent) => {
     e.preventDefault();
-    const clean = id.trim().toUpperCase();
-    if (!/^MKZ\d{5}$/.test(clean)) return setError("Order numbers look like MKZ12345. It's in your SMS and email.");
-    if (!/^\d{10}$/.test(phone)) return setError("Enter the 10-digit mobile number you ordered with.");
-    setBusy(true);
-    window.setTimeout(() => {
-      setBusy(false);
-      const o = orders.find((x) => x.id === clean && (x.contact.phone === phone || x.address.phone === phone));
-      if (!o) return setError(`No order ${clean} with that number. Check both, or write to hello@makzos.com.`);
-      router.push(`/orders/${o.id}`);
-    }, 600);
+    if (!/\d/.test(id)) return setError("Order numbers look like #1001. It's in your confirmation email.");
+    if (!contact.trim()) return setError("Enter the email or mobile number you ordered with.");
+    setError(null);
+    start(async () => {
+      const r = await trackOrder(id, contact, trap);
+      if (r.ok) setOrder(r.order);
+      else { setOrder(null); setError(r.message); }
+    });
   };
 
   return (
     <>
-      <PageHead title="Track an order." lede="Your order number and the phone number you ordered with." crumbs={[{ href: "/", label: "Home" }, { label: "Track an order" }]} />
+      <PageHead title="Track an order." lede="Your order number and the email or phone number you ordered with." crumbs={[{ href: "/", label: "Home" }, { label: "Track an order" }]} />
       <section className={`${ui.shell} ${styles.body}`}>
         <form className={`${forms.form} ${styles.form}`} onSubmit={find} noValidate>
           <div className={forms.field}>
             <label className={forms.label} htmlFor="t-id">Order number</label>
-            <input id="t-id" className={forms.input} placeholder="MKZ12345" autoComplete="off" value={id} onChange={(e) => { setId(e.target.value.toUpperCase()); setError(null); }} />
+            <input id="t-id" className={forms.input} placeholder="#1001" autoComplete="off" value={id} onChange={(e) => { setId(e.target.value); setError(null); }} />
           </div>
           <div className={forms.field}>
-            <label className={forms.label} htmlFor="t-phone">Mobile number</label>
-            <input id="t-phone" className={forms.input} type="tel" inputMode="numeric" maxLength={10} autoComplete="tel-national" value={phone} onChange={(e) => { setPhone(e.target.value.replace(/\D/g, "")); setError(null); }} />
+            <label className={forms.label} htmlFor="t-contact">Email or mobile number</label>
+            <input id="t-contact" className={forms.input} autoComplete="email" value={contact} onChange={(e) => { setContact(e.target.value); setError(null); }} />
           </div>
+          {/* Left empty by people; filled by bots. */}
+          <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" value={trap} onChange={(e) => setTrap(e.target.value)} style={{ position: "absolute", left: "-9999px" }} />
           {error && <p className={forms.error} role="alert">{error}</p>}
           <div className={forms.actions}>
             <button type="submit" className={ui.btn} disabled={busy}>{busy ? <><Spinner /> Looking</> : "Track order"}</button>
@@ -53,9 +55,10 @@ export function TrackView() {
         <aside className={styles.aside}>
           <p><strong>Ordered while signed in?</strong></p>
           <p>Every order is in your account, with its tracking.</p>
-          <Link href={user ? "/account/orders" : "/login?next=/account/orders"} className={ui.link}>{user ? "Your orders" : "Sign in"}</Link>
+          {user ? <Link href="/account/orders" className={ui.link}>Your orders</Link> : <a href={loginHref("/account/orders")} className={ui.link}>Sign in</a>}
         </aside>
       </section>
+      {order && <OrderView o={order} guest />}
     </>
   );
 }

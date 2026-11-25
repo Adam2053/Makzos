@@ -1,6 +1,8 @@
 /**
- * What an order costs on top of its bags: delivery and codes. Every number here is a
- * placeholder for the UI, like the bag prices in lib/products: confirm before launch.
+ * What an order costs on top of its bags, for the estimates the bag shows before Shopify answers.
+ * Shopify is the authority: delivery rates and the free-delivery threshold live in its shipping
+ * settings, codes in its discounts, serviceable pincodes in its shipping zones
+ * (scripts/shopify/seed.mjs set them to these same numbers). Keep the two in step.
  */
 import { inr } from "./products";
 
@@ -14,25 +16,17 @@ export const DELIVERY: Record<DeliveryId, { label: string; eta: string; fee: num
 /** Standard delivery is free from here up. Express always costs its fee. */
 export const FREE_FROM = 499;
 
-export type Coupon = { code: string; label: string; kind: "percent" | "flat"; value: number; min?: number };
+/** A code on the bag. `kind` and `value` are known for the codes we advertise; Shopify decides for any other. */
+export type Coupon = { code: string; label: string; kind?: "percent" | "flat"; value?: number; min?: number };
 
+/** The codes the site advertises (offers strip, product page). Each one exists in Shopify discounts. */
 export const COUPONS: Coupon[] = [
   { code: "FIRSTCRUNCH", label: "10% off your first order", kind: "percent", value: 10 },
   { code: "BOXOFF50", label: `${inr(50)} off orders over ${inr(400)}`, kind: "flat", value: 50, min: 400 },
 ];
 
-/** Checks a typed code against the subtotal; the message says exactly why it didn't apply. */
-export function checkCoupon(raw: string, subtotal: number): { ok: true; coupon: Coupon } | { ok: false; message: string } {
-  const code = raw.trim().toUpperCase();
-  if (!code) return { ok: false, message: "Type a code first." };
-  const coupon = COUPONS.find((c) => c.code === code);
-  if (!coupon) return { ok: false, message: `${code} isn't a code we know. Check the spelling.` };
-  if (coupon.min && subtotal < coupon.min) return { ok: false, message: `${code} works on orders over ${inr(coupon.min)}. Add ${inr(coupon.min - subtotal)} more.` };
-  return { ok: true, coupon };
-}
-
 export function discountFor(coupon: Coupon | null, subtotal: number) {
-  if (!coupon || (coupon.min && subtotal < coupon.min)) return 0;
+  if (!coupon?.kind || !coupon.value || (coupon.min && subtotal < coupon.min)) return 0;
   return coupon.kind === "percent" ? Math.round((subtotal * coupon.value) / 100) : Math.min(coupon.value, subtotal);
 }
 
@@ -50,14 +44,11 @@ export function totals(subtotal: number, coupon: Coupon | null, method: Delivery
 }
 
 /**
- * Where we deliver. For now every valid pincode is accepted, except one kept blocked so the
- * "can't deliver" state can be tested. Swap in the courier's serviceability check later.
+ * A quick pincode check for the forms: six digits, and when Express reaches it. Whether we
+ * deliver there at all is Shopify checkout's call, from the shipping zones.
  */
-export const BLOCKED_PINCODE = "442401";
-
 export function serviceFor(pincode: string): { ok: boolean; message: string } {
   if (!/^\d{6}$/.test(pincode)) return { ok: false, message: "Pincodes are six digits." };
-  if (pincode === BLOCKED_PINCODE) return { ok: false, message: "We don't deliver to this pincode yet. For now, find us on Amazon." };
   const express = /^50[0-2]/.test(pincode) ? " Next day with Express." : "";
   return { ok: true, message: `Delivers to ${pincode} in ${DELIVERY.standard.eta}.${express}` };
 }

@@ -1,0 +1,47 @@
+/*
+ * The "Nothing artificial" checkerboard: square cells, edge to edge, white and Paprika (the "Flash cut
+ * ingredients" artwork). Each cell is placed by --c/--r (wide) or --mc/--mr (phones).
+ */
+.band { position: relative; z-index: 2; background: var(--mist); --ink: #2b2b2b; --pen: #e1251b; }
+.board { display: grid; grid-template-columns: repeat(8, 1fr); grid-auto-rows: calc(100vw / 8); }
+@supports (width: 1cqw) { .band { container-type: inline-size; } .board { grid-auto-rows: calc(100cqw / 8); } }
+
+.cut, .usp { grid-column: var(--c); grid-row: var(--r); position: relative; display: grid; place-items: center; overflow: hidden; }
+.cut { background: #fbfbfb; color: var(--ink); }
+.usp { background: var(--black); color: var(--white); perspective: 600px; }
+
+/* The words the pen goes through: the label face, as on the artwork. */
+.word { position: relative; display: grid; justify-items: center; padding-inline: 8%; font-family: var(--font-label), "Arial Narrow", sans-serif; font-size: clamp(.875rem, .4rem + 1.35vw, 1.875rem); line-height: 1.05; text-transform: uppercase; text-align: center; }
+/* A long single word (Maltodextrin) steps down a size to stay inside its square. */
+.cut > .word[data-long] { font-size: clamp(.7rem, .32rem + 1.08vw, 1.5rem); }
+/* The strike runs a little past both ends and leans its own way; it draws from left to right. */
+.strike { position: absolute; left: -8%; right: -8%; top: 52%; height: max(2px, .12em); border-radius: 2px; background: var(--pen); rotate: var(--lean, 0deg); transform-origin: 0 50%; }
+
+/*
+ * The flip clock. Each half is a window half the cell tall onto a full-size face, so the
+ * top half shows the face's top and the bottom half its bottom. The hinge is the seam between.
+ * The square starts black and flips over to Paprika with the words on it.
+ */
+.half { position: absolute; left: 0; right: 0; height: 50%; overflow: hidden; background: var(--paprika); backface-visibility: hidden; }
+.blank { background: var(--black); }
+.top { top: 0; transform-origin: 50% 100%; }
+.bottom { bottom: 0; transform-origin: 50% 0; }
+.face { position: absolute; left: 0; right: 0; height: 200%; display: grid; place-items: center; padding-inline: 10%; font-family: var(--font-label), "Arial Narrow", sans-serif; font-size: clamp(.8125rem, .35rem + 1.25vw, 1.75rem); line-height: 1.05; text-transform: uppercase; text-align: center; }
+.top .face { top: 0; }
+.bottom .face { bottom: 0; }
+/* At rest the blank top has already tipped away: without the script, the words simply show. */
+.flapTop { z-index: 2; transform: rotateX(-90deg); }
+.flapBottom { z-index: 2; }
+/* The hinge: a hairline across the middle, dark on Paprika and faintly light on black, as on a flip clock. */
+.usp::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; z-index: 3; height: 1px; translate: 0 -.5px; background: rgb(0 0 0 / .16); box-shadow: 0 1px 0 rgb(255 255 255 / .07); }
+
+/* Phones: four across, four down. */
+@media (max-width: 700px) {
+  .board { grid-template-columns: repeat(4, 1fr); grid-auto-rows: calc(100vw / 4); }
+  @supports (width: 1cqw) { .board { grid-auto-rows: calc(100cqw / 4); } }
+  .cut, .usp { grid-column: var(--mc); grid-row: var(--mr); }
+  .word { font-size: clamp(.75rem, .45rem + 1.6vw, 1rem); padding-inline: 6%; }
+  .cut > .word[data-long] { font-size: clamp(.625rem, .36rem + 1.3vw, .8125rem); }
+  .face { font-size: clamp(.6875rem, .4rem + 1.5vw, .9375rem); padding-inline: 8%; }
+}
+

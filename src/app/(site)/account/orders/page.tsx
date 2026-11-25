@@ -17,7 +17,7 @@ const FILTERS: { id: string; label: string; test: (o: Order) => boolean }[] = [
 ];
 
 export default function AccountOrders() {
-  const { orders, addSampleOrders } = useStore();
+  const { orders } = useStore();
   const [filter, setFilter] = useState("all");
   const shown = orders.filter(FILTERS.find((f) => f.id === filter)!.test);
 
@@ -25,7 +25,7 @@ export default function AccountOrders() {
     <>
       <header>
         <h1 className={`${ui.display} ${styles.title}`}>Orders.</h1>
-        <p className={styles.sub}>Tap an order to track it, cancel it or buy it again.</p>
+        <p className={styles.sub}>Tap an order to track it or buy it again.</p>
       </header>
 
       {orders.length > 0 && (
@@ -44,17 +44,13 @@ export default function AccountOrders() {
           <p>No orders yet. When you order, you can follow it from here to your door.</p>
           <div className={forms.actions}>
             <Link href="/shop" className={ui.btnPaprika}>Shop the flavours</Link>
-            {/* Demo only: fills the list so its states can be seen without placing orders. */}
-            <button type="button" className={ui.btnLine} onClick={addSampleOrders}>Load sample orders</button>
+            <Link href="/track" className={ui.btnLine}>Track a guest order</Link>
           </div>
         </div>
       ) : shown.length === 0 ? (
         <p className={styles.quiet}>No {FILTERS.find((f) => f.id === filter)!.label.toLowerCase()} orders.</p>
       ) : (
         <div className={styles.orders}>{shown.map((o) => <OrderRow key={o.id} o={o} />)}</div>
-      )}
-      {orders.length > 0 && !orders.some((o) => o.sample) && (
-        <button type="button" className={`${ui.link} ${forms.textBtn} ${styles.reset}`} onClick={addSampleOrders}>Demo: add sample orders</button>
       )}
     </>
   );

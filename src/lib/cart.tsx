@@ -1,8 +1,10 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
-import { BAG_PRICE, BOX_PRICE, BOX_SIZE, MULTI_PRICE, MULTI_SIZE, SUB_OFF, WEIGHT, boxPrice, byId, productHref, type Every } from "./products";
-import { checkCoupon, type Coupon } from "./pricing";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
+import { BAG_PRICE, BOX_PRICE, BOX_SIZE, MULTI_PRICE, MULTI_SIZE, SUB_OFF, WEIGHT, boxPrice, byId, findFlavour, productHref, type Every } from "./products";
+import { COUPONS, type Coupon } from "./pricing";
+import type { Quote } from "./commerce";
+import { beginCheckout, checkCode, checkoutFinished, quoteBag } from "@/app/actions/cart";
 import { hydrated, persisted } from "./persist";
 import { EASE, gsap } from "./motion";
 
@@ -40,13 +42,18 @@ type Cart = {
   clear: () => void;
   /** The code applied to the bag, carried from the bag page into checkout. */
   coupon: Coupon | null;
-  /** Returns the reason a code didn't apply, or null when it did. */
-  applyCoupon: (code: string) => string | null;
+  /** Asks Shopify whether the code applies to this bag. Resolves to the reason it didn't, or null when it did. */
+  applyCoupon: (code: string) => Promise<string | null>;
   removeCoupon: () => void;
   /** False until the saved bag has been read back from the browser. */
   ready: boolean;
   /** The bag button in the header: what added packs fly into. */
   bagRef: RefObject<HTMLButtonElement | null>;
+  /**
+   * Builds the Shopify cart from the bag and goes to Shopify's checkout. Resolves only on
+   * failure, with the reason; on success the page is already leaving.
+   */
+  checkout: () => Promise<string>;
 };
 
 const CartContext = createContext<Cart | null>(null);
@@ -88,16 +95,32 @@ function fly(from: HTMLElement | null | undefined, to: HTMLElement | null) {
     .to(ghost, { opacity: 0, duration: 0.12 }, 0.6);
 }
 
-/** The bag survives a refresh: it lives in storage, read through useSyncExternalStore. */
-export const bagStore = persisted<{ lines: Line[]; coupon: Coupon | null }>("makzos-bag", { lines: [], coupon: null });
+/**
+ * The bag survives a refresh: it lives in storage, read through useSyncExternalStore. It's the
+ * shopper's intent, kept in the browser so adding feels instant; Shopify's cart is made to match
+ * it whenever real numbers are needed (lib/shopify/cart). `pending` marks a trip to checkout, so
+ * the bag empties once Shopify says the order went through.
+ */
+export const bagStore = persisted<{ lines: Line[]; coupon: Coupon | null; pending?: boolean }>("makzos-bag", { lines: [], coupon: null });
+/** A bag saved before a flavour was taken off sale (e.g. Tiramisu) would otherwise crash the drawer. */
+const onSale = (l: Line) => (l.kind === "bag" ? [l.id] : l.ids).every((id) => findFlavour(id));
 const setLines = (fn: (ls: Line[]) => Line[]) => bagStore.set((b) => ({ ...b, lines: fn(b.lines) }));
 const setCoupon = (coupon: Coupon | null) => bagStore.set((b) => ({ ...b, coupon }));
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const { lines, coupon } = useSyncExternalStore(bagStore.subscribe, bagStore.get, bagStore.getServer);
+  const { lines: saved, coupon } = useSyncExternalStore(bagStore.subscribe, bagStore.get, bagStore.getServer);
+  const lines = useMemo(() => saved.filter(onSale), [saved]);
   const ready = useSyncExternalStore(...hydrated);
   const [open, setOpen] = useState(false);
   const bagRef = useRef<HTMLButtonElement>(null);
+
+  // Back from checkout: if Shopify has closed that cart, the order was placed and the bag is spent.
+  useEffect(() => {
+    if (!ready || !bagStore.get().pending) return;
+    checkoutFinished().then((done) => {
+      if (done) bagStore.set({ lines: [], coupon: null });
+    });
+  }, [ready]);
 
   const addBag = useCallback((id: string, from?: HTMLElement | null, opts: AddOpts = {}) => {
     const size = opts.size ?? 1;
@@ -127,6 +150,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const clear = useCallback(() => bagStore.set({ lines: [], coupon: null }), []);
+
+  const checkout = useCallback(async () => {
+    const { lines: ls, coupon: c } = bagStore.get();
+    const r = await beginCheckout(ls.filter(onSale), c?.code);
+    if (!r.ok) return r.message;
+    bagStore.set((b) => ({ ...b, pending: true }));
+    window.location.assign(r.data.url);
+    return "";
+  }, []);
   const removeCoupon = useCallback(() => setCoupon(null), []);
 
   const value = useMemo<Cart>(() => {
@@ -134,18 +166,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // Any four loose bags, whatever the flavours, cost the same as a box.
     const saving = Math.floor(bags / BOX_SIZE) * (BOX_SIZE * BAG_PRICE - BOX_PRICE);
     const subtotal = lines.reduce((n, l) => n + linePrice(l), 0) - saving;
-    const applyCoupon = (code: string) => {
-      const r = checkCoupon(code, subtotal);
+    const applyCoupon = async (code: string) => {
+      const r = await checkCode(lines, code);
       if (!r.ok) return r.message;
-      setCoupon(r.coupon);
+      const c = code.trim().toUpperCase();
+      setCoupon(COUPONS.find((x) => x.code === c) ?? { code: c, label: "applied" });
       return null;
     };
     return {
       lines, bags, saving, subtotal,
       count: lines.reduce((n, l) => n + l.qty, 0),
-      open, setOpen, addBag, addBox, setQty, clear, coupon, applyCoupon, removeCoupon, ready, bagRef,
+      open, setOpen, addBag, addBox, setQty, clear, coupon, applyCoupon, removeCoupon, ready, bagRef, checkout,
     };
-  }, [lines, open, coupon, ready, addBag, addBox, setQty, clear, removeCoupon]);
+  }, [lines, open, coupon, ready, addBag, addBox, setQty, clear, removeCoupon, checkout]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
@@ -154,6 +187,34 @@ export function useCart() {
   const cart = useContext(CartContext);
   if (!cart) throw new Error("useCart must be used inside <CartProvider>");
   return cart;
+}
+
+/**
+ * Shopify's own numbers for the bag (subtotal, code discount, total before delivery), asked for
+ * a moment after the bag stops changing. Null until the first answer, or when Shopify can't be
+ * reached: callers fall back to the bag's own estimate.
+ */
+export function useQuote() {
+  const { lines, coupon, ready } = useCart();
+  const [quote, setQuote] = useState<{ key: string; q: Quote } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const key = JSON.stringify([lines.map((l) => [l.key, l.qty]), coupon?.code ?? ""]);
+
+  useEffect(() => {
+    if (!ready || lines.length === 0) return;
+    let live = true;
+    const t = window.setTimeout(() => {
+      quoteBag(lines, coupon?.code).then((r) => {
+        if (!live) return;
+        if (r.ok) { setQuote({ key, q: r.data }); setError(null); }
+        else setError(r.message);
+      });
+    }, 400);
+    return () => { live = false; window.clearTimeout(t); };
+  }, [key, ready]); // eslint-disable-line react-hooks/exhaustive-deps -- `key` stands for lines and code.
+
+  // A quote for an older bag is worse than none: it would show last minute's total.
+  return { quote: quote?.key === key ? quote.q : null, error };
 }
 
 /** How a line reads anywhere it's listed: the bag, the bag page, checkout and orders. */

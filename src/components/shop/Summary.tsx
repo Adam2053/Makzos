@@ -68,6 +68,7 @@ export function CouponField() {
   const { coupon, applyCoupon, removeCoupon } = useCart();
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   if (coupon) {
     return (
@@ -78,12 +79,12 @@ export function CouponField() {
     );
   }
   return (
-    <form className={styles.codeForm} onSubmit={(e) => { e.preventDefault(); setError(applyCoupon(code)); }} noValidate>
+    <form className={styles.codeForm} onSubmit={(e) => { e.preventDefault(); setBusy(true); applyCoupon(code).then(setError).finally(() => setBusy(false)); }} noValidate>
       <div className={styles.codeRow}>
         <label htmlFor="coupon" className={ui.sr}>Discount code</label>
         <input id="coupon" className={styles.codeInput} value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setError(null); }} placeholder="Discount code"
           autoComplete="off" aria-invalid={error ? true : undefined} aria-describedby="coupon-note" />
-        <button type="submit" className={styles.codeBtn} disabled={!code.trim()}>Apply</button>
+        <button type="submit" className={styles.codeBtn} disabled={!code.trim() || busy}>{busy ? "Checking" : "Apply"}</button>
       </div>
       <p id="coupon-note" className={error ? forms.error : forms.hint} role={error ? "alert" : undefined}>{error ?? "Try FIRSTCRUNCH or BOXOFF50."}</p>
     </form>

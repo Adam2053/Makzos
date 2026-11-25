@@ -54,7 +54,7 @@ export function Gift() {
             </label>
             <label className={styles.field}>
               <span>Your note <em>{note.length}/{MAX}</em></span>
-              <textarea value={note} onChange={(e) => { setNote(e.target.value.slice(0, MAX)); setAdded(false); }} rows={3} placeholder="Happy housewarming. Save me the Tiramisu." />
+              <textarea value={note} onChange={(e) => { setNote(e.target.value.slice(0, MAX)); setAdded(false); }} rows={3} placeholder="Happy housewarming. Save me the Rasam." />
             </label>
             <button type="submit" className={ui.btn}>{added ? "Added. Add another" : `Add gift box, ${inr(BOX_PRICE)}`}</button>
           </form>
